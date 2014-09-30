@@ -5,8 +5,6 @@ import java.io.IOException;
 import javax.media.opengl.GL3;
 import javax.media.opengl.GLException;
 
-import cleargl.demo.ClearGLDemo;
-
 public class GLProgram implements GLInterface, GLCloseable
 {
 	private GL3 mGL3;
@@ -20,13 +18,13 @@ public class GLProgram implements GLInterface, GLCloseable
 																				String pFragmentShader) throws IOException
 	{
 		GLShader lVertexShader = new GLShader(pGL3,
-																					ClearGLDemo.class,
+																					pClass,
 																					pVertexShader,
 																					GLShaderType.VertexShader);
 		System.out.println(lVertexShader.getShaderInfoLog());
 
 		GLShader lFragmentShader = new GLShader(pGL3,
-																						ClearGLDemo.class,
+																						pClass,
 																						pFragmentShader,
 																						GLShaderType.FragmentShader);
 		System.out.println(lFragmentShader.getShaderInfoLog());

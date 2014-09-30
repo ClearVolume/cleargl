@@ -11,8 +11,8 @@ import javax.media.opengl.GLException;
 
 import org.junit.Test;
 
+import cleargl.ClearGLEventListener;
 import cleargl.ClearGLWindow;
-import cleargl.ClearGLWindowEventListener;
 import cleargl.GLAttribute;
 import cleargl.GLProgram;
 import cleargl.GLTexture;
@@ -68,7 +68,7 @@ public class ClearGLDemo
 	@Test
 	public void test() throws InterruptedException
 	{
-		ClearGLWindowEventListener lClearGLWindowEventListener = new ClearGLWindowEventListener()
+		ClearGLEventListener lClearGLWindowEventListener = new ClearGLEventListener()
 		{
 
 			private GLProgram mGLProgram1, mGLProgram2;
@@ -84,6 +84,7 @@ public class ClearGLDemo
 			private GLTexture mTexture2;
 			private GLUniform mTexUnit2;
 			private GLTexture mTexture3;
+			private ClearGLWindow mClearGLWindow;
 
 			@Override
 			public void init(GLAutoDrawable pDrawable)
@@ -96,8 +97,8 @@ public class ClearGLDemo
 
 					mGLProgram1 = GLProgram.buildProgram(	pGL3,
 																								ClearGLDemo.class,
-																								"vertex.shader",
-																								"fragment.shader");
+																								"vertex.glsl",
+																								"fragment.glsl");
 					System.out.println(mGLProgram1.getProgramInfoLog());
 
 					mProjectionMatrixUniform1 = mGLProgram1.getUniform("projMatrix");
@@ -121,8 +122,8 @@ public class ClearGLDemo
 
 					mGLProgram2 = GLProgram.buildProgram(	pGL3,
 																								ClearGLDemo.class,
-																								"vertex.tex.shader",
-																								"fragment.tex.shader");
+																								"vertex.tex.glsl",
+																								"fragment.tex.glsl");
 					System.out.println(mGLProgram2.getProgramInfoLog());
 
 					mProjectionMatrixUniform2 = mGLProgram2.getUniform("projMatrix");
@@ -167,12 +168,58 @@ public class ClearGLDemo
 													int pWidth,
 													int pHeight)
 			{
-
+				pDrawable.getGL().getGL3().glViewport(10, 10, 100, 100);
 				if (pHeight == 0)
 					pHeight = 1;
 				float ratio = (1.0f * pWidth) / pHeight;
 				// setPerspectiveProjectionMatrix(53.13f, ratio, 1.0f, 30.0f);
-				setOrthoProjectionMatrix(-2, 2, -2, 2, 10, -10);
+				getClearGLWindow().setOrthoProjectionMatrix(-2,
+																										2,
+																										-2,
+																										2,
+																										10,
+																										-10);
+			}
+
+
+
+			@Override
+			public void display(GLAutoDrawable pDrawable)
+			{
+				GL3 lGL3 = pDrawable.getGL().getGL3();
+				lGL3.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+
+				getClearGLWindow().lookAt(0f, 0f, 1, 0f, 0f, -1, 0, 1, 0);
+
+				mGLProgram1.use(lGL3);
+
+				mProjectionMatrixUniform1.setFloatMatrix(	getClearGLWindow().getProjectionMatrix()
+																																.getFloatArray(),
+																									false);
+				mViewMatrixUniform1.setFloatMatrix(	getClearGLWindow().getViewMatrix()
+																													.getFloatArray(),
+																						false);
+
+				mGLVertexArray1.draw(GL.GL_TRIANGLES);
+
+				mGLProgram2.use(lGL3);
+				mTexture2.bind(mGLProgram2);
+
+				mProjectionMatrixUniform2.setFloatMatrix(	getClearGLWindow().getProjectionMatrix()
+																																.getFloatArray(),
+																									false);
+				mViewMatrixUniform2.setFloatMatrix(	getClearGLWindow().getViewMatrix()
+																													.getFloatArray(),
+																						false);
+
+				mGLVertexArray2.draw(GL.GL_TRIANGLES);
+
+				// Check out error
+				int error = lGL3.glGetError();
+				if (error != 0)
+				{
+					System.err.println("ERROR on render : " + error);
+				}
 			}
 
 			@Override
@@ -187,42 +234,18 @@ public class ClearGLDemo
 				mTexCoordAttributeArray2.close();
 				mPositionAttributeArray2.close();
 				mGLProgram2.close();
-				super.dispose(pDrawable);
 			}
 
 			@Override
-			public void display(GLAutoDrawable pDrawable)
+			public void setClearGLWindow(ClearGLWindow pClearGLWindow)
 			{
-				GL3 lGL3 = pDrawable.getGL().getGL3();
-				lGL3.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+				mClearGLWindow = pClearGLWindow;
+			}
 
-				lookAt(0f, 0f, 1, 0f, 0f, -1, 0, 1, 0);
-
-				mGLProgram1.use(lGL3);
-
-				mProjectionMatrixUniform1.setFloatMatrix(	getProjectionMatrix().getFloatArray(),
-																									false);
-				mViewMatrixUniform1.setFloatMatrix(	getViewMatrix().getFloatArray(),
-																						false);
-
-				mGLVertexArray1.draw(GL.GL_TRIANGLES);
-
-				mGLProgram2.use(lGL3);
-				mTexture2.bind(mGLProgram2);
-
-				mProjectionMatrixUniform2.setFloatMatrix(	getProjectionMatrix().getFloatArray(),
-																									false);
-				mViewMatrixUniform2.setFloatMatrix(	getViewMatrix().getFloatArray(),
-																						false);
-
-				mGLVertexArray2.draw(GL.GL_TRIANGLES);
-
-				// Check out error
-				int error = lGL3.glGetError();
-				if (error != 0)
-				{
-					System.err.println("ERROR on render : " + error);
-				}
+			@Override
+			public ClearGLWindow getClearGLWindow()
+			{
+				return mClearGLWindow;
 			}
 
 		};

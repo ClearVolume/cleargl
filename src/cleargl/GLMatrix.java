@@ -1,6 +1,7 @@
 package cleargl;
 
 import com.jogamp.opengl.math.FloatUtil;
+import com.jogamp.opengl.math.Quaternion;
 
 public class GLMatrix
 {
@@ -80,6 +81,35 @@ public class GLMatrix
 
 	}
 
+	public void euler(final double bankX,
+										final double headingY,
+										final double attitudeZ)
+	{
+		FloatUtil.makeRotationEuler(mMatrix,
+																0,
+																(float) bankX,
+																(float) headingY,
+																(float) attitudeZ);
+
+	}
+
+	public void translate(float pDeltaX, float pDeltaY, float pDeltaZ)
+	{
+		float[] lTranslationMatrix = FloatUtil.makeTranslation(	new float[16],
+															true,
+															pDeltaX,
+															pDeltaY,
+															pDeltaZ);
+
+		FloatUtil.multMatrix(mMatrix, lTranslationMatrix);
+	}
+	
+
+	public void mult(Quaternion pQuaternion)
+	{
+		float[] lQuaternionMatrix = pQuaternion.toMatrix(new float[16], 0);
+		FloatUtil.multMatrix(mMatrix, lQuaternionMatrix);
+	}
 
 	public float[] getFloatArray()
 	{
@@ -100,5 +130,8 @@ public class GLMatrix
 															true);
 		return lStringBuilder.toString();
 	}
+
+
+
 
 }

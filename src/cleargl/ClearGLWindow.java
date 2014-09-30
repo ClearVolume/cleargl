@@ -17,12 +17,14 @@ public class ClearGLWindow implements GLCloseable
 	private int mWindowDefaultWidth;
 	private int mWindowDefaultHeight;
 
-
+	private ClearGLWindow mClearGLWindow;
+	private GLMatrix mProjectionMatrix;
+	private GLMatrix mViewMatrix;
 
 	public ClearGLWindow(	String pWindowTitle,
 												int pDefaultWidth,
 												int pDefaultHeight,
-												ClearGLWindowEventListener pClearGLWindowEventListener)
+												ClearGLEventListener pClearGLWindowEventListener)
 	{
 		super();
 		mWindowDefaultWidth = pDefaultWidth;
@@ -37,6 +39,8 @@ public class ClearGLWindow implements GLCloseable
 		mGlWindow.addGLEventListener(pClearGLWindowEventListener);
 		mGlWindow.setSize(pDefaultWidth, pDefaultHeight);
 
+		mProjectionMatrix = new GLMatrix();
+		mViewMatrix = new GLMatrix();
 	}
 
 	@Override
@@ -45,6 +49,11 @@ public class ClearGLWindow implements GLCloseable
 		if (mGlWindow.isRealized())
 			mGlWindow.destroy();
 		mWindow.destroy();
+	}
+
+	public GLWindow getGLWindow()
+	{
+		return mGlWindow;
 	}
 
 	/**
@@ -81,6 +90,63 @@ public class ClearGLWindow implements GLCloseable
 		}
 	}
 
+	public void setPerspectiveProjectionMatrix(	float fov,
+																							float ratio,
+																							float nearP,
+																							float farP)
+	{
+		mProjectionMatrix.setPerspectiveProjectionMatrix(	fov,
+																											ratio,
+																											nearP,
+																											farP);
+	}
+
+	public void setOrthoProjectionMatrix(	final float left,
+																				final float right,
+																				final float bottom,
+																				final float top,
+																				final float zNear,
+																				final float zFar)
+	{
+		mProjectionMatrix.setOrthoProjectionMatrix(	left,
+																								right,
+																								bottom,
+																								top,
+																								zNear,
+																								zFar);
+	}
+
+	public void lookAt(	float pPosX,
+											float pPosY,
+											float pPosZ,
+											float pLookAtX,
+											float pLookAtY,
+											float pLookAtZ,
+											float pUpX,
+											float pUpY,
+											float pUpZ)
+	{
+		mViewMatrix.setCamera(pPosX,
+													pPosY,
+													pPosZ,
+													pLookAtX,
+													pLookAtY,
+													pLookAtZ,
+													pUpX,
+													pUpY,
+													pUpZ);
+	}
+
+	public GLMatrix getProjectionMatrix()
+	{
+		return mProjectionMatrix;
+	}
+
+	public GLMatrix getViewMatrix()
+	{
+		return mViewMatrix;
+	}
+
 	public void disableClose()
 	{
 		mGlWindow.setDefaultCloseOperation(WindowClosingMode.DO_NOTHING_ON_CLOSE);
@@ -98,6 +164,7 @@ public class ClearGLWindow implements GLCloseable
 						+ mWindowDefaultHeight
 						+ "]";
 	}
+
 
 
 }

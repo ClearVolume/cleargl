@@ -22,8 +22,7 @@ public class GLPixelBufferObject implements GLInterface, GLCloseable
 		mTextureWidth = pWidth;
 		mTextureHeight = pHeight;
 
-		final int pboArray[] = new int[1];
-		mGLInterface.getGL().glGenBuffers(1, pboArray, 0);
+		mGLInterface.getGL().glGenBuffers(1, mPixelBufferObjectId, 0);
 
 	}
 
@@ -38,27 +37,27 @@ public class GLPixelBufferObject implements GLInterface, GLCloseable
 		mGLInterface.getGL().glBindBuffer(GL3.GL_PIXEL_UNPACK_BUFFER, 0);
 	}
 
-	public void bufferData(Buffer pBuffer)
+	public void copyFrom(Buffer pBuffer)
 	{
 		bind();
 		mGLInterface.getGL().glBufferData(GL3.GL_PIXEL_UNPACK_BUFFER,
 											mTextureWidth * mTextureHeight * 1 * 4,
 											null,
 											GL.GL_DYNAMIC_DRAW);
-		unbind();
 	}
 
 	@Override
 	public void close() throws GLException
 	{
 		mGLInterface.getGL().glDeleteBuffers(1, mPixelBufferObjectId, 0);
+		mPixelBufferObjectId = null;
 	}
 
 
 	@Override
 	public GL3 getGL()
 	{
-		return null;
+		return mGLInterface.getGL();
 	}
 
 	@Override
