@@ -5,12 +5,21 @@ import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLException;
 import javax.media.opengl.GLProfile;
 
+import com.jogamp.common.util.IOUtil.ClassResources;
 import com.jogamp.newt.NewtFactory;
 import com.jogamp.newt.Window;
 import com.jogamp.newt.opengl.GLWindow;
 
 public class ClearGLWindow implements GLCloseable
 {
+	static
+	{
+		ClassResources lClassResources = new ClassResources(ClearGLWindow.class,
+																												new String[]
+																												{ "icon/ClearGLIcon16.png",
+																													"icon/ClearGLIcon32.png" });
+		NewtFactory.setWindowIcons(lClassResources);
+	}
 
 	private GLWindow mGlWindow;
 	private Window mWindow;
@@ -41,14 +50,26 @@ public class ClearGLWindow implements GLCloseable
 
 		mProjectionMatrix = new GLMatrix();
 		mViewMatrix = new GLMatrix();
+
+
+		/*..setProperty(	"newt.window.icons",
+													"cleargl/icon/ClearGLIcon16.png cleargl/icon/ClearGLIcon32.png");/**/
+
 	}
 
 	@Override
 	public void close() throws GLException
 	{
-		if (mGlWindow.isRealized())
-			mGlWindow.destroy();
-		mWindow.destroy();
+		try
+		{
+			mGlWindow.setVisible(false);
+			if (mGlWindow.isRealized())
+				mGlWindow.destroy();
+		}
+		catch (Throwable e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	public GLWindow getGLWindow()
@@ -164,7 +185,5 @@ public class ClearGLWindow implements GLCloseable
 						+ mWindowDefaultHeight
 						+ "]";
 	}
-
-
 
 }
