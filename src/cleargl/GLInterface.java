@@ -1,11 +1,11 @@
 package cleargl;
 
-import javax.media.opengl.GL3;
+import javax.media.opengl.GL4;
 
 public interface GLInterface
 {
 
-	GL3 getGL();
+	GL4 getGL();
 
 	int getId();
 

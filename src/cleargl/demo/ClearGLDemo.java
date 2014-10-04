@@ -2,16 +2,17 @@ package cleargl.demo;
 
 import java.io.IOException;
 import java.nio.Buffer;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import javax.media.opengl.GL;
-import javax.media.opengl.GL3;
+import javax.media.opengl.GL4;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLException;
 
 import org.junit.Test;
 
-import cleargl.ClearGLEventListener;
+import cleargl.ClearGLDebugEventListener;
 import cleargl.ClearGLWindow;
 import cleargl.GLAttribute;
 import cleargl.GLProgram;
@@ -59,16 +60,16 @@ public class ClearGLDemo
 
 	private Buffer getTextureBuffer3()
 	{
-		int[] lIntArray = new int[128 * 128];
-		for (int i = 0; i < lIntArray.length; i++)
-			lIntArray[i] = 200;
-		return IntBuffer.wrap(lIntArray);
+		float[] lFloatArray = new float[1280 * 1280];
+		for (int i = 0; i < lFloatArray.length; i++)
+			lFloatArray[i] = (float) Math.random();
+		return FloatBuffer.wrap(lFloatArray);
 	}
 
 	@Test
 	public void test() throws InterruptedException
 	{
-		ClearGLEventListener lClearGLWindowEventListener = new ClearGLEventListener()
+		ClearGLDebugEventListener lClearGLWindowEventListener = new ClearGLDebugEventListener()
 		{
 
 			private GLProgram mGLProgram1, mGLProgram2;
@@ -81,21 +82,22 @@ public class ClearGLDemo
 					mColorAttributeArray1, mPositionAttributeArray2,
 					mTexCoordAttributeArray2;
 			private GLVertexArray mGLVertexArray1, mGLVertexArray2;
-			private GLTexture mTexture2;
+			private GLTexture<Byte> mTexture2;
 			private GLUniform mTexUnit2;
-			private GLTexture mTexture3;
+			private GLTexture<Float> mTexture3;
 			private ClearGLWindow mClearGLWindow;
 
 			@Override
 			public void init(GLAutoDrawable pDrawable)
 			{
+				super.init(pDrawable);
 				try
 				{
-					GL3 pGL3 = pDrawable.getGL().getGL3();
-					pGL3.glEnable(GL.GL_DEPTH_TEST);
-					// pGL3.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+					GL4 pGL4 = pDrawable.getGL().getGL4();
+					pGL4.glDisable(GL.GL_DEPTH_TEST);
+					// pGL4.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-					mGLProgram1 = GLProgram.buildProgram(	pGL3,
+					mGLProgram1 = GLProgram.buildProgram(	pGL4,
 																								ClearGLDemo.class,
 																								"vertex.glsl",
 																								"fragment.glsl");
@@ -119,8 +121,7 @@ public class ClearGLDemo
 					mGLVertexArray1.addVertexAttributeArray(mColorAttributeArray1,
 																									Buffers.newDirectFloatBuffer(colors1));
 
-
-					mGLProgram2 = GLProgram.buildProgram(	pGL3,
+					mGLProgram2 = GLProgram.buildProgram(	pGL4,
 																								ClearGLDemo.class,
 																								"vertex.tex.glsl",
 																								"fragment.tex.glsl");
@@ -141,17 +142,30 @@ public class ClearGLDemo
 					mTexCoordAttributeArray2 = new GLVertexAttributeArray(mTexCoord2,
 																																2);
 
-
 					mGLVertexArray2.addVertexAttributeArray(mPositionAttributeArray2,
 																									Buffers.newDirectFloatBuffer(vertices2));
 					mGLVertexArray2.addVertexAttributeArray(mTexCoordAttributeArray2,
 																									Buffers.newDirectFloatBuffer(texcoord2));
 
-					mTexture2 = new GLTexture(mGLProgram2, 128, 128);
-					mTexture2.copyFrom(getTextureBuffer2(), 128, 128);
+					mTexture2 = new GLTexture<Byte>(mGLProgram2,
+																					Byte.class,
+																					4,
+																					128,
+																					128,
+																					1,
+																					true,
+																					2);
+					mTexture2.copyFrom(getTextureBuffer2());
 
-					mTexture3 = new GLTexture(mGLProgram2, 128, 128);
-					mTexture3.copyFrom(getTextureBuffer3(), 128, 128);
+					mTexture3 = new GLTexture<Float>(	mGLProgram2,
+																						Float.class,
+																						1,
+																						1280,
+																						1280,
+																						1,
+																						true,
+																						4);
+					mTexture3.copyFrom(getTextureBuffer3());
 
 				}
 				catch (GLException | IOException e)
@@ -168,7 +182,9 @@ public class ClearGLDemo
 													int pWidth,
 													int pHeight)
 			{
-				pDrawable.getGL().getGL3().glViewport(10, 10, 100, 100);
+				super.reshape(pDrawable, pX, pY, pWidth, pHeight);
+
+				// pDrawable.getGL().getGL4().glViewport(10, 10, 100, 100);
 				if (pHeight == 0)
 					pHeight = 1;
 				float ratio = (1.0f * pWidth) / pHeight;
@@ -181,41 +197,47 @@ public class ClearGLDemo
 																										-10);
 			}
 
-
-
 			@Override
 			public void display(GLAutoDrawable pDrawable)
 			{
-				GL3 lGL3 = pDrawable.getGL().getGL3();
-				lGL3.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+				super.display(pDrawable);
+				GL4 lGL4 = pDrawable.getGL().getGL4();
+				lGL4.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
 				getClearGLWindow().lookAt(0f, 0f, 1, 0f, 0f, -1, 0, 1, 0);
 
-				mGLProgram1.use(lGL3);
+				mGLProgram1.use(lGL4);
 
 				mProjectionMatrixUniform1.setFloatMatrix(	getClearGLWindow().getProjectionMatrix()
-																																.getFloatArray(),
+																																		.getFloatArray(),
 																									false);
 				mViewMatrixUniform1.setFloatMatrix(	getClearGLWindow().getViewMatrix()
-																													.getFloatArray(),
+																															.getFloatArray(),
 																						false);
 
 				mGLVertexArray1.draw(GL.GL_TRIANGLES);
 
-				mGLProgram2.use(lGL3);
+				mGLProgram2.use(lGL4);
 				mTexture2.bind(mGLProgram2);
 
 				mProjectionMatrixUniform2.setFloatMatrix(	getClearGLWindow().getProjectionMatrix()
-																																.getFloatArray(),
+																																		.getFloatArray(),
 																									false);
 				mViewMatrixUniform2.setFloatMatrix(	getClearGLWindow().getViewMatrix()
-																													.getFloatArray(),
+																															.getFloatArray(),
 																						false);
 
 				mGLVertexArray2.draw(GL.GL_TRIANGLES);
 
+				mTexture3.bind(mGLProgram2);
+				getClearGLWindow().getViewMatrix().translate(0.5f, 0.5f, 0);
+				mViewMatrixUniform2.setFloatMatrix(	getClearGLWindow().getViewMatrix()
+																															.getFloatArray(),
+																						false);
+				mGLVertexArray2.draw(GL.GL_TRIANGLES);
+
 				// Check out error
-				int error = lGL3.glGetError();
+				int error = lGL4.glGetError();
 				if (error != 0)
 				{
 					System.err.println("ERROR on render : " + error);
@@ -225,6 +247,8 @@ public class ClearGLDemo
 			@Override
 			public void dispose(GLAutoDrawable pDrawable)
 			{
+				super.dispose(pDrawable);
+
 				mGLVertexArray1.close();
 				mColorAttributeArray1.close();
 				mPositionAttributeArray1.close();
@@ -250,16 +274,17 @@ public class ClearGLDemo
 
 		};
 
+		lClearGLWindowEventListener.setDebugMode(true);
+
 		try (ClearGLWindow lClearGLWindow = new ClearGLWindow("demo",
 																													512,
 																													512,
 																													lClearGLWindowEventListener))
 		{
-			lClearGLWindow.disableClose();
+			// lClearGLWindow.disableClose();
 			lClearGLWindow.setVisible(true);
 
-			Thread.sleep(10000);
+			Thread.sleep(20000);
 		}
 	}
-
 }

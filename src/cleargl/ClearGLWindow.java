@@ -18,7 +18,7 @@ public class ClearGLWindow implements GLCloseable
 																												new String[]
 																												{ "icon/ClearGLIcon16.png",
 																													"icon/ClearGLIcon32.png" });
-		NewtFactory.setWindowIcons(lClassResources);
+		// NewtFactory.setWindowIcons(lClassResources);
 	}
 
 	private GLWindow mGlWindow;
@@ -38,7 +38,7 @@ public class ClearGLWindow implements GLCloseable
 		super();
 		mWindowDefaultWidth = pDefaultWidth;
 		mWindowDefaultHeight = pDefaultHeight;
-		final GLProfile lProfile = GLProfile.get(GLProfile.GL3);
+		final GLProfile lProfile = GLProfile.get(GLProfile.GL4);
 		final GLCapabilities lCapabilities = new GLCapabilities(lProfile);
 		mWindow = NewtFactory.createWindow(lCapabilities);
 		mGlWindow = GLWindow.create(mWindow);
@@ -51,6 +51,7 @@ public class ClearGLWindow implements GLCloseable
 		mProjectionMatrix = new GLMatrix();
 		mViewMatrix = new GLMatrix();
 
+		// gl = mGlWindow.setGL(new DebugGL(mGlWindow.getGL()));
 
 		/*..setProperty(	"newt.window.icons",
 													"cleargl/icon/ClearGLIcon16.png cleargl/icon/ClearGLIcon32.png");/**/

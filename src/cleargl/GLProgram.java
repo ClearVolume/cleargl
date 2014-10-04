@@ -2,28 +2,28 @@ package cleargl;
 
 import java.io.IOException;
 
-import javax.media.opengl.GL3;
+import javax.media.opengl.GL4;
 import javax.media.opengl.GLException;
 
 public class GLProgram implements GLInterface, GLCloseable
 {
-	private GL3 mGL3;
+	private GL4 mGL4;
 	private int mProgramId;
 	private GLShader mVerteShader;
 	private GLShader mFragmentShader;
 
-	public static GLProgram buildProgram(	GL3 pGL3,
+	public static GLProgram buildProgram(	GL4 pGL4,
 																				Class<?> pClass,
 																				String pVertexShader,
 																				String pFragmentShader) throws IOException
 	{
-		GLShader lVertexShader = new GLShader(pGL3,
+		GLShader lVertexShader = new GLShader(pGL4,
 																					pClass,
 																					pVertexShader,
 																					GLShaderType.VertexShader);
 		System.out.println(lVertexShader.getShaderInfoLog());
 
-		GLShader lFragmentShader = new GLShader(pGL3,
+		GLShader lFragmentShader = new GLShader(pGL4,
 																						pClass,
 																						pFragmentShader,
 																						GLShaderType.FragmentShader);
@@ -39,28 +39,28 @@ public class GLProgram implements GLInterface, GLCloseable
 		mVerteShader = pVerteShader;
 		mFragmentShader = pFragmentShader;
 
-		mGL3 = pVerteShader.getGL();
+		mGL4 = pVerteShader.getGL();
 
 		final int lVertexShaderId = mVerteShader.getId();
 		final int lFragmentShaderId = mFragmentShader.getId();
 
-		mProgramId = mGL3.glCreateProgram();
-		mGL3.glAttachShader(mProgramId, lVertexShaderId);
-		mGL3.glAttachShader(mProgramId, lFragmentShaderId);
-		mGL3.glLinkProgram(mProgramId);
+		mProgramId = mGL4.glCreateProgram();
+		mGL4.glAttachShader(mProgramId, lVertexShaderId);
+		mGL4.glAttachShader(mProgramId, lFragmentShaderId);
+		mGL4.glLinkProgram(mProgramId);
 
-		mGL3.glBindFragDataLocation(mProgramId, 0, "outColor");
+		mGL4.glBindFragDataLocation(mProgramId, 0, "outColor");
 	}
 
 	@Override
 	public void close() throws GLException
 	{
-		mGL3.glDeleteProgram(mProgramId);
+		mGL4.glDeleteProgram(mProgramId);
 	}
 
 	public GLAttribute getAtribute(String pAttributeName)
 	{
-		int lAttributeId = mGL3.glGetAttribLocation(mProgramId,
+		int lAttributeId = mGL4.glGetAttribLocation(mProgramId,
 																								pAttributeName);
 		GLAttribute lGLAttribute = new GLAttribute(this, lAttributeId);
 		return lGLAttribute;
@@ -68,7 +68,7 @@ public class GLProgram implements GLInterface, GLCloseable
 
 	public GLUniform getUniform(String pUniformName)
 	{
-		int lUniformId = mGL3.glGetUniformLocation(	mProgramId,
+		int lUniformId = mGL4.glGetUniformLocation(	mProgramId,
 																								pUniformName);
 		GLUniform lGLUniform = new GLUniform(this, lUniformId);
 		return lGLUniform;
@@ -76,29 +76,29 @@ public class GLProgram implements GLInterface, GLCloseable
 
 	public void bind()
 	{
-		mGL3.glUseProgram(mProgramId);
+		mGL4.glUseProgram(mProgramId);
 	}
 
 	public void unbind()
 	{
-		mGL3.glUseProgram(0);
+		mGL4.glUseProgram(0);
 	}
 
-	public void use(GL3 pGL3)
+	public void use(GL4 pGL4)
 	{
-		mGL3 = pGL3;
+		mGL4 = pGL4;
 		bind();
 	}
 
 	public String getProgramInfoLog()
 	{
-		final int lLogLength = getProgramParameter(GL3.GL_INFO_LOG_LENGTH);
+		final int lLogLength = getProgramParameter(GL4.GL_INFO_LOG_LENGTH);
 		if (lLogLength <= 0)
 			return "";
 
 		final int[] lLength = new int[1];
 		final byte[] lBytes = new byte[lLogLength + 1];
-		mGL3.glGetProgramInfoLog(	mProgramId,
+		mGL4.glGetProgramInfoLog(	mProgramId,
 															lLogLength,
 															lLength,
 															0,
@@ -112,19 +112,19 @@ public class GLProgram implements GLInterface, GLCloseable
 	public int getProgramParameter(int pParameterName)
 	{
 		final int lParameter[] = new int[1];
-		mGL3.glGetProgramiv(mProgramId, pParameterName, lParameter, 0);
+		mGL4.glGetProgramiv(mProgramId, pParameterName, lParameter, 0);
 		return lParameter[0];
 	}
 
-	public void setGL(GL3 pGL3)
+	public void setGL(GL4 pGL4)
 	{
-		mGL3 = pGL3;
+		mGL4 = pGL4;
 	}
 
 	@Override
-	public GL3 getGL()
+	public GL4 getGL()
 	{
-		return mGL3;
+		return mGL4;
 	}
 
 	@Override
@@ -136,7 +136,7 @@ public class GLProgram implements GLInterface, GLCloseable
 	@Override
 	public String toString()
 	{
-		return "GLProgram [mGL3=" + mGL3
+		return "GLProgram [mGL4=" + mGL4
 						+ ", mProgramId="
 						+ mProgramId
 						+ ", mVerteShader="

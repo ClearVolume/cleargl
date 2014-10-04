@@ -4,7 +4,7 @@ import java.nio.Buffer;
 import java.util.Arrays;
 
 import javax.media.opengl.GL;
-import javax.media.opengl.GL3;
+import javax.media.opengl.GL4;
 import javax.media.opengl.GLException;
 
 public class GLPixelBufferObject implements GLInterface, GLCloseable
@@ -28,19 +28,19 @@ public class GLPixelBufferObject implements GLInterface, GLCloseable
 
 	public void bind()
 	{
-		mGLInterface.getGL().glBindBuffer(GL3.GL_PIXEL_UNPACK_BUFFER,
+		mGLInterface.getGL().glBindBuffer(GL4.GL_PIXEL_UNPACK_BUFFER,
 																			getId());
 	}
 
 	public void unbind()
 	{
-		mGLInterface.getGL().glBindBuffer(GL3.GL_PIXEL_UNPACK_BUFFER, 0);
+		mGLInterface.getGL().glBindBuffer(GL4.GL_PIXEL_UNPACK_BUFFER, 0);
 	}
 
 	public void copyFrom(Buffer pBuffer)
 	{
 		bind();
-		mGLInterface.getGL().glBufferData(GL3.GL_PIXEL_UNPACK_BUFFER,
+		mGLInterface.getGL().glBufferData(GL4.GL_PIXEL_UNPACK_BUFFER,
 											mTextureWidth * mTextureHeight * 1 * 4,
 											null,
 											GL.GL_DYNAMIC_DRAW);
@@ -55,7 +55,7 @@ public class GLPixelBufferObject implements GLInterface, GLCloseable
 
 
 	@Override
-	public GL3 getGL()
+	public GL4 getGL()
 	{
 		return mGLInterface.getGL();
 	}

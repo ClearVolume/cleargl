@@ -1,6 +1,6 @@
 package cleargl;
 
-import javax.media.opengl.GL3;
+import javax.media.opengl.GL4;
 
 public class GLAttribute implements GLInterface
 {
@@ -15,7 +15,7 @@ public class GLAttribute implements GLInterface
 	}
 
 	@Override
-	public GL3 getGL()
+	public GL4 getGL()
 	{
 		return mGlProgram.getGL();
 	}

@@ -2,7 +2,7 @@ package cleargl;
 
 import java.nio.FloatBuffer;
 
-import javax.media.opengl.GL3;
+import javax.media.opengl.GL4;
 
 public class GLUniform implements GLInterface
 {
@@ -43,7 +43,7 @@ public class GLUniform implements GLInterface
 	}
 
 	@Override
-	public GL3 getGL()
+	public GL4 getGL()
 	{
 		return mGlProgram.getGL();
 	}

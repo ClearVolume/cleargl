@@ -4,7 +4,7 @@ import java.nio.FloatBuffer;
 import java.util.Arrays;
 
 import javax.media.opengl.GL;
-import javax.media.opengl.GL3;
+import javax.media.opengl.GL4;
 import javax.media.opengl.GLException;
 
 public class GLVertexArray implements GLCloseable, GLInterface
@@ -71,7 +71,7 @@ public class GLVertexArray implements GLCloseable, GLInterface
 	}
 
 	@Override
-	public GL3 getGL()
+	public GL4 getGL()
 	{
 		return mGLInterface.getGL();
 	}

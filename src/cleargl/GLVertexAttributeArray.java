@@ -4,7 +4,7 @@ import java.nio.FloatBuffer;
 import java.util.Arrays;
 
 import javax.media.opengl.GL;
-import javax.media.opengl.GL3;
+import javax.media.opengl.GL4;
 import javax.media.opengl.GLException;
 
 public class GLVertexAttributeArray	implements
@@ -57,7 +57,7 @@ public class GLVertexAttributeArray	implements
 	}
 
 	@Override
-	public GL3 getGL()
+	public GL4 getGL()
 	{
 		return mGLAttribute.getGL();
 	}

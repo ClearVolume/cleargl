@@ -7,5 +7,6 @@ out vec4 outColor;
  
 void main()
 {
-    outColor = texture(texUnit, ftexcoord);
+		float value = texture(texUnit, ftexcoord).r;
+    outColor = vec4(value,value,value,value);
 }
