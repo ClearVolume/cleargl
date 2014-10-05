@@ -36,10 +36,22 @@ public class GLUniform implements GLInterface
 																					pProjectionMatrix);
 	}
 
-	public void setInt(int pInt)
+	public void set(int pInt)
 	{
 		mGlProgram.bind();
 		mGlProgram.getGL().glUniform1i(mUniformId, pInt);
+	}
+
+	public void set(float pFloat)
+	{
+		mGlProgram.bind();
+		mGlProgram.getGL().glUniform1f(mUniformId, pFloat);
+	}
+
+	public void set(double pDouble)
+	{
+		mGlProgram.bind();
+		mGlProgram.getGL().glUniform1d(mUniformId, pDouble);
 	}
 
 	@Override

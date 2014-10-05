@@ -10,15 +10,25 @@ import com.jogamp.newt.NewtFactory;
 import com.jogamp.newt.Window;
 import com.jogamp.newt.opengl.GLWindow;
 
+
 public class ClearGLWindow implements GLCloseable
 {
 	static
 	{
-		ClassResources lClassResources = new ClassResources(ClearGLWindow.class,
-																												new String[]
-																												{ "icon/ClearGLIcon16.png",
-																													"icon/ClearGLIcon32.png" });
-		// NewtFactory.setWindowIcons(lClassResources);
+		try
+		{
+			System.setProperty("sun.awt.noerasebackground", "true");
+
+			ClassResources lClassResources = new ClassResources(ClearGLWindow.class,
+																													new String[]
+																													{ "icon/ClearGLIcon16.png",
+																														"icon/ClearGLIcon32.png" });
+			// NewtFactory.setWindowIcons(lClassResources);
+		}
+		catch (Throwable e)
+		{
+			e.printStackTrace();
+		}
 	}
 
 	private GLWindow mGlWindow;
@@ -47,6 +57,7 @@ public class ClearGLWindow implements GLCloseable
 		pClearGLWindowEventListener.setClearGLWindow(this);
 		mGlWindow.addGLEventListener(pClearGLWindowEventListener);
 		mGlWindow.setSize(pDefaultWidth, pDefaultHeight);
+		mGlWindow.setAutoSwapBufferMode(true);
 
 		mProjectionMatrix = new GLMatrix();
 		mViewMatrix = new GLMatrix();

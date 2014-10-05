@@ -88,7 +88,7 @@ public class GLTexture<T> implements GLInterface, GLCloseable
 																														: GL4.GL_R8;
 			mBytesPerChannel = 1;
 		}
-		else if (mType.equals(Short.class))
+		else if (mType.equals(Short.class)||mType.equals(Character.class))
 		{
 			mTextureOpenGLDataType = GL4.GL_UNSIGNED_SHORT;
 			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL4.GL_RGBA16_SNORM
@@ -155,6 +155,7 @@ public class GLTexture<T> implements GLInterface, GLCloseable
 		if (mMipMapLevels > 1)
 			mGLInterface.getGL().glGenerateMipmap(mTextureTarget);
 	}
+
 
 	public void unbind()
 	{
