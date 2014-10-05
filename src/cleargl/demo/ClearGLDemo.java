@@ -12,7 +12,7 @@ import javax.media.opengl.GLException;
 
 import org.junit.Test;
 
-import cleargl.ClearGLDebugEventListener;
+import cleargl.ClearGLDefaultEventListener;
 import cleargl.ClearGLWindow;
 import cleargl.GLAttribute;
 import cleargl.GLProgram;
@@ -69,7 +69,7 @@ public class ClearGLDemo
 	@Test
 	public void test() throws InterruptedException
 	{
-		ClearGLDebugEventListener lClearGLWindowEventListener = new ClearGLDebugEventListener()
+		ClearGLDefaultEventListener lClearGLWindowEventListener = new ClearGLDefaultEventListener()
 		{
 
 			private GLProgram mGLProgram1, mGLProgram2;

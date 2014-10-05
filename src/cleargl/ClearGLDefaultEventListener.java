@@ -4,15 +4,19 @@ import javax.media.opengl.GL4;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLPipelineFactory;
 
-public abstract class ClearGLDebugEventListener	implements
-																								ClearGLEventListener
+import com.jogamp.newt.opengl.GLWindow;
+
+public abstract class ClearGLDefaultEventListener	implements
+																									ClearGLEventListener
 {
 	private boolean mDebugMode = false;
 	private boolean mAlreadyInDebugMode = false;
+	private long mNextFPSUpdate;
 
 	@Override
 	public void init(GLAutoDrawable pDrawable)
 	{
+		getClearGLWindow().getGLWindow().setUpdateFPSFrames(60, null);
 		setDebugPipeline(pDrawable);
 	}
 
@@ -27,6 +31,18 @@ public abstract class ClearGLDebugEventListener	implements
 	public void display(GLAutoDrawable pDrawable)
 	{
 		setDebugPipeline(pDrawable);
+		GLWindow lGlWindow = getClearGLWindow().getGLWindow();
+		if (System.nanoTime() > mNextFPSUpdate)
+		{
+			String lWindowTitle = getClearGLWindow().getWindowTitle();
+			float lLastFPS = lGlWindow.getLastFPS();
+			String lTitleWithFPS = String.format(	"%s (%.0f fps) ",
+																						lWindowTitle,
+																						lLastFPS);
+			lGlWindow.setTitle(lTitleWithFPS);
+
+			mNextFPSUpdate = System.nanoTime() + 1000 * 1000 * 1000;
+		}
 
 	}
 

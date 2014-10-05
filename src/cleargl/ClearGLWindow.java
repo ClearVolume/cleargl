@@ -10,7 +10,6 @@ import com.jogamp.newt.NewtFactory;
 import com.jogamp.newt.Window;
 import com.jogamp.newt.opengl.GLWindow;
 
-
 public class ClearGLWindow implements GLCloseable
 {
 	static
@@ -33,6 +32,7 @@ public class ClearGLWindow implements GLCloseable
 
 	private GLWindow mGlWindow;
 	private Window mWindow;
+	private String mWindowTitle;
 	private int mWindowDefaultWidth;
 	private int mWindowDefaultHeight;
 
@@ -46,6 +46,7 @@ public class ClearGLWindow implements GLCloseable
 												ClearGLEventListener pClearGLWindowEventListener)
 	{
 		super();
+		mWindowTitle = pWindowTitle;
 		mWindowDefaultWidth = pDefaultWidth;
 		mWindowDefaultHeight = pDefaultHeight;
 		final GLProfile lProfile = GLProfile.get(GLProfile.GL4);
@@ -178,6 +179,11 @@ public class ClearGLWindow implements GLCloseable
 	public GLMatrix getViewMatrix()
 	{
 		return mViewMatrix;
+	}
+
+	public String getWindowTitle()
+	{
+		return mWindowTitle;
 	}
 
 	public void disableClose()

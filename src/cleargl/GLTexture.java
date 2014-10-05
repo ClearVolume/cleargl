@@ -88,27 +88,35 @@ public class GLTexture<T> implements GLInterface, GLCloseable
 																														: GL4.GL_R8;
 			mBytesPerChannel = 1;
 		}
-		else if (mType.equals(Short.class)||mType.equals(Character.class))
+		else if (mType.equals(Short.class))
+		{
+			mTextureOpenGLDataType = GL4.GL_SHORT;
+			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL4.GL_RGBA16F
+																														: GL4.GL_R16F;
+			mBytesPerChannel = 2;
+		}
+		else if (mType.equals(Character.class))
 		{
 			mTextureOpenGLDataType = GL4.GL_UNSIGNED_SHORT;
-			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL4.GL_RGBA16_SNORM
-																														: GL4.GL_R16_SNORM;
+			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL4.GL_RGBA16F
+																														: GL4.GL_R16F;
 			mBytesPerChannel = 2;
 		}
 		else if (mType.equals(Integer.class))
 		{
 			mTextureOpenGLDataType = GL4.GL_UNSIGNED_INT;
-			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL4.GL_RGBA32I
-																														: GL4.GL_R32I;
+			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL4.GL_RGBA32F
+																														: GL4.GL_R32F;
 			mBytesPerChannel = 4;
 		}
-		else if (mType.equals(Float.class))
+		else if (mType.equals(Float.class) || mType.equals(Double.class))
 		{
 			mTextureOpenGLDataType = GL4.GL_FLOAT;
 			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL4.GL_RGBA32F
 																														: GL4.GL_R32F;
 			mBytesPerChannel = 4;
 		}
+
 		else
 			throw new IllegalArgumentException("Data type not supported for texture !");
 
