@@ -50,8 +50,6 @@ public class GLMatrix
 												pZFar);
 	}
 
-
-
 	public void setCamera(float pPosX,
 												float pPosY,
 												float pPosZ,
@@ -96,14 +94,13 @@ public class GLMatrix
 	public void translate(float pDeltaX, float pDeltaY, float pDeltaZ)
 	{
 		float[] lTranslationMatrix = FloatUtil.makeTranslation(	new float[16],
-															true,
-															pDeltaX,
-															pDeltaY,
-															pDeltaZ);
+																														true,
+																														pDeltaX,
+																														pDeltaY,
+																														pDeltaZ);
 
 		FloatUtil.multMatrix(mMatrix, lTranslationMatrix);
 	}
-	
 
 	public void mult(Quaternion pQuaternion)
 	{
@@ -114,6 +111,11 @@ public class GLMatrix
 	public float[] getFloatArray()
 	{
 		return mMatrix;
+	}
+
+	public void invert()
+	{
+		FloatUtil.invertMatrix(mMatrix, mMatrix);
 	}
 
 	@Override
@@ -130,8 +132,5 @@ public class GLMatrix
 															true);
 		return lStringBuilder.toString();
 	}
-
-
-
 
 }
