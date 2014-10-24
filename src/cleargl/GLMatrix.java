@@ -108,6 +108,15 @@ public class GLMatrix
 		FloatUtil.multMatrix(mMatrix, lQuaternionMatrix);
 	}
 
+	public void copy(final GLMatrix rhs)
+	{
+		System.arraycopy(	rhs.getFloatArray(),
+											0,
+											mMatrix,
+											0,
+											mMatrix.length);
+	}
+
 	public float[] getFloatArray()
 	{
 		return mMatrix;
@@ -115,7 +124,18 @@ public class GLMatrix
 
 	public void invert()
 	{
-		FloatUtil.invertMatrix(mMatrix, mMatrix);
+		float[] tmp = new float[16];
+		System.arraycopy(mMatrix, 0, tmp, 0, mMatrix.length);
+
+		FloatUtil.invertMatrix(tmp, mMatrix);
+	}
+
+	public void transpose()
+	{
+		float[] tmp = new float[16];
+		System.arraycopy(mMatrix, 0, tmp, 0, mMatrix.length);
+
+		FloatUtil.transposeMatrix(tmp, mMatrix);
 	}
 
 	@Override
