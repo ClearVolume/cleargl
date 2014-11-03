@@ -67,7 +67,7 @@ public class ClearGLDemo
 	}
 
 	@Test
-	public void test() throws InterruptedException
+	public void demo() throws InterruptedException
 	{
 		ClearGLDefaultEventListener lClearGLWindowEventListener = new ClearGLDefaultEventListener()
 		{
@@ -276,7 +276,7 @@ public class ClearGLDemo
 
 		lClearGLWindowEventListener.setDebugMode(true);
 
-		try (ClearGLWindow lClearGLWindow = new ClearGLWindow("demo",
+		try (ClearGLWindow lClearGLWindow = new ClearGLWindow("demo: ClearGLWindow",
 																													512,
 																													512,
 																													lClearGLWindowEventListener))
@@ -284,7 +284,57 @@ public class ClearGLDemo
 			// lClearGLWindow.disableClose();
 			lClearGLWindow.setVisible(true);
 
-			Thread.sleep(20000);
+			Thread.sleep(2000);
 		}
+
+		/*try (ClearGLJPanel lClearGLJPanel = new ClearGLJPanel(lClearGLWindowEventListener))
+		{
+			final JFrame lJFrame = new JFrame("demo: ClearGLJPanel inside of JFrame");
+			lJFrame.addWindowListener(new WindowAdapter()
+			{
+				@Override
+				public void windowClosing(WindowEvent windowevent)
+				{
+					lJFrame.dispose();
+					System.exit(0);
+				}
+			});
+			lJFrame.setLayout(new MigLayout("",
+																			"[190px,grow,fill]",
+																			"[grow,fill][29px][29px][29px]"));
+
+			lJFrame.add(lClearGLJPanel, "cell 0 0,alignx center,aligny top");
+
+			JSlider slide1 = new JSlider(JSlider.HORIZONTAL, 0, 255, 128);
+			slide1.addChangeListener((ChangeEvent pE) -> {
+				colors1[2] = slide1.getValue() / 255f;
+				lClearGLJPanel.repaint();
+			});
+
+			lJFrame.add(slide1, "cell 0 1,alignx center,aligny top");
+
+			JSlider slide2 = new JSlider(JSlider.HORIZONTAL, 0, 255, 128);
+			slide2.addChangeListener((ChangeEvent pE) -> {
+				colors1[4] = slide2.getValue() / 255f;
+				lClearGLJPanel.repaint();
+			});
+
+			lJFrame.add(slide2, "cell 0 2,alignx center,aligny top");
+
+			JSlider slide3 = new JSlider(JSlider.HORIZONTAL, 0, 255, 128);
+			slide3.addChangeListener((ChangeEvent pE) -> {
+				colors1[7] = slide3.getValue() / 255f;
+				lClearGLJPanel.repaint();
+			});
+
+			lJFrame.add(slide3, "cell 0 3,alignx center,aligny top");
+
+			lJFrame.setSize(840, 680);
+			lJFrame.setVisible(true);
+
+			Thread.sleep(2000);
+		}/**/
+
+
 	}
 }

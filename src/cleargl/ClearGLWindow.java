@@ -63,11 +63,6 @@ public class ClearGLWindow implements GLCloseable
 		mProjectionMatrix = new GLMatrix();
 		mViewMatrix = new GLMatrix();
 
-		// gl = mGlWindow.setGL(new DebugGL(mGlWindow.getGL()));
-
-		/*..setProperty(	"newt.window.icons",
-													"cleargl/icon/ClearGLIcon16.png cleargl/icon/ClearGLIcon32.png");/**/
-
 	}
 
 	@Override
