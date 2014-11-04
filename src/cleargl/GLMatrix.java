@@ -13,9 +13,35 @@ public class GLMatrix
 		mMatrix = new float[16];
 	}
 
+	public float get(int pRow, int pColumn)
+	{
+		return mMatrix[4 * pRow + pColumn];
+	}
+
+	public void set(int pRow, int pColumn, float pValue)
+	{
+		mMatrix[4 * pRow + pColumn] = pValue;
+	}
+
+	public void mult(int pRow, int pColumn, float pValue)
+	{
+		mMatrix[4 * pRow + pColumn] *= pValue;
+	}
+
 	public void setIdentity()
 	{
 		FloatUtil.makeIdentity(mMatrix);
+	}
+
+	public void mult(GLMatrix pGLMatrix)
+	{
+		FloatUtil.multMatrix(mMatrix, pGLMatrix.mMatrix);
+	}
+
+	public void multinv(GLMatrix pGLMatrix)
+	{
+		pGLMatrix.invert();
+		mult(pGLMatrix);
 	}
 
 	public void setPerspectiveProjectionMatrix(	float pFOV,
