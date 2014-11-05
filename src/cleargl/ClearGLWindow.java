@@ -5,30 +5,12 @@ import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLException;
 import javax.media.opengl.GLProfile;
 
-import com.jogamp.common.util.IOUtil.ClassResources;
 import com.jogamp.newt.NewtFactory;
 import com.jogamp.newt.Window;
 import com.jogamp.newt.opengl.GLWindow;
 
 public class ClearGLWindow implements GLCloseable
 {
-	static
-	{
-		try
-		{
-			System.setProperty("sun.awt.noerasebackground", "true");
-
-			ClassResources lClassResources = new ClassResources(ClearGLWindow.class,
-																													new String[]
-																													{ "icon/ClearGLIcon16.png",
-																														"icon/ClearGLIcon32.png" });
-			// NewtFactory.setWindowIcons(lClassResources);
-		}
-		catch (Throwable e)
-		{
-			e.printStackTrace();
-		}
-	}
 
 	private GLWindow mGlWindow;
 	private Window mWindow;
@@ -39,6 +21,35 @@ public class ClearGLWindow implements GLCloseable
 	private ClearGLWindow mClearGLWindow;
 	private GLMatrix mProjectionMatrix;
 	private GLMatrix mViewMatrix;
+
+	public static final void setWindowIconsDefault()
+	{
+		setWindowIcons(	"cleargl/icon/ClearGLIcon16.png",
+										"cleargl/icon/ClearGLIcon32.png");
+	}
+
+	public static final void setWindowIcons(String... pIconsLowToHighRessourcePaths)
+	{
+		try
+		{
+			System.setProperty("sun.awt.noerasebackground", "true");
+
+			StringBuilder lStringBuilder = new StringBuilder();
+
+			for (String lIconRessourcePath : pIconsLowToHighRessourcePaths)
+			{
+				lStringBuilder.append(lIconRessourcePath);
+				lStringBuilder.append(' ');
+			}
+
+			System.setProperty(	"newt.window.icons",
+													lStringBuilder.toString());
+		}
+		catch (Throwable e)
+		{
+			e.printStackTrace();
+		}
+	}
 
 	public ClearGLWindow(	String pWindowTitle,
 												int pDefaultWidth,
