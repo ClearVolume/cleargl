@@ -164,11 +164,21 @@ public class GLTexture<T> implements GLInterface, GLCloseable
 			mGLInterface.getGL().glGenerateMipmap(mTextureTarget);
 	}
 
-
 	public void unbind()
 	{
 		mGLInterface.getGL().glBindTexture(mTextureTarget, 0);
 	}
+
+	@SafeVarargs
+	public static <T> void bindTextures(GLProgram pGLProgram,
+													GLTexture<T>... pTexturesToBind)
+	{
+		pGLProgram.bind();
+		int lTextureUnit = 0;
+		for (GLTexture<T> lTexture : pTexturesToBind)
+			lTexture.bind(lTextureUnit++);
+	}
+
 
 	public void bind(GLProgram pGLProgram)
 	{
@@ -179,6 +189,13 @@ public class GLTexture<T> implements GLInterface, GLCloseable
 	public void bind()
 	{
 		mGLInterface.getGL().glActiveTexture(GL4.GL_TEXTURE0);
+		mGLInterface.getGL().glBindTexture(mTextureTarget, getId());
+	}
+
+	public void bind(int pTextureUnit)
+	{
+		mGLInterface.getGL()
+								.glActiveTexture(GL4.GL_TEXTURE0 + pTextureUnit);
 		mGLInterface.getGL().glBindTexture(mTextureTarget, getId());
 	}
 

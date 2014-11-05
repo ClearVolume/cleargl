@@ -14,18 +14,36 @@ public class GLProgram implements GLInterface, GLCloseable
 
 	public static GLProgram buildProgram(	GL4 pGL4,
 																				Class<?> pClass,
-																				String pVertexShader,
-																				String pFragmentShader) throws IOException
+																				String pVertexShaderRessourcePath,
+																				String pFragmentShaderRessourcePath) throws IOException
 	{
 		GLShader lVertexShader = new GLShader(pGL4,
 																					pClass,
-																					pVertexShader,
+																					pVertexShaderRessourcePath,
 																					GLShaderType.VertexShader);
 		System.out.println(lVertexShader.getShaderInfoLog());
 
 		GLShader lFragmentShader = new GLShader(pGL4,
 																						pClass,
-																						pFragmentShader,
+																						pFragmentShaderRessourcePath,
+																						GLShaderType.FragmentShader);
+		System.out.println(lFragmentShader.getShaderInfoLog());
+		GLProgram lGLProgram = new GLProgram(	lVertexShader,
+																					lFragmentShader);
+		return lGLProgram;
+	}
+
+	public static GLProgram buildProgram(	GL4 pGL4,
+																				String pVertexShaderSourceAsString,
+																				String pFragmentShaderSourceAsString) throws IOException
+	{
+		GLShader lVertexShader = new GLShader(pGL4,
+																					pVertexShaderSourceAsString,
+																					GLShaderType.VertexShader);
+		System.out.println(lVertexShader.getShaderInfoLog());
+
+		GLShader lFragmentShader = new GLShader(pGL4,
+																						pFragmentShaderSourceAsString,
 																						GLShaderType.FragmentShader);
 		System.out.println(lFragmentShader.getShaderInfoLog());
 		GLProgram lGLProgram = new GLProgram(	lVertexShader,

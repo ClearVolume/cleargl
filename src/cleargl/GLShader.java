@@ -36,6 +36,25 @@ public class GLShader implements GLInterface, GLCloseable
 
 	}
 
+	public GLShader(GL4 pGL4,
+									String pShaderSourceAsString,
+									GLShaderType pShaderType) throws IOException
+	{
+		super();
+		mGL4 = pGL4;
+		mShaderSource = pShaderSourceAsString;
+		mShaderType = pShaderType;
+
+		int lShaderTypeInt = mShaderType == GLShaderType.VertexShader	? GL4.GL_VERTEX_SHADER
+																																	: GL4.GL_FRAGMENT_SHADER;
+
+		mShaderId = pGL4.glCreateShader(lShaderTypeInt);
+		mGL4.glShaderSource(mShaderId, 1, new String[]
+		{ mShaderSource }, null);
+		mGL4.glCompileShader(mShaderId);
+
+	}
+
 	@Override
 	public void close() throws GLException
 	{

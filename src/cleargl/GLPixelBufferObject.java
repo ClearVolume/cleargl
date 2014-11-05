@@ -44,6 +44,7 @@ public class GLPixelBufferObject implements GLInterface, GLCloseable
 											mTextureWidth * mTextureHeight * 1 * 4,
 											null,
 											GL.GL_DYNAMIC_DRAW);
+		unbind();
 	}
 
 	@Override
