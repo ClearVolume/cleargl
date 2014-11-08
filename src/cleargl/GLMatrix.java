@@ -128,6 +128,18 @@ public class GLMatrix
 		FloatUtil.multMatrix(mMatrix, lTranslationMatrix);
 	}
 
+	public void scale(float pScaleX, float pScaleY, float pScaleZ)
+	{
+
+		float[] lScaleMatrix = FloatUtil.makeScale(	new float[16],
+																								true,
+																								pScaleX,
+																								pScaleY,
+																								pScaleZ);
+
+		FloatUtil.multMatrix(mMatrix, lScaleMatrix);
+	}
+
 	public void mult(Quaternion pQuaternion)
 	{
 		float[] lQuaternionMatrix = pQuaternion.toMatrix(new float[16], 0);
