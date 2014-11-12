@@ -81,13 +81,20 @@ public class ClearGLWindow implements GLCloseable
 	{
 		try
 		{
-			mGlWindow.setVisible(false);
+			try
+			{
+				mGlWindow.setVisible(false);
+			}
+			catch (Throwable e)
+			{
+				System.err.println(e.getLocalizedMessage());
+			}
 			if (mGlWindow.isRealized())
 				mGlWindow.destroy();
 		}
 		catch (Throwable e)
 		{
-			e.printStackTrace();
+			System.err.println(e.getLocalizedMessage());
 		}
 	}
 
