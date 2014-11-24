@@ -117,6 +117,18 @@ public class GLMatrix
 
 	}
 
+	public void rotEuler(	final double bankX,
+												final double headingY,
+												final double attitudeZ)
+	{
+		float[] lRotMatrix = FloatUtil.makeRotationEuler(	new float[16],
+																											0,
+																											(float) bankX,
+																											(float) headingY,
+																											(float) attitudeZ);
+		FloatUtil.multMatrix(mMatrix, lRotMatrix);
+	}
+
 	public void translate(float pDeltaX, float pDeltaY, float pDeltaZ)
 	{
 		float[] lTranslationMatrix = FloatUtil.makeTranslation(	new float[16],
