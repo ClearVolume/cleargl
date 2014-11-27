@@ -12,6 +12,7 @@ import com.jogamp.newt.opengl.GLWindow;
 public class ClearGLWindow implements GLCloseable
 {
 
+
 	private GLWindow mGlWindow;
 	private Window mWindow;
 	private String mWindowTitle;
