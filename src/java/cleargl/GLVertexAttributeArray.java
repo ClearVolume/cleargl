@@ -1,11 +1,10 @@
 package cleargl;
 
-import java.nio.FloatBuffer;
-import java.util.Arrays;
-
 import javax.media.opengl.GL;
 import javax.media.opengl.GL4;
 import javax.media.opengl.GLException;
+import java.nio.FloatBuffer;
+import java.util.Arrays;
 
 public class GLVertexAttributeArray	implements
 																		GLCloseable,
@@ -23,15 +22,15 @@ public class GLVertexAttributeArray	implements
 		super();
 		mGLAttribute = pGLAttribute;
 		mElementsPerIndex = pElementsPerIndex;
-		mVertexAttributeBuffersId = new int[1];
+		mVertexAttributeBuffersId = new int[3];
 		mGLAttribute.getGL()
-								.glGenBuffers(1, mVertexAttributeBuffersId, 0);
+								.glGenBuffers(3, mVertexAttributeBuffersId, 0);
 	}
 
 	@Override
 	public void close() throws GLException
 	{
-		mGLAttribute.getGL().glDeleteBuffers(	1,
+		mGLAttribute.getGL().glDeleteBuffers(	2,
 																					mVertexAttributeBuffersId,
 																					0);
 	}
@@ -68,6 +67,11 @@ public class GLVertexAttributeArray	implements
 		return mVertexAttributeBuffersId[0];
 	}
 
+	public int getId(int index)
+	{
+		return mVertexAttributeBuffersId[index];
+	}
+	
 	public GLAttribute getAttribute()
 	{
 		return mGLAttribute;
