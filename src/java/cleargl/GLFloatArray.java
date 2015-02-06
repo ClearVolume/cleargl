@@ -16,7 +16,7 @@ public class GLFloatArray
 		mNumberOfElements = pNumberOfElements;
 		mElementSize = pElementSize;
 		mFloatBuffer = ByteBuffer.allocateDirect(pNumberOfElements * pElementSize
-																							* 4)
+																							* (Float.SIZE/Byte.SIZE))
 															.order(ByteOrder.nativeOrder())
 															.asFloatBuffer();
 	}
