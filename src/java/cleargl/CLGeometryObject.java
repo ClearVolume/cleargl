@@ -65,15 +65,15 @@ public class CLGeometryObject implements GLCloseable, GLInterface {
     getGL().glBindVertexArray(VertexArrayObject[0]);
     getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, VertexBuffers[0]);
 
+    getGL().glEnableVertexAttribArray(0);
     getGL().glBufferData(	GL.GL_ARRAY_BUFFER,
-            vertexBuffer.remaining() * (Float.SIZE / 8),
+            vertexBuffer.remaining() * (Float.SIZE / Byte.SIZE),
             vertexBuffer,
             GL.GL_DYNAMIC_DRAW);
 
     storedPrimitiveCount = vertexBuffer.remaining() / geometrySize;
 
     getGL().glVertexAttribPointer(0, geometrySize, GL4.GL_FLOAT, false, 0, 0);
-    getGL().glEnableVertexAttribArray(0);
 
     getGL().glBindVertexArray(0);
   }
@@ -82,13 +82,13 @@ public class CLGeometryObject implements GLCloseable, GLInterface {
     getGL().glBindVertexArray(VertexArrayObject[0]);
     getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, VertexBuffers[1]);
 
+    getGL().glEnableVertexAttribArray(1);
     getGL().glBufferData(	GL.GL_ARRAY_BUFFER,
-            normalBuffer.remaining() * (Float.SIZE / 8),
+            normalBuffer.remaining() * (Float.SIZE / Byte.SIZE),
             normalBuffer,
             GL.GL_DYNAMIC_DRAW);
 
     getGL().glVertexAttribPointer(1, geometrySize, GL4.GL_FLOAT, false, 0, 0);
-    getGL().glEnableVertexAttribArray(1);
 
     getGL().glBindVertexArray(0);
   }
@@ -97,13 +97,13 @@ public class CLGeometryObject implements GLCloseable, GLInterface {
     getGL().glBindVertexArray(VertexArrayObject[0]);
     getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, VertexBuffers[2]);
 
+    getGL().glEnableVertexAttribArray(2);
     getGL().glBufferData(	GL.GL_ARRAY_BUFFER,
-            texcoordsBuffer.remaining() * (Float.SIZE / 8),
+            texcoordsBuffer.remaining() * (Float.SIZE / Byte.SIZE),
             texcoordsBuffer,
             GL.GL_DYNAMIC_DRAW);
 
     getGL().glVertexAttribPointer(2, textureCoordSize, GL4.GL_FLOAT, false, 0, 0);
-    getGL().glEnableVertexAttribArray(2);
 
     getGL().glBindVertexArray(0);
   }
@@ -127,7 +127,7 @@ public class CLGeometryObject implements GLCloseable, GLInterface {
     getGL().glBindBuffer(GL4.GL_ELEMENT_ARRAY_BUFFER, IndexBuffer[0]);
 
     getGL().glBufferData(	GL.GL_ELEMENT_ARRAY_BUFFER,
-            indexBuffer.remaining() * (Integer.SIZE / 8),
+            indexBuffer.remaining() * (Integer.SIZE / Byte.SIZE),
             indexBuffer,
             GL.GL_DYNAMIC_DRAW);
 
@@ -137,21 +137,17 @@ public class CLGeometryObject implements GLCloseable, GLInterface {
   }
 
   public void draw() {
-    //getGL().glUseProgram(prog.getId());
     prog.use(getGL());
-    getGL().glBindVertexArray(VertexArrayObject[0]);
-    getGL().glEnableVertexAttribArray(0);
-    getGL().glEnableVertexAttribArray(1);
-    getGL().glEnableVertexAttribArray(2);
-
     prog.getUniform("modelview").setFloatMatrix(modelview.getFloatArray(), false);
     prog.getUniform("projection").setFloatMatrix(projection.getFloatArray(), false);
+
+    getGL().glBindVertexArray(VertexArrayObject[0]);
 
     if(storedIndexCount > 0) {
       getGL().glBindBuffer(GL4.GL_ELEMENT_ARRAY_BUFFER, IndexBuffer[0]);
       getGL().glDrawElements(geometryType, storedIndexCount, GL4.GL_UNSIGNED_INT, 0);
     } else {
-      getGL().glDrawArrays(geometryType, 0, storedPrimitiveCount);
+      getGL().glDrawArrays(geometryType, 0, storedPrimitiveCount*geometrySize);
     }
 
     getGL().glUseProgram(0);
