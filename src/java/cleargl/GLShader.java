@@ -1,12 +1,11 @@
 package cleargl;
 
-import java.io.IOException;
-import java.io.InputStream;
+import org.apache.commons.io.IOUtils;
 
 import javax.media.opengl.GL4;
 import javax.media.opengl.GLException;
-
-import org.apache.commons.io.IOUtils;
+import java.io.IOException;
+import java.io.InputStream;
 
 public class GLShader implements GLInterface, GLCloseable
 {

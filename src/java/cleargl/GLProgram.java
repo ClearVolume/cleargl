@@ -1,9 +1,8 @@
 package cleargl;
 
-import java.io.IOException;
-
 import javax.media.opengl.GL4;
 import javax.media.opengl.GLException;
+import java.io.IOException;
 
 public class GLProgram implements GLInterface, GLCloseable
 {

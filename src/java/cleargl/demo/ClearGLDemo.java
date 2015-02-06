@@ -1,27 +1,17 @@
 package cleargl.demo;
 
-import java.io.IOException;
-import java.nio.Buffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
+import cleargl.*;
+import com.jogamp.common.nio.Buffers;
+import org.junit.Test;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL4;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLException;
-
-import org.junit.Test;
-
-import cleargl.ClearGLDefaultEventListener;
-import cleargl.ClearGLWindow;
-import cleargl.GLAttribute;
-import cleargl.GLProgram;
-import cleargl.GLTexture;
-import cleargl.GLUniform;
-import cleargl.GLVertexArray;
-import cleargl.GLVertexAttributeArray;
-
-import com.jogamp.common.nio.Buffers;
+import java.io.IOException;
+import java.nio.Buffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 public class ClearGLDemo
 {
