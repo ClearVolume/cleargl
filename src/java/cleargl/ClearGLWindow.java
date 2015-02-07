@@ -1,13 +1,13 @@
 package cleargl;
 
-import javax.media.nativewindow.WindowClosingProtocol.WindowClosingMode;
-import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLException;
-import javax.media.opengl.GLProfile;
-
 import com.jogamp.newt.NewtFactory;
 import com.jogamp.newt.Window;
 import com.jogamp.newt.opengl.GLWindow;
+
+import javax.media.nativewindow.CapabilitiesImmutable;
+import javax.media.nativewindow.WindowClosingProtocol.WindowClosingMode;
+import javax.media.opengl.*;
+import java.util.List;
 
 public class ClearGLWindow implements GLCloseable
 {
@@ -22,6 +22,31 @@ public class ClearGLWindow implements GLCloseable
 	private ClearGLWindow mClearGLWindow;
 	private GLMatrix mProjectionMatrix;
 	private GLMatrix mViewMatrix;
+
+  static class MultisampleChooser extends DefaultGLCapabilitiesChooser {
+    public int chooseCapabilities(GLCapabilities desired,
+                                  List<? extends CapabilitiesImmutable> available,
+                                  int windowSystemRecommendedChoice) {
+      boolean anyHaveSampleBuffers = false;
+      for (int i = 0; i < available.size(); i++) {
+        GLCapabilitiesImmutable caps = (GLCapabilitiesImmutable) available.get(i);
+        if (caps != null && caps.getSampleBuffers()) {
+          anyHaveSampleBuffers = true;
+          break;
+        }
+      }
+      int selection = super.chooseCapabilities(desired, available, windowSystemRecommendedChoice);
+      if (!anyHaveSampleBuffers) {
+        System.err.println("WARNING: antialiasing will be disabled because none of the available pixel formats had it to offer");
+      } else if(selection>=0) {
+        GLCapabilitiesImmutable caps = (GLCapabilitiesImmutable) available.get(selection);
+        if (!caps.getSampleBuffers()) {
+          System.err.println("WARNING: antialiasing will be disabled because the DefaultGLCapabilitiesChooser didn't supply it");
+        }
+      }
+      return selection;
+    }
+  }
 
 	public static final void setWindowIconsDefault()
 	{
@@ -63,8 +88,15 @@ public class ClearGLWindow implements GLCloseable
 		mWindowDefaultHeight = pDefaultHeight;
 		final GLProfile lProfile = GLProfile.get(GLProfile.GL4);
 		final GLCapabilities lCapabilities = new GLCapabilities(lProfile);
-		mWindow = NewtFactory.createWindow(lCapabilities);
+
+    lCapabilities.setSampleBuffers(true);
+    lCapabilities.setNumSamples(16);
+
+    GLCapabilitiesChooser multisampleChooser = new MultisampleChooser();
+
+    mWindow = NewtFactory.createWindow(lCapabilities);
 		mGlWindow = GLWindow.create(mWindow);
+    mGlWindow.setCapabilitiesChooser(multisampleChooser);
 		mGlWindow.setTitle(pWindowTitle);
 
 		pClearGLWindowEventListener.setClearGLWindow(this);
