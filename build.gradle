@@ -14,7 +14,7 @@ sourceSets
     }
     resources 
     { 
-      srcDir 'src'
+      srcDir 'src/java'
     }
   }
   test
@@ -25,7 +25,7 @@ sourceSets
     }
     resources 
     { 
-      srcDir 'src'
+      srcDir 'src/java'
     }
   }
 }
