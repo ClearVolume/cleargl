@@ -47,6 +47,8 @@ public class GLProgram implements GLInterface, GLCloseable
 		System.out.println(lFragmentShader.getShaderInfoLog());
 		GLProgram lGLProgram = new GLProgram(	lVertexShader,
 																					lFragmentShader);
+
+    System.out.println(lGLProgram.getProgramInfoLog());
 		return lGLProgram;
 	}
 
