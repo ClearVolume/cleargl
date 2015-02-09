@@ -21,6 +21,10 @@ public class GLFloatArray
 															.asFloatBuffer();
 	}
 
+  public void copyFromBuffer(FloatBuffer buffer) {
+    mFloatBuffer.put(buffer);
+  }
+
 	public void add(float... pElementFloats)
 	{
 		mFloatBuffer.put(pElementFloats);
