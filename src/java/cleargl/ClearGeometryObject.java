@@ -1,10 +1,11 @@
 package cleargl;
 
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+
 import javax.media.opengl.GL;
 import javax.media.opengl.GL4;
 import javax.media.opengl.GLException;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 
 /**
  * ClearGeometryObject -
@@ -335,7 +336,8 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 															GL4.GL_UNSIGNED_INT,
 															pOffset);
 
-      System.out.println("Drawing " + pCount + " elements, containing " + mStoredPrimitiveCount);
+			// System.out.println("Drawing " + pCount + " elements, containing " +
+			// mStoredPrimitiveCount);
 
 			getGL().glBindBuffer(GL4.GL_ELEMENT_ARRAY_BUFFER, 0);
 		}
