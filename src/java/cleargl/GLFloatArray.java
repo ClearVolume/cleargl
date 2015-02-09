@@ -16,17 +16,20 @@ public class GLFloatArray
 		mNumberOfElements = pNumberOfElements;
 		mElementSize = pElementSize;
 		mFloatBuffer = ByteBuffer.allocateDirect(pNumberOfElements * pElementSize
-																							* (Float.SIZE/Byte.SIZE))
+																							* (Float.SIZE / Byte.SIZE))
 															.order(ByteOrder.nativeOrder())
 															.asFloatBuffer();
 	}
 
 	public void add(float... pElementFloats)
 	{
-		for (float lFloat : pElementFloats)
-		{
-			mFloatBuffer.put(lFloat);
-		}
+		mFloatBuffer.put(pElementFloats);
+	}
+
+	public void fillZeros()
+	{
+		while (mFloatBuffer.hasRemaining())
+			mFloatBuffer.put(0);
 	}
 
 	public void rewind()

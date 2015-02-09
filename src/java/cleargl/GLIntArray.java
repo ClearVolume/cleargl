@@ -16,17 +16,20 @@ public class GLIntArray
 		mNumberOfElements = pNumberOfElements;
 		mElementSize = pElementSize;
 		mIntBuffer = ByteBuffer.allocateDirect(pNumberOfElements * pElementSize
-																							* 4)
-															.order(ByteOrder.nativeOrder())
-															.asIntBuffer();
+																						* 4)
+														.order(ByteOrder.nativeOrder())
+														.asIntBuffer();
 	}
 
 	public void add(int... pElementInts)
 	{
-		for (int lInt : pElementInts)
-		{
-			mIntBuffer.put(lInt);
-		}
+		mIntBuffer.put(pElementInts);
+	}
+
+	public void fillZeros()
+	{
+		while (mIntBuffer.hasRemaining())
+			mIntBuffer.put(0);
 	}
 
 	public void rewind()
