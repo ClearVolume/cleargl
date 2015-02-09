@@ -32,6 +32,12 @@ public class GLFloatArray
 
 	public void fillZeros()
 	{
+		mFloatBuffer.rewind();
+		padZeros();
+	}
+
+	public void padZeros()
+	{
 		while (mFloatBuffer.hasRemaining())
 			mFloatBuffer.put(0);
 	}
