@@ -28,6 +28,7 @@ public class GLIntArray
 
 	public void fillZeros()
 	{
+		mIntBuffer.rewind();
 		while (mIntBuffer.hasRemaining())
 			mIntBuffer.put(0);
 	}

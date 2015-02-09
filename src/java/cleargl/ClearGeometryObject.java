@@ -24,7 +24,7 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 
 	private int[] mVertexArrayObject = new int[1];
 	private int[] mVertexBuffers = new int[3];
-	private int[] IndexBuffer = new int[1];
+	private int[] mIndexBuffer = new int[1];
 
 	private boolean mIsDynamic = false;
 
@@ -56,7 +56,7 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 
 		// generate three VBOs for coords, normals, texcoords
 		getGL().glGenBuffers(3, mVertexBuffers, 0);
-		getGL().glGenBuffers(1, IndexBuffer, 0);
+		getGL().glGenBuffers(1, mIndexBuffer, 0);
 	}
 
 	private static void printBuffer(FloatBuffer buf)
@@ -92,19 +92,19 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 		mGLProgram = program;
 	}
 
-	public void setVerticesAndCreateBuffer(FloatBuffer vertexBuffer)
+	public void setVerticesAndCreateBuffer(FloatBuffer pVertexBuffer)
 	{
 		getGL().glBindVertexArray(mVertexArrayObject[0]);
 		getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, mVertexBuffers[0]);
 
 		getGL().glEnableVertexAttribArray(0);
 		getGL().glBufferData(	GL.GL_ARRAY_BUFFER,
-													vertexBuffer.limit() * (Float.SIZE / Byte.SIZE),
-													vertexBuffer,
-													isIsDynamic() ? GL.GL_DYNAMIC_DRAW
-																		: GL.GL_STATIC_DRAW);
+													pVertexBuffer.limit() * (Float.SIZE / Byte.SIZE),
+													pVertexBuffer,
+													isIsDynamic()	? GL.GL_DYNAMIC_DRAW
+																				: GL.GL_STATIC_DRAW);
 
-		mStoredPrimitiveCount = vertexBuffer.remaining() / mGeometrySize;
+		mStoredPrimitiveCount = pVertexBuffer.remaining() / mGeometrySize;
 
 		getGL().glVertexAttribPointer(0,
 																	mGeometrySize,
@@ -117,7 +117,7 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 		getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, 0);
 	}
 
-	public void updateVertices(FloatBuffer vertexBuffer)
+	public void updateVertices(FloatBuffer pVertexBuffer)
 	{
 		if (!isIsDynamic())
 			throw new UnsupportedOperationException("Cannot update non dynamic buffers!");
@@ -128,10 +128,10 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 		getGL().glEnableVertexAttribArray(0);
 		getGL().glBufferSubData(GL.GL_ARRAY_BUFFER,
 														0,
-														vertexBuffer.limit() * (Float.SIZE / Byte.SIZE),
-														vertexBuffer);
+														pVertexBuffer.limit() * (Float.SIZE / Byte.SIZE),
+														pVertexBuffer);
 
-		mStoredPrimitiveCount = vertexBuffer.remaining() / mGeometrySize;
+		mStoredPrimitiveCount = pVertexBuffer.remaining() / mGeometrySize;
 
 		getGL().glVertexAttribPointer(0,
 																	mGeometrySize,
@@ -144,17 +144,17 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 		getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, 0);
 	}
 
-	public void setNormalsAndCreateBuffer(FloatBuffer normalBuffer)
+	public void setNormalsAndCreateBuffer(FloatBuffer pNormalBuffer)
 	{
 		getGL().glBindVertexArray(mVertexArrayObject[0]);
 		getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, mVertexBuffers[1]);
 
 		getGL().glEnableVertexAttribArray(1);
 		getGL().glBufferData(	GL.GL_ARRAY_BUFFER,
-													normalBuffer.limit() * (Float.SIZE / Byte.SIZE),
-													normalBuffer,
-													isIsDynamic() ? GL.GL_DYNAMIC_DRAW
-																		: GL.GL_STATIC_DRAW);
+													pNormalBuffer.limit() * (Float.SIZE / Byte.SIZE),
+													pNormalBuffer,
+													isIsDynamic()	? GL.GL_DYNAMIC_DRAW
+																				: GL.GL_STATIC_DRAW);
 
 		getGL().glVertexAttribPointer(1,
 																	mGeometrySize,
@@ -167,17 +167,17 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 		getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, 0);
 	}
 
-	public void setTextureCoordsAndCreateBuffer(FloatBuffer texcoordsBuffer)
+	public void setTextureCoordsAndCreateBuffer(FloatBuffer pTextureCoordsBuffer)
 	{
 		getGL().glBindVertexArray(mVertexArrayObject[0]);
 		getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, mVertexBuffers[2]);
 
 		getGL().glEnableVertexAttribArray(2);
 		getGL().glBufferData(	GL.GL_ARRAY_BUFFER,
-													texcoordsBuffer.limit() * (Float.SIZE / Byte.SIZE),
-													texcoordsBuffer,
-													isIsDynamic() ? GL.GL_DYNAMIC_DRAW
-																		: GL.GL_STATIC_DRAW);
+													pTextureCoordsBuffer.limit() * (Float.SIZE / Byte.SIZE),
+													pTextureCoordsBuffer,
+													isIsDynamic()	? GL.GL_DYNAMIC_DRAW
+																				: GL.GL_STATIC_DRAW);
 
 		getGL().glVertexAttribPointer(2,
 																	mTextureCoordSize,
@@ -190,37 +190,37 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 		getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, 0);
 	}
 
-	public void setIndicesAndCreateBuffer(IntBuffer indexBuffer)
+	public void setIndicesAndCreateBuffer(IntBuffer pIndexBuffer)
 	{
 		getGL().glBindVertexArray(mVertexArrayObject[0]);
-		getGL().glBindBuffer(GL4.GL_ELEMENT_ARRAY_BUFFER, IndexBuffer[0]);
+		getGL().glBindBuffer(GL4.GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer[0]);
 
 		getGL().glBufferData(	GL.GL_ELEMENT_ARRAY_BUFFER,
-													indexBuffer.limit() * (Integer.SIZE / Byte.SIZE),
-													indexBuffer,
-													isIsDynamic() ? GL.GL_DYNAMIC_DRAW
-																		: GL.GL_STATIC_DRAW);
+													pIndexBuffer.limit() * (Integer.SIZE / Byte.SIZE),
+													pIndexBuffer,
+													isIsDynamic()	? GL.GL_DYNAMIC_DRAW
+																				: GL.GL_STATIC_DRAW);
 
-		mStoredIndexCount = indexBuffer.remaining();
+		mStoredIndexCount = pIndexBuffer.remaining();
 
 		getGL().glBindVertexArray(0);
 		getGL().glBindBuffer(GL4.GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
-	public void updateIndices(IntBuffer indexBuffer)
+	public void updateIndices(IntBuffer pIndexBuffer)
 	{
 		if (!isIsDynamic())
 			throw new UnsupportedOperationException("Cannot update non dynamic buffers!");
 
 		getGL().glBindVertexArray(mVertexArrayObject[0]);
-		getGL().glBindBuffer(GL4.GL_ELEMENT_ARRAY_BUFFER, IndexBuffer[0]);
+		getGL().glBindBuffer(GL4.GL_ELEMENT_ARRAY_BUFFER, mIndexBuffer[0]);
 
 		getGL().glBufferSubData(GL.GL_ELEMENT_ARRAY_BUFFER,
 														0,
-														indexBuffer.limit() * (Integer.SIZE / Byte.SIZE),
-														indexBuffer);
+														pIndexBuffer.limit() * (Integer.SIZE / Byte.SIZE),
+														pIndexBuffer);
 
-		mStoredIndexCount = indexBuffer.remaining();
+		mStoredIndexCount = pIndexBuffer.remaining();
 
 		getGL().glBindVertexArray(0);
 		getGL().glBindBuffer(GL4.GL_ELEMENT_ARRAY_BUFFER, 0);
@@ -245,6 +245,18 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 
 	public void draw()
 	{
+		if (mStoredIndexCount > 0)
+		{
+			draw(0, mStoredIndexCount);
+		}
+		else
+		{
+			draw(0, mStoredPrimitiveCount * mGeometrySize);
+		}
+	}
+
+	public void draw(int pOffset, int pCount)
+	{
 		mGLProgram.use(getGL());
 		if (mModelViewMatrix != null)
 			mGLProgram.getUniform("modelview")
@@ -261,19 +273,19 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 		if (mStoredIndexCount > 0)
 		{
 			getGL().glBindBuffer(	GL4.GL_ELEMENT_ARRAY_BUFFER,
-														IndexBuffer[0]);
+														mIndexBuffer[0]);
 			getGL().glDrawElements(	mGeometryType,
-															36,
+															pCount,
 															GL4.GL_UNSIGNED_INT,
-															0);
+															pOffset);
 
 			getGL().glBindBuffer(GL4.GL_ELEMENT_ARRAY_BUFFER, 0);
 		}
 		else
 		{
 			getGL().glDrawArrays(	mGeometryType,
-														0,
-														mStoredPrimitiveCount * mGeometrySize);
+														pOffset * mGeometrySize,
+														pCount * mGeometrySize);
 		}
 
 		getGL().glUseProgram(0);
@@ -284,6 +296,7 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 	{
 		getGL().glDeleteBuffers(mVertexBuffers.length, mVertexBuffers, 0);
 		getGL().glDeleteVertexArrays(1, mVertexArrayObject, 0);
+		getGL().glDeleteVertexArrays(1, mIndexBuffer, 0);
 	}
 
 	@Override

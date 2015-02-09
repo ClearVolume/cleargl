@@ -28,6 +28,7 @@ public class GLFloatArray
 
 	public void fillZeros()
 	{
+		mFloatBuffer.rewind();
 		while (mFloatBuffer.hasRemaining())
 			mFloatBuffer.put(0);
 	}
