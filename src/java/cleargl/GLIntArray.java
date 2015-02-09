@@ -13,21 +13,28 @@ public class GLIntArray
 	public GLIntArray(int pNumberOfElements, int pElementSize)
 	{
 		super();
-		resize(pNumberOfElements, pElementSize);
+		mElementSize = pElementSize;
+		mIntBuffer = allocate(pNumberOfElements);
 	}
 
-	public void resize(int pNumberOfElements, int pElementSize)
+	private IntBuffer allocate(int pNewCapacity)
 	{
-		mNumberOfElements = pNumberOfElements;
-		mElementSize = pElementSize;
-		mIntBuffer = ByteBuffer.allocateDirect(pNumberOfElements * pElementSize
-																						* 4)
-														.order(ByteOrder.nativeOrder())
-														.asIntBuffer();
+		return ByteBuffer.allocateDirect(pNewCapacity * mElementSize
+																			* (Integer.SIZE / Byte.SIZE))
+											.order(ByteOrder.nativeOrder())
+											.asIntBuffer();
 	}
 
 	public void add(int... pElementInts)
 	{
+		if (mIntBuffer.remaining() < pElementInts.length)
+		{
+			final int lNewCapacity = (int) 1.5 * mIntBuffer.capacity();
+			IntBuffer lNewBuffer = allocate(lNewCapacity);
+			lNewBuffer.put(mIntBuffer);
+			mIntBuffer = lNewBuffer;
+		}
+
 		mIntBuffer.put(pElementInts);
 	}
 
@@ -47,6 +54,11 @@ public class GLIntArray
 	{
 		mIntBuffer.rewind();
 	}
+	
+	public void flip()
+	{
+		mIntBuffer.flip();
+	}
 
 	public IntBuffer getIntBuffer()
 	{
@@ -56,7 +68,7 @@ public class GLIntArray
 
 	public int getNumberOfElements()
 	{
-		return mNumberOfElements;
+		return mIntBuffer.limit() - 1;
 	}
 
 	public int getElementSize()
