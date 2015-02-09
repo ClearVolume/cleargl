@@ -6,19 +6,22 @@ import java.nio.FloatBuffer;
 
 public class GLFloatArray
 {
-	private final int mNumberOfElements;
-	private final int mElementSize;
-	private final FloatBuffer mFloatBuffer;
+	private int mElementSize;
+	private FloatBuffer mFloatBuffer;
 
 	public GLFloatArray(int pNumberOfElements, int pElementSize)
 	{
 		super();
-		mNumberOfElements = pNumberOfElements;
 		mElementSize = pElementSize;
-		mFloatBuffer = ByteBuffer.allocateDirect(pNumberOfElements * pElementSize
-																							* (Float.SIZE / Byte.SIZE))
-															.order(ByteOrder.nativeOrder())
-															.asFloatBuffer();
+		mFloatBuffer = allocate(pNumberOfElements);
+	}
+
+	private FloatBuffer allocate(int pNewCapacity)
+	{
+		return ByteBuffer.allocateDirect(pNewCapacity * mElementSize
+																			* (Float.SIZE / Byte.SIZE))
+											.order(ByteOrder.nativeOrder())
+											.asFloatBuffer();
 	}
 
   public void copyFromBuffer(FloatBuffer buffer) {
@@ -27,6 +30,14 @@ public class GLFloatArray
 
 	public void add(float... pElementFloats)
 	{
+		if (mFloatBuffer.remaining() < pElementFloats.length)
+		{
+			final int lNewCapacity = (int) 1.5 * mFloatBuffer.capacity();
+			FloatBuffer lNewBuffer = allocate(lNewCapacity);
+			lNewBuffer.put(mFloatBuffer);
+			mFloatBuffer = lNewBuffer;
+		}
+
 		mFloatBuffer.put(pElementFloats);
 	}
 
@@ -47,6 +58,11 @@ public class GLFloatArray
 		mFloatBuffer.rewind();
 	}
 
+	public void flip()
+	{
+		mFloatBuffer.flip();
+	}
+
 	public FloatBuffer getFloatBuffer()
 	{
 		rewind();
@@ -55,7 +71,7 @@ public class GLFloatArray
 
 	public int getNumberOfElements()
 	{
-		return mNumberOfElements;
+		return mFloatBuffer.limit() - 1;
 	}
 
 	public int getElementSize()
