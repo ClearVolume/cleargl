@@ -167,6 +167,31 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 		getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, 0);
 	}
 
+	public void updateNormals(FloatBuffer pNormalBuffer)
+	{
+		if (!isIsDynamic())
+			throw new UnsupportedOperationException("Cannot update non dynamic buffers!");
+
+		getGL().glBindVertexArray(mVertexArrayObject[0]);
+		getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, mVertexBuffers[1]);
+
+		getGL().glEnableVertexAttribArray(1);
+		getGL().glBufferSubData(GL.GL_ARRAY_BUFFER,
+														0,
+														pNormalBuffer.limit() * (Float.SIZE / Byte.SIZE),
+														pNormalBuffer);
+
+		getGL().glVertexAttribPointer(1,
+																	mGeometrySize,
+																	GL4.GL_FLOAT,
+																	false,
+																	0,
+																	0);
+
+		getGL().glBindVertexArray(0);
+		getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, 0);
+	}
+
 	public void setTextureCoordsAndCreateBuffer(FloatBuffer pTextureCoordsBuffer)
 	{
 		getGL().glBindVertexArray(mVertexArrayObject[0]);
@@ -178,6 +203,31 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 													pTextureCoordsBuffer,
 													isIsDynamic()	? GL.GL_DYNAMIC_DRAW
 																				: GL.GL_STATIC_DRAW);
+
+		getGL().glVertexAttribPointer(2,
+																	mTextureCoordSize,
+																	GL4.GL_FLOAT,
+																	false,
+																	0,
+																	0);
+
+		getGL().glBindVertexArray(0);
+		getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, 0);
+	}
+
+	public void updateTextureCoords(FloatBuffer pTextureCoordsBuffer)
+	{
+		if (!isIsDynamic())
+			throw new UnsupportedOperationException("Cannot update non dynamic buffers!");
+
+		getGL().glBindVertexArray(mVertexArrayObject[0]);
+		getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, mVertexBuffers[2]);
+
+		getGL().glEnableVertexAttribArray(2);
+		getGL().glBufferSubData(GL.GL_ARRAY_BUFFER,
+													0,
+													pTextureCoordsBuffer.limit() * (Float.SIZE / Byte.SIZE),
+													pTextureCoordsBuffer);
 
 		getGL().glVertexAttribPointer(2,
 																	mTextureCoordSize,

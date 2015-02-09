@@ -6,13 +6,18 @@ import java.nio.FloatBuffer;
 
 public class GLFloatArray
 {
-	private final int mNumberOfElements;
-	private final int mElementSize;
-	private final FloatBuffer mFloatBuffer;
+	private int mNumberOfElements;
+	private int mElementSize;
+	private FloatBuffer mFloatBuffer;
 
 	public GLFloatArray(int pNumberOfElements, int pElementSize)
 	{
 		super();
+		resize(pNumberOfElements, pElementSize);
+	}
+
+	public void resize(int pNumberOfElements, int pElementSize)
+	{
 		mNumberOfElements = pNumberOfElements;
 		mElementSize = pElementSize;
 		mFloatBuffer = ByteBuffer.allocateDirect(pNumberOfElements * pElementSize

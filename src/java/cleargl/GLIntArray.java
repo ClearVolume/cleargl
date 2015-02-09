@@ -6,13 +6,18 @@ import java.nio.IntBuffer;
 
 public class GLIntArray
 {
-	private final int mNumberOfElements;
-	private final int mElementSize;
-	private final IntBuffer mIntBuffer;
+	private int mNumberOfElements;
+	private int mElementSize;
+	private IntBuffer mIntBuffer;
 
 	public GLIntArray(int pNumberOfElements, int pElementSize)
 	{
 		super();
+		resize(pNumberOfElements, pElementSize);
+	}
+
+	public void resize(int pNumberOfElements, int pElementSize)
+	{
 		mNumberOfElements = pNumberOfElements;
 		mElementSize = pElementSize;
 		mIntBuffer = ByteBuffer.allocateDirect(pNumberOfElements * pElementSize
