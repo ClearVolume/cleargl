@@ -6,7 +6,7 @@ import java.nio.IntBuffer;
 
 public class GLIntArray
 {
-	private int mNumberOfElements;
+
 	private int mElementSize;
 	private IntBuffer mIntBuffer;
 
@@ -36,6 +36,11 @@ public class GLIntArray
 		}
 
 		mIntBuffer.put(pElementInts);
+	}
+
+	public void clear()
+	{
+		mIntBuffer.clear();
 	}
 
 	public void fillZeros()
@@ -68,7 +73,7 @@ public class GLIntArray
 
 	public int getNumberOfElements()
 	{
-		return mIntBuffer.limit() - 1;
+		return mIntBuffer.limit();
 	}
 
 	public int getElementSize()
