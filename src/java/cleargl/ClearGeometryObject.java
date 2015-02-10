@@ -335,8 +335,6 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 															GL4.GL_UNSIGNED_INT,
 															pOffset);
 
-      System.out.println("Drawing " + pCount + " elements, containing " + mStoredPrimitiveCount);
-
 			getGL().glBindBuffer(GL4.GL_ELEMENT_ARRAY_BUFFER, 0);
 		}
 		else
