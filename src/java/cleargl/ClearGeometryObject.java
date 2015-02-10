@@ -226,13 +226,19 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 			throw new UnsupportedOperationException("Cannot update non dynamic buffers!");
 
 		getGL().glBindVertexArray(mVertexArrayObject[0]);
+		GLError.printGLErrors(mGLProgram.getGL(), "1");
+
 		getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, mVertexBuffers[2]);
+		GLError.printGLErrors(mGLProgram.getGL(), "2");
 
 		getGL().glEnableVertexAttribArray(2);
+		GLError.printGLErrors(mGLProgram.getGL(), "3");
+
 		getGL().glBufferSubData(GL.GL_ARRAY_BUFFER,
             0,
             pTextureCoordsBuffer.limit() * (Float.SIZE / Byte.SIZE),
             pTextureCoordsBuffer);
+		GLError.printGLErrors(mGLProgram.getGL(), "4");
 
 		getGL().glVertexAttribPointer(2,
 																	mTextureCoordSize,
@@ -240,9 +246,14 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 																	false,
 																	0,
 																	0);
+		GLError.printGLErrors(mGLProgram.getGL(), "5");
 
 		getGL().glBindVertexArray(0);
+		GLError.printGLErrors(mGLProgram.getGL(), "6");
+
 		getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, 0);
+		GLError.printGLErrors(mGLProgram.getGL(), "7");
+
 	}
 
 	public void setIndicesAndCreateBuffer(IntBuffer pIndexBuffer)

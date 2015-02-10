@@ -8,7 +8,7 @@ public class GLFloatArray
 {
 	private int mElementSize;
 	private FloatBuffer mFloatBuffer;
-  private int mLastDataPosition;
+	private volatile int mLastDataPosition;
 
 	public GLFloatArray(int pNumberOfElements, int pElementSize)
 	{
@@ -53,6 +53,12 @@ public class GLFloatArray
     mLastDataPosition = mFloatBuffer.position();
 	}
 
+	public void clear()
+	{
+		mLastDataPosition = 0;
+		mFloatBuffer.clear();
+	}
+
 	public void fillZeros()
 	{
 		mFloatBuffer.rewind();
@@ -83,7 +89,7 @@ public class GLFloatArray
 
 	public int getNumberOfElements()
 	{
-		return mFloatBuffer.limit() - 1;
+		return mFloatBuffer.limit();
 	}
 
 	public int getElementSize()
