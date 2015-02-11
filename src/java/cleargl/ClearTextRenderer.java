@@ -40,10 +40,10 @@ public class ClearTextRenderer {
     }
   }
 
-  public void drawTextAtPosition(String text, int screenX, int screenY, Font font, FloatBuffer color) {
+  public void drawTextAtPosition(String text, int screenX, int screenY, Font font, FloatBuffer color, boolean antiAliased) {
 
-    int windowSizeX = 512;
-    int windowSizeY = 512;
+    int windowSizeX = mGL4.getContext().getGLDrawable().getSurfaceWidth()/2;
+    int windowSizeY = mGL4.getContext().getGLDrawable().getSurfaceHeight()/2;
 
     ColorModel glAlphaColorModel = new ComponentColorModel(ColorSpace
             .getInstance(ColorSpace.CS_sRGB), new int[] { 8, 8, 8, 8 },
@@ -60,15 +60,17 @@ public class ClearTextRenderer {
 
     image = new BufferedImage(glAlphaColorModel, raster, true,
             new Hashtable());
-    
+
     g2d = (Graphics2D)image.createGraphics();
     g2d.setFont(font);
 
-    RenderingHints rh = new RenderingHints(
-            RenderingHints.KEY_TEXT_ANTIALIASING,
-            RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+    if(antiAliased) {
+      RenderingHints rh = new RenderingHints(
+              RenderingHints.KEY_TEXT_ANTIALIASING,
+              RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 
-    g2d.setRenderingHints(rh);
+      g2d.setRenderingHints(rh);
+    }
     FontMetrics fm = g2d.getFontMetrics();
     int width = text.length() * font.getSize();
     int height = font.getSize();
