@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
+import java.util.HashMap;
 import java.util.Hashtable;
 
 /**
@@ -23,9 +24,13 @@ public class ClearTextRenderer {
   protected GLMatrix ProjectionMatrix = new GLMatrix();
 
   protected GL4 mGL4;
+  protected final boolean mShouldCache;
 
-  public ClearTextRenderer(GL4 pGL4) {
+  protected HashMap<String, ByteBuffer> textureCache = new HashMap<>();
+
+  public ClearTextRenderer(GL4 pGL4, boolean shouldCache) {
     init(pGL4);
+    mShouldCache = true;
   }
 
   public void init(GL4 pGL4) {
@@ -45,38 +50,58 @@ public class ClearTextRenderer {
     int windowSizeX = mGL4.getContext().getGLDrawable().getSurfaceWidth()/2;
     int windowSizeY = mGL4.getContext().getGLDrawable().getSurfaceHeight()/2;
 
-    ColorModel glAlphaColorModel = new ComponentColorModel(ColorSpace
-            .getInstance(ColorSpace.CS_sRGB), new int[] { 8, 8, 8, 8 },
-            true, false, Transparency.TRANSLUCENT, DataBuffer.TYPE_BYTE);
-    WritableRaster raster;
-
-    if(font == null) {
-      System.err.println("Font invalid for text \"" + text + "\"");
-      return;
-    }
-
-    raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,
-            font.getSize() * text.length(), 18, 4, null);
-
-    image = new BufferedImage(glAlphaColorModel, raster, true,
-            new Hashtable());
-
-    g2d = (Graphics2D)image.createGraphics();
-    g2d.setFont(font);
-
-    if(antiAliased) {
-      RenderingHints rh = new RenderingHints(
-              RenderingHints.KEY_TEXT_ANTIALIASING,
-              RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
-
-      g2d.setRenderingHints(rh);
-    }
-    FontMetrics fm = g2d.getFontMetrics();
     int width = text.length() * font.getSize();
     int height = font.getSize();
 
-    g2d.drawString(text, 0, font.getSize());
+    // don't store more then 50 textures
+    if(textureCache.size() > 50) {
+      textureCache.clear();
+    }
 
+    if(!mShouldCache || (mShouldCache && !textureCache.containsKey(text))) {
+      ByteBuffer imageBuffer;
+
+      ColorModel glAlphaColorModel = new ComponentColorModel(ColorSpace
+              .getInstance(ColorSpace.CS_sRGB), new int[]{8, 8, 8, 8},
+              true, false, Transparency.TRANSLUCENT, DataBuffer.TYPE_BYTE);
+      WritableRaster raster;
+
+      if (font == null) {
+        System.err.println("Font invalid for text \"" + text + "\"");
+        return;
+      }
+
+      raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,
+              font.getSize() * text.length(), 18, 4, null);
+
+      image = new BufferedImage(glAlphaColorModel, raster, true, new Hashtable());
+
+      g2d = image.createGraphics();
+      g2d.setFont(font);
+
+      if (antiAliased) {
+        RenderingHints rh = new RenderingHints(
+                RenderingHints.KEY_TEXT_ANTIALIASING,
+                RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
+
+        g2d.setRenderingHints(rh);
+      }
+
+      g2d.drawString(text, 0, font.getSize());
+
+      byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+
+      imageBuffer = ByteBuffer.allocateDirect(data.length);
+      imageBuffer.order(ByteOrder.nativeOrder());
+      imageBuffer.put(data, 0, data.length);
+      imageBuffer.flip();
+
+      if(!mShouldCache) {
+        textureCache.clear();
+      }
+
+      textureCache.put(text, imageBuffer);
+    }
 
     mGL4.glClear(GL4.GL_DEPTH_BUFFER_BIT | GL4.GL_STENCIL_BUFFER_BIT);
 
@@ -151,15 +176,7 @@ public class ClearTextRenderer {
     mGL4.glTexParameteri(GL4.GL_TEXTURE_2D, GL4.GL_TEXTURE_BASE_LEVEL, 0);
     mGL4.glTexParameteri(GL4.GL_TEXTURE_2D, GL4.GL_TEXTURE_MAX_LEVEL, 0);
 
-    byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
-    ByteBuffer imageBuffer;
-
-    imageBuffer = ByteBuffer.allocateDirect(data.length);
-    imageBuffer.order(ByteOrder.nativeOrder());
-    imageBuffer.put(data, 0, data.length);
-    imageBuffer.flip();
-
-    mGL4.glTexImage2D(GL4.GL_TEXTURE_2D, 0, GL4.GL_RGBA8, width, height, 0, GL4.GL_RGBA, GL4.GL_UNSIGNED_BYTE, imageBuffer);
+    mGL4.glTexImage2D(GL4.GL_TEXTURE_2D, 0, GL4.GL_RGBA8, width, height, 0, GL4.GL_RGBA, GL4.GL_UNSIGNED_BYTE, textureCache.get(text));
 
     mProg.getUniform("uitex").set(1);
     ModelMatrix.mult(ViewMatrix);
