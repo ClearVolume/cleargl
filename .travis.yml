@@ -1,5 +1,5 @@
 language: java
-script: "./build.sh"
+script: "gradle build"
 jdk:
   - oraclejdk8
   - oraclejdk7
