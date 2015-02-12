@@ -6,7 +6,7 @@ import com.jogamp.opengl.math.Quaternion;
 public class GLMatrix
 {
 
-	private float[] mMatrix;
+	private final float[] mMatrix;
 
 	public GLMatrix()
 	{
@@ -76,6 +76,23 @@ public class GLMatrix
 												pZFar);
 	}
 
+	public static GLMatrix getOrthoProjectionMatrix(float pLeft,
+																									float pRight,
+																									float pBottom,
+																									float pTop,
+																									float pZNear,
+																									float pZFar)
+	{
+		final GLMatrix lGLMatrix = new GLMatrix();
+		lGLMatrix.setOrthoProjectionMatrix(	pLeft,
+																				pRight,
+																				pBottom,
+																				pTop,
+																				pZNear,
+																				pZFar);
+		return lGLMatrix;
+	}
+
 	public void setCamera(float pPosX,
 												float pPosY,
 												float pPosZ,
@@ -86,11 +103,11 @@ public class GLMatrix
 												float pUpY,
 												float pUpZ)
 	{
-		float[] lPosition = new float[]
+		final float[] lPosition = new float[]
 		{ pPosX, pPosY, pPosZ };
-		float[] lLookAt = new float[]
+		final float[] lLookAt = new float[]
 		{ pLookAtX, pLookAtY, pLookAtZ };
-		float[] lUp = new float[]
+		final float[] lUp = new float[]
 		{ pUpX, pUpY, pUpZ };
 
 		FloatUtil.makeLookAt(	mMatrix,
@@ -121,7 +138,7 @@ public class GLMatrix
 												final double headingY,
 												final double attitudeZ)
 	{
-		float[] lRotMatrix = FloatUtil.makeRotationEuler(	new float[16],
+		final float[] lRotMatrix = FloatUtil.makeRotationEuler(	new float[16],
 																											0,
 																											(float) bankX,
 																											(float) headingY,
@@ -131,7 +148,7 @@ public class GLMatrix
 
 	public void translate(float pDeltaX, float pDeltaY, float pDeltaZ)
 	{
-		float[] lTranslationMatrix = FloatUtil.makeTranslation(	new float[16],
+		final float[] lTranslationMatrix = FloatUtil.makeTranslation(	new float[16],
 																														true,
 																														pDeltaX,
 																														pDeltaY,
@@ -143,7 +160,7 @@ public class GLMatrix
 	public void scale(float pScaleX, float pScaleY, float pScaleZ)
 	{
 
-		float[] lScaleMatrix = FloatUtil.makeScale(	new float[16],
+		final float[] lScaleMatrix = FloatUtil.makeScale(	new float[16],
 																								true,
 																								pScaleX,
 																								pScaleY,
@@ -154,7 +171,7 @@ public class GLMatrix
 
 	public void mult(Quaternion pQuaternion)
 	{
-		float[] lQuaternionMatrix = pQuaternion.toMatrix(new float[16], 0);
+		final float[] lQuaternionMatrix = pQuaternion.toMatrix(new float[16], 0);
 		FloatUtil.multMatrix(mMatrix, lQuaternionMatrix);
 	}
 
@@ -174,7 +191,7 @@ public class GLMatrix
 
 	public void invert()
 	{
-		float[] tmp = new float[16];
+		final float[] tmp = new float[16];
 		System.arraycopy(mMatrix, 0, tmp, 0, mMatrix.length);
 
 		FloatUtil.invertMatrix(tmp, mMatrix);
@@ -182,7 +199,7 @@ public class GLMatrix
 
 	public void transpose()
 	{
-		float[] tmp = new float[16];
+		final float[] tmp = new float[16];
 		System.arraycopy(mMatrix, 0, tmp, 0, mMatrix.length);
 
 		FloatUtil.transposeMatrix(tmp, mMatrix);
@@ -191,7 +208,7 @@ public class GLMatrix
 	@Override
 	public String toString()
 	{
-		StringBuilder lStringBuilder = new StringBuilder();
+		final StringBuilder lStringBuilder = new StringBuilder();
 		FloatUtil.matrixToString(	lStringBuilder,
 															"GLMatrix ",
 															"%10.5f",
