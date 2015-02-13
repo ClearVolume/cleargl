@@ -4,8 +4,6 @@ import javax.media.opengl.GL4;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLPipelineFactory;
 
-import com.jogamp.newt.opengl.GLWindow;
-
 public abstract class ClearGLDefaultEventListener	implements
 																									ClearGLEventListener
 {
@@ -16,7 +14,7 @@ public abstract class ClearGLDefaultEventListener	implements
 	@Override
 	public void init(GLAutoDrawable pDrawable)
 	{
-		getClearGLWindow().getGLWindow().setUpdateFPSFrames(60, null);
+		getClearGLWindow().setUpdateFPSFrames(60, null);
 		setDebugPipeline(pDrawable);
 	}
 
@@ -31,15 +29,14 @@ public abstract class ClearGLDefaultEventListener	implements
 	public void display(GLAutoDrawable pDrawable)
 	{
 		setDebugPipeline(pDrawable);
-		GLWindow lGlWindow = getClearGLWindow().getGLWindow();
 		if (System.nanoTime() > mNextFPSUpdate)
 		{
-			String lWindowTitle = getClearGLWindow().getWindowTitle();
-			float lLastFPS = lGlWindow.getLastFPS();
-			String lTitleWithFPS = String.format(	"%s (%.0f fps) ",
-																						lWindowTitle,
-																						lLastFPS);
-			lGlWindow.setTitle(lTitleWithFPS);
+			final String lWindowTitle = getClearGLWindow().getWindowTitle();
+			final float lLastFPS = getClearGLWindow().getLastFPS();
+			final String lTitleWithFPS = String.format(	"%s (%.0f fps) ",
+																									lWindowTitle,
+																									lLastFPS);
+			getClearGLWindow().setWindowTitle(lTitleWithFPS);
 
 			mNextFPSUpdate = System.nanoTime() + 1000 * 1000 * 1000;
 		}
@@ -62,7 +59,7 @@ public abstract class ClearGLDefaultEventListener	implements
 		if (mAlreadyInDebugMode || !isDebugMode())
 			return;
 
-		GL4 gl = pDrawable.getGL().getGL4();
+		final GL4 gl = pDrawable.getGL().getGL4();
 		gl.getContext()
 			.setGL(GLPipelineFactory.create("javax.media.opengl.Debug",
 																			null,
@@ -76,7 +73,7 @@ public abstract class ClearGLDefaultEventListener	implements
 	public abstract void setClearGLWindow(ClearGLWindow pClearGLWindow);
 
 	@Override
-	public abstract ClearGLWindow getClearGLWindow();
+	public abstract ClearGLDisplayable getClearGLWindow();
 
 	public boolean isDebugMode()
 	{
