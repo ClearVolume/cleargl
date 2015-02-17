@@ -7,6 +7,7 @@ import java.util.List;
 import javax.media.nativewindow.CapabilitiesImmutable;
 import javax.media.nativewindow.WindowClosingProtocol.WindowClosingMode;
 import javax.media.opengl.DefaultGLCapabilitiesChooser;
+import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLCapabilities;
 import javax.media.opengl.GLCapabilitiesChooser;
 import javax.media.opengl.GLCapabilitiesImmutable;
@@ -334,7 +335,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 	 * @see cleargl.ClearGLDisplayable#requestDisplay()
 	 */
 	@Override
-	public void requestDisplay()
+	public void display()
 	{
 		mGlWindow.display();
 	}
@@ -436,6 +437,11 @@ public class ClearGLWindow implements ClearGLDisplayable
 		}
 
 		return mNewtCanvasAWT;
+	}
+
+	public GLAutoDrawable getGLAutoDrawable()
+	{
+		return mGlWindow;
 	}
 
 }

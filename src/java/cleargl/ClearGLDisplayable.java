@@ -56,7 +56,7 @@ public interface ClearGLDisplayable extends GLCloseable
 
 	public abstract void setFullscreen(boolean pFullScreen);
 
-	public abstract void requestDisplay();
+	public abstract void display();
 
 	public abstract WindowClosingMode setDefaultCloseOperation(WindowClosingMode pWindowClosingMode);
 

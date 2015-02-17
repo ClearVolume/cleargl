@@ -159,7 +159,7 @@ public class ClearGLJPanel implements ClearGLDisplayable
 	}
 
 	@Override
-	public void requestDisplay()
+	public void display()
 	{
 		getGLJPanel().repaint();
 	}
