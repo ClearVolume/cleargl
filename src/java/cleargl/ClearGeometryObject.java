@@ -1,11 +1,11 @@
 package cleargl;
 
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-
 import javax.media.opengl.GL;
 import javax.media.opengl.GL4;
 import javax.media.opengl.GLException;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.util.Hashtable;
 
 /**
  * ClearGeometryObject -
@@ -21,6 +21,8 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 	private GLMatrix mViewMatrix;
 	private GLMatrix mModelViewMatrix;
 	private GLMatrix mProjectionMatrix;
+
+  private Hashtable<String, Integer> additionalBufferIds = new Hashtable<>();
 
 	private int[] mVertexArrayObject = new int[1];
 	private int[] mVertexBuffers = new int[3];
@@ -116,6 +118,37 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 		getGL().glBindVertexArray(0);
 		getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, 0);
 	}
+
+  public void setArbitraryAndCreateBuffer(String name, FloatBuffer pBuffer, int pBufferGeometrySize)
+  {
+    // create additional buffers
+    if(!additionalBufferIds.containsKey(name)) {
+      getGL().glGenBuffers(1, mVertexBuffers, mVertexBuffers.length);
+      additionalBufferIds.put(name, mVertexBuffers[mVertexBuffers.length-1]);
+    }
+
+    mStoredPrimitiveCount = pBuffer.remaining() / mGeometrySize;
+
+    getGL().glBindVertexArray(mVertexArrayObject[0]);
+    getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, mVertexBuffers[mVertexBuffers.length-1]);
+
+    getGL().glEnableVertexAttribArray(0);
+    getGL().glBufferData(	GL.GL_ARRAY_BUFFER,
+            pBuffer.limit() * (Float.SIZE / Byte.SIZE),
+            pBuffer,
+            isIsDynamic()	? GL.GL_DYNAMIC_DRAW
+                    : GL.GL_STATIC_DRAW);
+
+    getGL().glVertexAttribPointer(mVertexBuffers.length,
+            pBufferGeometrySize,
+            GL4.GL_FLOAT,
+            false,
+            0,
+            0);
+
+    getGL().glBindVertexArray(0);
+    getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, 0);
+  }
 
   public GLProgram getProgram() {
     return mGLProgram;
@@ -346,7 +379,7 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 															pCount,
 															GL4.GL_UNSIGNED_INT,
 															pOffset);
-      
+
 			getGL().glBindBuffer(GL4.GL_ELEMENT_ARRAY_BUFFER, 0);
 		}
 		else
