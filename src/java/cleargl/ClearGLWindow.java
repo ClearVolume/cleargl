@@ -114,6 +114,10 @@ public class ClearGLWindow implements ClearGLDisplayable
 		mWindowTitle = pWindowTitle;
 		mWindowDefaultWidth = pDefaultWidth;
 		mWindowDefaultHeight = pDefaultHeight;
+
+		mProjectionMatrix = new GLMatrix();
+		mViewMatrix = new GLMatrix();
+
 		final GLProfile lProfile = GLProfile.get(GLProfile.GL4);
 		final GLCapabilities lCapabilities = new GLCapabilities(lProfile);
 
@@ -132,8 +136,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 		mGlWindow.setSize(pDefaultWidth, pDefaultHeight);
 		mGlWindow.setAutoSwapBufferMode(true);
 
-		mProjectionMatrix = new GLMatrix();
-		mViewMatrix = new GLMatrix();
+
 
 	}
 
@@ -214,10 +217,11 @@ public class ClearGLWindow implements ClearGLDisplayable
 																							float nearP,
 																							float farP)
 	{
-		mProjectionMatrix.setPerspectiveProjectionMatrix(	fov,
-																											ratio,
-																											nearP,
-																											farP);
+		if (mProjectionMatrix != null)
+			mProjectionMatrix.setPerspectiveProjectionMatrix(	fov,
+																												ratio,
+																												nearP,
+																												farP);
 	}
 
 	/* (non-Javadoc)
@@ -231,12 +235,13 @@ public class ClearGLWindow implements ClearGLDisplayable
 																				final float zNear,
 																				final float zFar)
 	{
-		mProjectionMatrix.setOrthoProjectionMatrix(	left,
-																								right,
-																								bottom,
-																								top,
-																								zNear,
-																								zFar);
+		if (mProjectionMatrix != null)
+			mProjectionMatrix.setOrthoProjectionMatrix(	left,
+																									right,
+																									bottom,
+																									top,
+																									zNear,
+																									zFar);
 	}
 
 	/* (non-Javadoc)
