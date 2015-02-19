@@ -1,27 +1,20 @@
 package cleargl.demo;
 
-import java.io.IOException;
-import java.nio.Buffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
+import cleargl.*;
+
+import com.jogamp.common.nio.Buffers;
+
+import org.junit.Test;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL4;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLException;
 
-import org.junit.Test;
-
-import cleargl.ClearGLDefaultEventListener;
-import cleargl.ClearGLWindow;
-import cleargl.GLAttribute;
-import cleargl.GLProgram;
-import cleargl.GLTexture;
-import cleargl.GLUniform;
-import cleargl.GLVertexArray;
-import cleargl.GLVertexAttributeArray;
-
-import com.jogamp.common.nio.Buffers;
+import java.io.IOException;
+import java.nio.Buffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 public class ClearGLDemo
 {
@@ -85,7 +78,7 @@ public class ClearGLDemo
 			private GLTexture<Byte> mTexture2;
 			private GLUniform mTexUnit2;
 			private GLTexture<Float> mTexture3;
-			private ClearGLWindow mClearGLWindow;
+			private ClearGLDisplayable mClearGLWindow;
 
 			@Override
 			public void init(GLAutoDrawable pDrawable)
@@ -267,7 +260,7 @@ public class ClearGLDemo
 			}
 
 			@Override
-			public ClearGLWindow getClearGLWindow()
+			public ClearGLDisplayable getClearGLWindow()
 			{
 				return mClearGLWindow;
 			}
@@ -276,7 +269,7 @@ public class ClearGLDemo
 
 		lClearGLWindowEventListener.setDebugMode(true);
 
-		try (ClearGLWindow lClearGLWindow = new ClearGLWindow("demo: ClearGLWindow",
+		try (ClearGLDisplayable lClearGLWindow = new ClearGLWindow("demo: ClearGLWindow",
 																													512,
 																													512,
 																													lClearGLWindowEventListener))

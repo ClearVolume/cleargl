@@ -2,6 +2,7 @@ apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
+apply plugin: 'idea'
 
 sourceSets 
 {
@@ -9,22 +10,22 @@ sourceSets
   {
     java 
     {
-      srcDir 'src'
+      srcDir 'src/java'
     }
     resources 
     { 
-      srcDir 'src'
+      srcDir 'src/java'
     }
   }
   test
   {
     java 
     {
-      srcDir 'src'
+      srcDir 'src/java'
     }
     resources 
     { 
-      srcDir 'src'
+      srcDir 'src/java'
     }
   }
 }

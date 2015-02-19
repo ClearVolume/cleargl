@@ -1,9 +1,9 @@
 package cleargl;
 
-import java.io.IOException;
-
 import javax.media.opengl.GL4;
 import javax.media.opengl.GLException;
+import java.io.IOException;
+import java.util.HashMap;
 
 public class GLProgram implements GLInterface, GLCloseable
 {
@@ -48,8 +48,54 @@ public class GLProgram implements GLInterface, GLCloseable
 		System.out.println(lFragmentShader.getShaderInfoLog());
 		GLProgram lGLProgram = new GLProgram(	lVertexShader,
 																					lFragmentShader);
+
+    System.out.println(lGLProgram.getProgramInfoLog());
 		return lGLProgram;
 	}
+
+  public static GLProgram buildProgram(	GL4 pGL4,
+                                         Class<?> pClass,
+                                         String[] shaders) throws IOException
+  {
+    GLProgram lGLProgram = new GLProgram(pGL4, shaderPipelineFromFilenames(pGL4, pClass, shaders));
+
+    System.out.println(lGLProgram.getProgramInfoLog());
+
+    return lGLProgram;
+  }
+
+  private static String shaderFileForType(GLShaderType type, String[] shaders) {
+    HashMap<GLShaderType, String> glslFilenameMapping = new HashMap<>();
+
+    glslFilenameMapping.put(GLShaderType.VertexShader, "_vert.glsl");
+    glslFilenameMapping.put(GLShaderType.GeometryShader, "_geom.glsl");
+    glslFilenameMapping.put(GLShaderType.TesselationControlShader, "_tess_ctrl.glsl");
+    glslFilenameMapping.put(GLShaderType.TesselationEvaluationShader, "_tess_eval.glsl");
+    glslFilenameMapping.put(GLShaderType.FragmentShader, "_frag.glsl");
+
+    for (int i = 0; i < shaders.length; i++) {
+      if(shaders[i].endsWith(glslFilenameMapping.get(type))) {
+        return shaders[i];
+      }
+    }
+
+    return null;
+  }
+
+  private static HashMap<GLShaderType, GLShader> shaderPipelineFromFilenames(GL4 pGL4, Class<?> rootClass, String[] shaders) throws IOException {
+    HashMap<GLShaderType, GLShader> pipeline  = new HashMap<>();
+
+    for(GLShaderType type: GLShaderType.values()) {
+      String filename = shaderFileForType(type, shaders);
+      if(filename != null) {
+        GLShader shader = new GLShader(pGL4, rootClass, filename, type);
+        System.out.println(shader.getShaderInfoLog());
+        pipeline.put(type, shader);
+      }
+    }
+
+    return pipeline;
+  }
 
 	public GLProgram(GLShader pVerteShader, GLShader pFragmentShader)
 	{
@@ -69,6 +115,20 @@ public class GLProgram implements GLInterface, GLCloseable
 
 		mGL4.glBindFragDataLocation(mProgramId, 0, "outColor");
 	}
+
+  public GLProgram(GL4 pGL4, HashMap<GLShaderType, GLShader> pipeline) {
+    super();
+
+    mGL4 = pGL4;
+
+    mProgramId = mGL4.glCreateProgram();
+
+    for(GLShader shader: pipeline.values()) {
+      mGL4.glAttachShader(mProgramId, shader.getId());
+    }
+
+    mGL4.glLinkProgram(mProgramId);
+  }
 
 	@Override
 	public void close() throws GLException

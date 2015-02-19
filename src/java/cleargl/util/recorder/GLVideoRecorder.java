@@ -63,9 +63,9 @@ public class GLVideoRecorder
 
 	private final ReentrantLock mReadPixelsLock = new ReentrantLock();
 
-	private ConcurrentLinkedQueue<ByteBuffer> mPixelRGBBufferQueue = new ConcurrentLinkedQueue<ByteBuffer>();
-	private ThreadLocal<int[]> mPixelRGBIntsThreadLocal = new ThreadLocal<int[]>();
-	private ThreadLocal<BufferedImage> mPixelRGBBufferedImageThreadLocal = new ThreadLocal<BufferedImage>();
+	private final ConcurrentLinkedQueue<ByteBuffer> mPixelRGBBufferQueue = new ConcurrentLinkedQueue<ByteBuffer>();
+	private final ThreadLocal<int[]> mPixelRGBIntsThreadLocal = new ThreadLocal<int[]>();
+	private final ThreadLocal<BufferedImage> mPixelRGBBufferedImageThreadLocal = new ThreadLocal<BufferedImage>();
 
 	/**
 	 * Creates a GLVideoRecorder with a given root folder for saving the video
@@ -91,7 +91,7 @@ public class GLVideoRecorder
 	{
 		if (pDisplayRequestRunnable != null)
 		{
-			Runnable lDisplayRequestRunnable = new Runnable()
+			final Runnable lDisplayRequestRunnable = new Runnable()
 			{
 
 				@Override
@@ -104,18 +104,18 @@ public class GLVideoRecorder
 							System.out.println("Recorder requests display now!");
 							pDisplayRequestRunnable.run();
 						}
-						int lTargetPeriodInMilliSeconds = (int) (1000 / getTargetFrameRate());
+						final int lTargetPeriodInMilliSeconds = (int) (1000 / getTargetFrameRate());
 						try
 						{
 							Thread.sleep(lTargetPeriodInMilliSeconds);
 						}
-						catch (InterruptedException e)
+						catch (final InterruptedException e)
 						{
 						}
 					}
 				}
 			};
-			Thread lDisplayRequestDeamonThread = new Thread(lDisplayRequestRunnable,
+			final Thread lDisplayRequestDeamonThread = new Thread(lDisplayRequestRunnable,
 																											GLVideoRecorder.class.getSimpleName() + ".DisplayRequestThread");
 			lDisplayRequestDeamonThread.setDaemon(true);
 			lDisplayRequestDeamonThread.setPriority(Thread.MIN_PRIORITY);
@@ -207,7 +207,7 @@ public class GLVideoRecorder
 				@Override
 				public void run()
 				{
-					JProgressBar lJProgressBar = new JProgressBar(0, 500);
+					final JProgressBar lJProgressBar = new JProgressBar(0, 500);
 					lJProgressBar.setValue(499);
 					lJDialog.add(BorderLayout.CENTER, lJProgressBar);
 					lJDialog.add(	BorderLayout.NORTH,
@@ -223,7 +223,7 @@ public class GLVideoRecorder
 			{
 				mExecutorService.awaitTermination(30, TimeUnit.SECONDS);
 			}
-			catch (InterruptedException e)
+			catch (final InterruptedException e)
 			{
 				e.printStackTrace();
 			}
@@ -247,7 +247,7 @@ public class GLVideoRecorder
 
 	private boolean getNewVideoFolder()
 	{
-		String lVideoFolderName = String.format("Video.%d", mVideoCounter);
+		final String lVideoFolderName = String.format("Video.%d", mVideoCounter);
 		mVideoFolder = new File(mRootFolder, lVideoFolderName);
 		return mVideoFolder.exists();
 	}
@@ -264,17 +264,17 @@ public class GLVideoRecorder
 		if (!mActive || tooSoon())
 			return;
 
-		String lFileName = String.format("image%d.png", mImageCounter);
-		File lNewFile = new File(mVideoFolder, lFileName);
+		final String lFileName = String.format("image%d.png", mImageCounter);
+		final File lNewFile = new File(mVideoFolder, lFileName);
 		writeDrawableToFile(pGLAutoDrawable, lNewFile);
 
 	}
 
 	private boolean tooSoon()
 	{
-		long lCurrentTimePoint = System.nanoTime();
-		double lElpasedTimeInSeconds = 0.001 * 0.001 * 0.001 * (abs(lCurrentTimePoint - mLastImageTimePoint));
-		double lTargetPeriodInSeconds = 1 / getTargetFrameRate();
+		final long lCurrentTimePoint = System.nanoTime();
+		final double lElpasedTimeInSeconds = 0.001 * 0.001 * 0.001 * (abs(lCurrentTimePoint - mLastImageTimePoint));
+		final double lTargetPeriodInSeconds = 1 / getTargetFrameRate();
 		if (lElpasedTimeInSeconds < lTargetPeriodInSeconds)
 		{
 			// System.out.println("too soon!");
@@ -297,10 +297,10 @@ public class GLVideoRecorder
 	private void writeDrawableToFile(	GLAutoDrawable pDrawable,
 																		final File pOutputFile)
 	{
-		int lTargetPeriodInMiliSeconds = (int) (1000 / getTargetFrameRate());
+		final int lTargetPeriodInMiliSeconds = (int) (1000 / getTargetFrameRate());
 		try
 		{
-			boolean lIsLocked = mReadPixelsLock.tryLock(lTargetPeriodInMiliSeconds / 2,
+			final boolean lIsLocked = mReadPixelsLock.tryLock(lTargetPeriodInMiliSeconds / 2,
 																									TimeUnit.MILLISECONDS);
 
 			if (lIsLocked)
@@ -352,19 +352,20 @@ public class GLVideoRecorder
 			}
 
 		}
-		catch (InterruptedException e)
+		catch (final InterruptedException e)
 		{
 		}
-		catch (RejectedExecutionException e)
+		catch (final RejectedExecutionException e)
 		{
 		}
-		catch (Throwable e)
+		catch (final Throwable e)
 		{
 			e.printStackTrace();
 		}
 		finally
 		{
-			mReadPixelsLock.unlock();
+			if (mReadPixelsLock.isHeldByCurrentThread())
+				mReadPixelsLock.unlock();
 		}
 
 	}
@@ -402,7 +403,7 @@ public class GLVideoRecorder
 			int p = pWidth * pHeight * 3; // Points to first byte (red) in each row.
 			int q; // Index into ByteBuffer
 			int i = 0; // Index into target int[]
-			int w3 = pWidth * 3; // Number of bytes in each row
+			final int w3 = pWidth * 3; // Number of bytes in each row
 
 			for (int row = 0; row < pHeight; row++)
 			{
@@ -410,9 +411,9 @@ public class GLVideoRecorder
 				q = p;
 				for (int col = 0; col < pWidth; col++)
 				{
-					int iR = pByteBuffer.get(q++);
-					int iG = pByteBuffer.get(q++);
-					int iB = pByteBuffer.get(q++);
+					final int iR = pByteBuffer.get(q++);
+					final int iG = pByteBuffer.get(q++);
+					final int iB = pByteBuffer.get(q++);
 
 					lPixelInts[i++] = 0xFF000000 | ((iR & 0x000000FF) << 16)
 														| ((iG & 0x000000FF) << 8)
@@ -444,7 +445,7 @@ public class GLVideoRecorder
 
 			ImageIO.write(lBufferedImage, "PNG", pOutputFile);
 		}
-		catch (Throwable e)
+		catch (final Throwable e)
 		{
 			e.printStackTrace();
 		}

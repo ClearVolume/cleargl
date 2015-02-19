@@ -7,6 +7,6 @@ public interface ClearGLEventListener extends GLEventListener
 
 	void setClearGLWindow(ClearGLWindow pClearGLWindow);
 
-	ClearGLWindow getClearGLWindow();
+	ClearGLDisplayable getClearGLWindow();
 
 }
