@@ -1,11 +1,11 @@
 package cleargl;
 
-import java.nio.FloatBuffer;
-import java.util.Arrays;
-
 import javax.media.opengl.GL;
 import javax.media.opengl.GL4;
 import javax.media.opengl.GLException;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.util.Arrays;
 
 public class GLVertexArray implements GLCloseable, GLInterface
 {
@@ -13,6 +13,7 @@ public class GLVertexArray implements GLCloseable, GLInterface
 	private GLInterface mGLInterface;
 	private int[] mVertexArrayId;
 	private int mNumberOfIndices;
+    private int mIndexCount = 0;
 
 	public GLVertexArray(GLInterface pGLInterface)
 	{
@@ -52,6 +53,15 @@ public class GLVertexArray implements GLCloseable, GLInterface
 																	0,
 																	0);
 	}
+	
+	public void addIndexArray(GLVertexAttributeArray pGLVertexAttributeArray, IntBuffer pIndexBuffer) {
+		bind();
+		
+		getGL().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, pGLVertexAttributeArray.getId(1));
+		getGL().glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, pIndexBuffer.remaining() * (Integer.SIZE/8) + 1, pIndexBuffer, GL.GL_STATIC_DRAW);
+
+    mIndexCount = pIndexBuffer.remaining();
+	}
 
 	public void bind()
 	{
@@ -66,7 +76,11 @@ public class GLVertexArray implements GLCloseable, GLInterface
 	public void draw(int pType)
 	{
 		bind();
-		getGL().glDrawArrays(pType, 0, mNumberOfIndices);
+    if(mIndexCount > 0) {
+      getGL().glDrawElements(pType, mIndexCount, GL.GL_UNSIGNED_INT, 0);
+    } else {
+      getGL().glDrawArrays(pType, 0, mNumberOfIndices);
+    }
 	}
 
 	@Override

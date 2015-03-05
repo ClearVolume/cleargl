@@ -1,12 +1,12 @@
 package cleargl;
 
-import java.io.IOException;
-import java.io.InputStream;
+import org.apache.commons.io.IOUtils;
 
 import javax.media.opengl.GL4;
 import javax.media.opengl.GLException;
-
-import org.apache.commons.io.IOUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
 
 public class GLShader implements GLInterface, GLCloseable
 {
@@ -26,8 +26,14 @@ public class GLShader implements GLInterface, GLCloseable
 		mShaderSource = IOUtils.toString(lResourceAsStream, "UTF-8");
 		mShaderType = pShaderType;
 
-		int lShaderTypeInt = mShaderType == GLShaderType.VertexShader	? GL4.GL_VERTEX_SHADER
-																																	: GL4.GL_FRAGMENT_SHADER;
+    HashMap<GLShaderType, Integer> glShaderTypeMapping = new HashMap<>();
+    glShaderTypeMapping.put(GLShaderType.VertexShader, GL4.GL_VERTEX_SHADER);
+    glShaderTypeMapping.put(GLShaderType.GeometryShader, GL4.GL_GEOMETRY_SHADER);
+    glShaderTypeMapping.put(GLShaderType.TesselationControlShader, GL4.GL_TESS_CONTROL_SHADER);
+    glShaderTypeMapping.put(GLShaderType.TesselationEvaluationShader, GL4.GL_TESS_EVALUATION_SHADER);
+    glShaderTypeMapping.put(GLShaderType.FragmentShader, GL4.GL_FRAGMENT_SHADER);
+
+    int lShaderTypeInt = glShaderTypeMapping.get(pShaderType);
 
 		mShaderId = pGL4.glCreateShader(lShaderTypeInt);
 		mGL4.glShaderSource(mShaderId, 1, new String[]
@@ -45,8 +51,14 @@ public class GLShader implements GLInterface, GLCloseable
 		mShaderSource = pShaderSourceAsString;
 		mShaderType = pShaderType;
 
-		int lShaderTypeInt = mShaderType == GLShaderType.VertexShader	? GL4.GL_VERTEX_SHADER
-																																	: GL4.GL_FRAGMENT_SHADER;
+    HashMap<GLShaderType, Integer> glShaderTypeMapping = new HashMap<>();
+    glShaderTypeMapping.put(GLShaderType.VertexShader, GL4.GL_VERTEX_SHADER);
+    glShaderTypeMapping.put(GLShaderType.GeometryShader, GL4.GL_GEOMETRY_SHADER);
+    glShaderTypeMapping.put(GLShaderType.TesselationControlShader, GL4.GL_TESS_CONTROL_SHADER);
+    glShaderTypeMapping.put(GLShaderType.TesselationEvaluationShader, GL4.GL_TESS_EVALUATION_SHADER);
+    glShaderTypeMapping.put(GLShaderType.FragmentShader, GL4.GL_FRAGMENT_SHADER);
+
+		int lShaderTypeInt = glShaderTypeMapping.get(pShaderType);
 
 		mShaderId = pGL4.glCreateShader(lShaderTypeInt);
 		mGL4.glShaderSource(mShaderId, 1, new String[]
