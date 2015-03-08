@@ -22,15 +22,15 @@ public class ClearGeometryObject implements GLCloseable, GLInterface {
 	private GLMatrix mModelViewMatrix;
 	private GLMatrix mProjectionMatrix;
 
-	private Hashtable<String, Integer> additionalBufferIds = new Hashtable<>();
+	private final Hashtable<String, Integer> additionalBufferIds = new Hashtable<>();
 
-	private int[] mVertexArrayObject = new int[1];
-	private int[] mVertexBuffers = new int[3];
-	private int[] mIndexBuffer = new int[1];
+	private final int[] mVertexArrayObject = new int[1];
+	private final int[] mVertexBuffers = new int[3];
+	private final int[] mIndexBuffer = new int[1];
 
 	private boolean mIsDynamic = false;
 
-	private int mGeometryType;
+	private final int mGeometryType;
 	// length of vectors and texcoords
 	private int mGeometrySize = 3;
 	private int mTextureCoordSize = 2;
@@ -38,7 +38,7 @@ public class ClearGeometryObject implements GLCloseable, GLInterface {
 	private int mStoredIndexCount = 0;
 	private int mStoredPrimitiveCount = 0;
 
-	private int mId;
+	private final int mId;
 	private static int counter = 0;
 
 	public ClearGeometryObject(GLProgram pGLProgram, int pVectorSize,
@@ -219,28 +219,28 @@ public class ClearGeometryObject implements GLCloseable, GLInterface {
 					"Cannot update non dynamic buffers!");
 
 		getGL().glBindVertexArray(mVertexArrayObject[0]);
-		GLError.printGLErrors(mGLProgram.getGL(), "1");
+		GLError.printGLErrors(getGL(), "1");
 
 		getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, mVertexBuffers[2]);
-		GLError.printGLErrors(mGLProgram.getGL(), "2");
+		GLError.printGLErrors(getGL(), "2");
 
 		getGL().glEnableVertexAttribArray(2);
-		GLError.printGLErrors(mGLProgram.getGL(), "3");
+		GLError.printGLErrors(getGL(), "3");
 
 		getGL().glBufferSubData(GL.GL_ARRAY_BUFFER, 0,
 				pTextureCoordsBuffer.limit() * (Float.SIZE / Byte.SIZE),
 				pTextureCoordsBuffer);
-		GLError.printGLErrors(mGLProgram.getGL(), "4");
+		GLError.printGLErrors(getGL(), "4");
 
 		getGL().glVertexAttribPointer(2, mTextureCoordSize, GL4.GL_FLOAT,
 				false, 0, 0);
-		GLError.printGLErrors(mGLProgram.getGL(), "5");
+		GLError.printGLErrors(getGL(), "5");
 
 		getGL().glBindVertexArray(0);
-		GLError.printGLErrors(mGLProgram.getGL(), "6");
+		GLError.printGLErrors(getGL(), "6");
 
 		getGL().glBindBuffer(GL4.GL_ARRAY_BUFFER, 0);
-		GLError.printGLErrors(mGLProgram.getGL(), "7");
+		GLError.printGLErrors(getGL(), "7");
 
 	}
 

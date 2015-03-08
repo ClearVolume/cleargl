@@ -6,8 +6,8 @@ import javax.media.opengl.GL4;
 
 public class GLUniform implements GLInterface
 {
-	private GLProgram mGlProgram;
-	private int mUniformId;
+	private final GLProgram mGlProgram;
+	private final int mUniformId;
 
 	public GLUniform(GLProgram pGlProgram, int pUniformId)
 	{
@@ -36,10 +36,31 @@ public class GLUniform implements GLInterface
 																					pProjectionMatrix);
 	}
 
+	public void setFloatVector2(float... pVector2)
+	{
+		setFloatVector2(FloatBuffer.wrap(pVector2));
+	}
+
+	public void setFloatVector2(FloatBuffer pVector)
+	{
+		mGlProgram.bind();
+		mGlProgram.getGL().glUniform2fv(mUniformId, 1, pVector);
+	}
+
+	public void setFloatVector3(float... pVector3)
+	{
+		setFloatVector3(FloatBuffer.wrap(pVector3));
+	}
+
 	public void setFloatVector3(FloatBuffer pVector)
 	{
 		mGlProgram.bind();
 		mGlProgram.getGL().glUniform3fv(mUniformId, 1, pVector);
+	}
+
+	public void setFloatVector4(float... pVector4)
+	{
+		setFloatVector4(FloatBuffer.wrap(pVector4));
 	}
 
 	public void setFloatVector4(FloatBuffer pVector)
@@ -86,5 +107,6 @@ public class GLUniform implements GLInterface
 						+ mUniformId
 						+ "]";
 	}
+
 
 }

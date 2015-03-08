@@ -180,6 +180,18 @@ public class GLMatrix
 		FloatUtil.multMatrix(mMatrix, lScaleMatrix);
 	}
 
+	public void invscale(float pScaleX, float pScaleY, float pScaleZ)
+	{
+
+		final float[] lScaleMatrix = FloatUtil.makeScale(	new float[16],
+																											true,
+																											1.0f / pScaleX,
+																											1.0f / pScaleY,
+																											1.0f / pScaleZ);
+
+		FloatUtil.multMatrix(mMatrix, lScaleMatrix);
+	}
+
 	public void mult(Quaternion pQuaternion)
 	{
 		final float[] lQuaternionMatrix = pQuaternion.toMatrix(	new float[16],
@@ -198,7 +210,6 @@ public class GLMatrix
 																				final float[] colMatrix,
 																				final float[] vec)
 	{
-
 		result[0] = vec[0] * colMatrix[0]
 								+ vec[1]
 								* colMatrix[4]
@@ -232,43 +243,51 @@ public class GLMatrix
 	}
 
 	private static float[] mulRowMat4Vec4(final float[] result,
-																				final float[] colMatrix,
+																				final float[] rowMatrix,
 																				final float[] vec)
 	{
 
-		result[0] = vec[0] * colMatrix[0]
+		result[0] = vec[0] * rowMatrix[0]
 								+ vec[1]
-								* colMatrix[1]
+								* rowMatrix[1]
 								+ vec[2]
-								* colMatrix[2]
+								* rowMatrix[2]
 								+ vec[3]
-								* colMatrix[3];
-		result[1] = vec[0] * colMatrix[4]
+								* rowMatrix[3];
+		result[1] = vec[0] * rowMatrix[4]
 								+ vec[1]
-								* colMatrix[5]
+								* rowMatrix[5]
 								+ vec[2]
-								* colMatrix[6]
+								* rowMatrix[6]
 								+ vec[3]
-								* colMatrix[7];
-		result[2] = vec[0] * colMatrix[8]
+								* rowMatrix[7];
+		result[2] = vec[0] * rowMatrix[8]
 								+ vec[1]
-								* colMatrix[9]
+								* rowMatrix[9]
 								+ vec[2]
-								* colMatrix[10]
+								* rowMatrix[10]
 								+ vec[3]
-								* colMatrix[11];
-		result[3] = vec[0] * colMatrix[12]
+								* rowMatrix[11];
+		result[3] = vec[0] * rowMatrix[12]
 								+ vec[1]
-								* colMatrix[13]
+								* rowMatrix[13]
 								+ vec[2]
-								* colMatrix[14]
+								* rowMatrix[14]
 								+ vec[3]
-								* colMatrix[15];
+								* rowMatrix[15];
 
 		return result;
 	}
 
-	public void copy(final GLMatrix rhs)
+	@Override
+	public GLMatrix clone()
+	{
+		final GLMatrix lGLMatrix = new GLMatrix();
+		lGLMatrix.copyFrom(this);
+		return lGLMatrix;
+	}
+
+	public void copyFrom(final GLMatrix rhs)
 	{
 		System.arraycopy(	rhs.getFloatArray(),
 											0,
@@ -282,20 +301,35 @@ public class GLMatrix
 		return mMatrix;
 	}
 
-	public void invert()
+	public float[] getTransposedFloatArray()
+	{
+		final GLMatrix lGLMatrix = new GLMatrix();
+		System.arraycopy(	mMatrix,
+											0,
+											lGLMatrix.getFloatArray(),
+											0,
+											mMatrix.length);
+		lGLMatrix.transpose();
+		return lGLMatrix.getFloatArray();
+	}
+
+	public GLMatrix invert()
 	{
 		final float[] tmp = new float[16];
 		System.arraycopy(mMatrix, 0, tmp, 0, mMatrix.length);
 
 		FloatUtil.invertMatrix(tmp, mMatrix);
+		return this;
 	}
 
-	public void transpose()
+	public GLMatrix transpose()
 	{
 		final float[] tmp = new float[16];
 		System.arraycopy(mMatrix, 0, tmp, 0, mMatrix.length);
 
 		FloatUtil.transposeMatrix(tmp, mMatrix);
+
+		return this;
 	}
 
 	@Override
@@ -325,6 +359,12 @@ public class GLMatrix
 			pVector[i] += pValue;
 	}
 
+	public static void add(float[] pA, float[] pB)
+	{
+		for (int i = 0; i < pA.length; i++)
+			pA[i] += pB[i];
+	}
+
 	public static void sub(float[] pA, float[] pB)
 	{
 		final int lLength = min(pA.length, pB.length);
@@ -346,6 +386,33 @@ public class GLMatrix
 
 		for (int i = 0; i < pVector.length; i++)
 			pVector[i] /= lNorm;
+	}
+
+	public static float dot(float[] pA, float[] pB)
+	{
+		float lDot = 0;
+		for (int i = 0; i < pA.length; i++)
+			lDot += pA[i] * pB[i];
+
+		return lDot;
+	}
+
+	public static float[] clone(float[] pVector)
+	{
+		final float[] lClone = new float[pVector.length];
+		System.arraycopy(pVector, 0, lClone, 0, pVector.length);
+		return lClone;
+	}
+
+	public static float norm(float[] pVector)
+	{
+		float lNorm = 0;
+		for (int i = 0; i < pVector.length; i++)
+			lNorm += pVector[i] * pVector[i];
+
+		lNorm = (float) sqrt(lNorm);
+
+		return lNorm;
 	}
 
 }
