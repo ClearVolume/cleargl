@@ -21,6 +21,7 @@ import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.MouseListener;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.opengl.GLWindow;
+import com.jogamp.opengl.util.FPSAnimator;
 
 public class ClearGLWindow implements ClearGLDisplayable
 {
@@ -35,6 +36,9 @@ public class ClearGLWindow implements ClearGLDisplayable
 	private final GLMatrix mProjectionMatrix;
 	private final GLMatrix mViewMatrix;
 	private NewtCanvasAWT mNewtCanvasAWT;
+
+	private FPSAnimator mAnimator;
+	private int mFramesPerSecond = 60;
 
 	static
 	{
@@ -137,8 +141,34 @@ public class ClearGLWindow implements ClearGLDisplayable
 		mGlWindow.setAutoSwapBufferMode(true);
 
 
-
+		// lAnimator.add(mClearGLWindow.getGLAutoDrawable());
 	}
+
+	public void setFPS(int pFramesPerSecond)
+	{
+		mFramesPerSecond = pFramesPerSecond;
+	}
+
+	public void start()
+	{
+		mAnimator = new FPSAnimator(this.getGLAutoDrawable(),
+																mFramesPerSecond);
+		mAnimator.start();
+	}
+
+	public void stop()
+	{
+		mAnimator.setIgnoreExceptions(true);
+		mAnimator.pause();
+		mAnimator.stop();
+	}
+
+	public void waitForAnimationToStop()
+	{
+		while (mAnimator.isAnimating())
+			Thread.yield();
+	}
+
 
 	/* (non-Javadoc)
 	 * @see cleargl.ClearGLDisplayable#close()
@@ -448,5 +478,8 @@ public class ClearGLWindow implements ClearGLDisplayable
 	{
 		return mGlWindow;
 	}
+
+
+
 
 }

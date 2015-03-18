@@ -10,28 +10,31 @@ import javax.media.opengl.GLException;
 
 import com.jogamp.common.nio.Buffers;
 
-public class GLTexture<T> implements GLInterface, GLCloseable
+import coremem.ContiguousMemoryInterface;
+import coremem.types.NativeTypeEnum;
+
+public class GLTexture implements GLInterface, GLCloseable
 {
 
-	private GLInterface mGLInterface;
+	private final GLInterface mGLInterface;
 	private final int[] mTextureId = new int[1];
-	private Class<T> mType;
+	private final NativeTypeEnum mType;
 	private int mBytesPerChannel;
-	private int mTextureWidth;
-	private int mTextureHeight;
+	private final int mTextureWidth;
+	private final int mTextureHeight;
 	private int mTextureOpenGLDataType;
-	private int mTextureOpenGLFormat;
+	private final int mTextureOpenGLFormat;
 	private int mTextureOpenGLInternalFormat;
-	private int mMipMapLevels;
-	private int mTextureDepth;
-	private int mTextureTarget;
-	private int mNumberOfChannels;
+	private final int mMipMapLevels;
+	private final int mTextureDepth;
+	private final int mTextureTarget;
+	private final int mNumberOfChannels;
 
 	// empty buffer
 	private Buffer mEmptyBuffer;
 
 	public GLTexture(	GLInterface pGLInterface,
-	                 	Class<T> pType,
+										NativeTypeEnum pType,
 	                 	int pTextureWidth,
 	                 	int pTextureHeight,
 	                 	int pTextureDepth)
@@ -47,7 +50,7 @@ public class GLTexture<T> implements GLInterface, GLCloseable
 	}
 
 	public GLTexture(	GLInterface pGLInterface,
-	                 	Class<T> pType,
+										NativeTypeEnum pType,
 	                 	int pTextureWidth,
 	                 	int pTextureHeight,
 	                 	int pTextureDepth,
@@ -64,7 +67,7 @@ public class GLTexture<T> implements GLInterface, GLCloseable
 	}
 
 	public GLTexture(	GLInterface pGLInterface,
-	                 	Class<T> pType,
+										NativeTypeEnum pType,
 	                 	int pNumberOfChannels,
 	                 	int pTextureWidth,
 	                 	int pTextureHeight,
@@ -86,35 +89,49 @@ public class GLTexture<T> implements GLInterface, GLCloseable
 		mTextureOpenGLFormat = mNumberOfChannels == 4 ? GL4.GL_RGBA// GL_BGRA
 		                                              : GL4.GL_RED;
 
-		if (mType.equals(Byte.class))
+		if (mType == NativeTypeEnum.Byte)
+		{
+			mTextureOpenGLDataType = GL4.GL_BYTE;
+			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL4.GL_RGBA8
+																														: GL4.GL_R8;
+			mBytesPerChannel = 1;
+		}
+		else if (mType == NativeTypeEnum.UnsignedByte)
 		{
 			mTextureOpenGLDataType = GL4.GL_UNSIGNED_BYTE;
 			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL4.GL_RGBA8
 			                                                     	: GL4.GL_R8;
 			mBytesPerChannel = 1;
 		}
-		else if (mType.equals(Short.class))
+		else if (mType == NativeTypeEnum.Short)
 		{
 			mTextureOpenGLDataType = GL4.GL_SHORT;
 			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL4.GL_RGBA16F
 			                                                     	: GL4.GL_R16F;
 			mBytesPerChannel = 2;
 		}
-		else if (mType.equals(Character.class))
+		else if (mType == NativeTypeEnum.UnsignedShort)
 		{
 			mTextureOpenGLDataType = GL4.GL_UNSIGNED_SHORT;
 			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL4.GL_RGBA16F
 			                                                     	: GL4.GL_R16F;
 			mBytesPerChannel = 2;
 		}
-		else if (mType.equals(Integer.class))
+		else if (mType == NativeTypeEnum.Int)
+		{
+			mTextureOpenGLDataType = GL4.GL_INT;
+			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL4.GL_RGBA32F
+																														: GL4.GL_R32F;
+			mBytesPerChannel = 4;
+		}
+		else if (mType == NativeTypeEnum.UnsignedInt)
 		{
 			mTextureOpenGLDataType = GL4.GL_UNSIGNED_INT;
 			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL4.GL_RGBA32F
 			                                                     	: GL4.GL_R32F;
 			mBytesPerChannel = 4;
 		}
-		else if (mType.equals(Float.class) || mType.equals(Double.class))
+		else if (mType == NativeTypeEnum.Float)
 		{
 			mTextureOpenGLDataType = GL4.GL_FLOAT;
 			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL4.GL_RGBA32F
@@ -176,11 +193,11 @@ public class GLTexture<T> implements GLInterface, GLCloseable
 
 	@SafeVarargs
 	public static <T> void bindTextures(GLProgram pGLProgram,
-	                                    GLTexture<T>... pTexturesToBind)
+																			GLTexture... pTexturesToBind)
 	{
 		pGLProgram.bind();
 		int lTextureUnit = 0;
-		for (final GLTexture<T> lTexture : pTexturesToBind)
+		for (final GLTexture lTexture : pTexturesToBind)
 			lTexture.bind(lTextureUnit++);
 	}
 
@@ -260,6 +277,23 @@ public class GLTexture<T> implements GLInterface, GLCloseable
 		                                     	mTextureOpenGLFormat,
 		                                     	mTextureOpenGLDataType,
 		                                     	pBuffer);
+		if (mMipMapLevels > 1)
+			mGLInterface.getGL().glGenerateMipmap(mTextureTarget);
+	}
+
+	public void copyFrom(ContiguousMemoryInterface pContiguousMemory)
+	{
+		bind();
+		final ByteBuffer lByteBuffer = pContiguousMemory.getByteBuffer();
+		mGLInterface.getGL().glTexSubImage2D(	mTextureTarget,
+																					0,
+																					0,
+																					0,
+																					mTextureWidth,
+																					mTextureHeight,
+																					mTextureOpenGLFormat,
+																					mTextureOpenGLDataType,
+																					lByteBuffer);
 		if (mMipMapLevels > 1)
 			mGLInterface.getGL().glGenerateMipmap(mTextureTarget);
 	}

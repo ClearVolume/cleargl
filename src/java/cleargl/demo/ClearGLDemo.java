@@ -1,20 +1,30 @@
 package cleargl.demo;
 
-import cleargl.*;
-
-import com.jogamp.common.nio.Buffers;
-
-import org.junit.Test;
+import java.io.IOException;
+import java.nio.Buffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.GL4;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLException;
 
-import java.io.IOException;
-import java.nio.Buffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
+import org.junit.Test;
+
+import cleargl.ClearGLDefaultEventListener;
+import cleargl.ClearGLDisplayable;
+import cleargl.ClearGLWindow;
+import cleargl.GLAttribute;
+import cleargl.GLProgram;
+import cleargl.GLTexture;
+import cleargl.GLUniform;
+import cleargl.GLVertexArray;
+import cleargl.GLVertexAttributeArray;
+
+import com.jogamp.common.nio.Buffers;
+
+import coremem.types.NativeTypeEnum;
 
 public class ClearGLDemo
 {
@@ -45,7 +55,7 @@ public class ClearGLDemo
 
 	private Buffer getTextureBuffer2()
 	{
-		int[] lIntArray = new int[128 * 128];
+		final int[] lIntArray = new int[128 * 128];
 		for (int i = 0; i < lIntArray.length; i++)
 			lIntArray[i] = 1000 + 128 * i;
 		return IntBuffer.wrap(lIntArray);
@@ -53,7 +63,7 @@ public class ClearGLDemo
 
 	private Buffer getTextureBuffer3()
 	{
-		float[] lFloatArray = new float[1280 * 1280];
+		final float[] lFloatArray = new float[1280 * 1280];
 		for (int i = 0; i < lFloatArray.length; i++)
 			lFloatArray[i] = (float) Math.random();
 		return FloatBuffer.wrap(lFloatArray);
@@ -62,7 +72,7 @@ public class ClearGLDemo
 	@Test
 	public void demo() throws InterruptedException
 	{
-		ClearGLDefaultEventListener lClearGLWindowEventListener = new ClearGLDefaultEventListener()
+		final ClearGLDefaultEventListener lClearGLWindowEventListener = new ClearGLDefaultEventListener()
 		{
 
 			private GLProgram mGLProgram1, mGLProgram2;
@@ -75,9 +85,9 @@ public class ClearGLDemo
 					mColorAttributeArray1, mPositionAttributeArray2,
 					mTexCoordAttributeArray2;
 			private GLVertexArray mGLVertexArray1, mGLVertexArray2;
-			private GLTexture<Byte> mTexture2;
+			private GLTexture mTexture2;
 			private GLUniform mTexUnit2;
-			private GLTexture<Float> mTexture3;
+			private GLTexture mTexture3;
 			private ClearGLDisplayable mClearGLWindow;
 
 			@Override
@@ -86,7 +96,7 @@ public class ClearGLDemo
 				super.init(pDrawable);
 				try
 				{
-					GL4 pGL4 = pDrawable.getGL().getGL4();
+					final GL4 pGL4 = pDrawable.getGL().getGL4();
 					pGL4.glDisable(GL.GL_DEPTH_TEST);
 					// pGL4.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -140,24 +150,24 @@ public class ClearGLDemo
 					mGLVertexArray2.addVertexAttributeArray(mTexCoordAttributeArray2,
 																									Buffers.newDirectFloatBuffer(texcoord2));
 
-					mTexture2 = new GLTexture<Byte>(mGLProgram2,
-																					Byte.class,
-																					4,
-																					128,
-																					128,
-																					1,
-																					true,
-																					2);
+					mTexture2 = new GLTexture(mGLProgram2,
+																		NativeTypeEnum.UnsignedByte,
+																		4,
+																		128,
+																		128,
+																		1,
+																		true,
+																		2);
 					mTexture2.copyFrom(getTextureBuffer2());
 
-					mTexture3 = new GLTexture<Float>(	mGLProgram2,
-																						Float.class,
-																						1,
-																						1280,
-																						1280,
-																						1,
-																						true,
-																						4);
+					mTexture3 = new GLTexture(mGLProgram2,
+																		NativeTypeEnum.Float,
+																		1,
+																		1280,
+																		1280,
+																		1,
+																		true,
+																		4);
 					mTexture3.copyFrom(getTextureBuffer3());
 
 				}
@@ -180,7 +190,7 @@ public class ClearGLDemo
 				// pDrawable.getGL().getGL4().glViewport(10, 10, 100, 100);
 				if (pHeight == 0)
 					pHeight = 1;
-				float ratio = (1.0f * pWidth) / pHeight;
+				final float ratio = (1.0f * pWidth) / pHeight;
 				// setPerspectiveProjectionMatrix(53.13f, ratio, 1.0f, 30.0f);
 				getClearGLWindow().setOrthoProjectionMatrix(-2,
 																										2,
@@ -194,7 +204,7 @@ public class ClearGLDemo
 			public void display(GLAutoDrawable pDrawable)
 			{
 				super.display(pDrawable);
-				GL4 lGL4 = pDrawable.getGL().getGL4();
+				final GL4 lGL4 = pDrawable.getGL().getGL4();
 				lGL4.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
 				getClearGLWindow().lookAt(0f, 0f, 1, 0f, 0f, -1, 0, 1, 0);
@@ -230,7 +240,7 @@ public class ClearGLDemo
 				mGLVertexArray2.draw(GL.GL_TRIANGLES);
 
 				// Check out error
-				int error = lGL4.glGetError();
+				final int error = lGL4.glGetError();
 				if (error != 0)
 				{
 					System.err.println("ERROR on render : " + error);
@@ -269,10 +279,10 @@ public class ClearGLDemo
 
 		lClearGLWindowEventListener.setDebugMode(true);
 
-		try (ClearGLDisplayable lClearGLWindow = new ClearGLWindow("demo: ClearGLWindow",
-																													512,
-																													512,
-																													lClearGLWindowEventListener))
+		try (ClearGLDisplayable lClearGLWindow = new ClearGLWindow(	"demo: ClearGLWindow",
+																																512,
+																																512,
+																																lClearGLWindowEventListener))
 		{
 			// lClearGLWindow.disableClose();
 			lClearGLWindow.setVisible(true);
@@ -327,7 +337,6 @@ public class ClearGLDemo
 
 			Thread.sleep(2000);
 		}/**/
-
 
 	}
 }
