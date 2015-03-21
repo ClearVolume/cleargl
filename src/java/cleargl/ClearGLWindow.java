@@ -140,7 +140,6 @@ public class ClearGLWindow implements ClearGLDisplayable
 		mGlWindow.setSize(pDefaultWidth, pDefaultHeight);
 		mGlWindow.setAutoSwapBufferMode(true);
 
-
 		// lAnimator.add(mClearGLWindow.getGLAutoDrawable());
 	}
 
@@ -154,6 +153,8 @@ public class ClearGLWindow implements ClearGLDisplayable
 		mAnimator = new FPSAnimator(this.getGLAutoDrawable(),
 																mFramesPerSecond);
 		mAnimator.start();
+		while (!mAnimator.isAnimating())
+			Thread.yield();
 	}
 
 	public void stop()
@@ -161,10 +162,6 @@ public class ClearGLWindow implements ClearGLDisplayable
 		mAnimator.setIgnoreExceptions(true);
 		mAnimator.pause();
 		mAnimator.stop();
-	}
-
-	public void waitForAnimationToStop()
-	{
 		while (mAnimator.isAnimating())
 			Thread.yield();
 	}
@@ -478,8 +475,5 @@ public class ClearGLWindow implements ClearGLDisplayable
 	{
 		return mGlWindow;
 	}
-
-
-
 
 }
