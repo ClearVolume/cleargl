@@ -15,7 +15,6 @@ public class GLVertexArray implements GLCloseable, GLInterface
 	private int mNumberOfIndices;
     private int mIndexCount = 0;
 
-
 	public GLVertexArray(GLInterface pGLInterface)
 	{
 		super();
@@ -106,6 +105,5 @@ public class GLVertexArray implements GLCloseable, GLInterface
 						+ mNumberOfIndices
 						+ "]";
 	}
-
 
 }
