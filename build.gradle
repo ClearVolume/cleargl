@@ -111,7 +111,7 @@ if (JavaVersion.current().isJava8Compatible()) {
 // BINTRAY PUBLISHING
 
 group = 'net.clearvolume'
-version = '0.9.1'
+version = '0.9.2'
 
 artifacts
 {
