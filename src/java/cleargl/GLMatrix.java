@@ -6,6 +6,7 @@ import static java.lang.Math.sqrt;
 
 import com.jogamp.opengl.math.FloatUtil;
 import com.jogamp.opengl.math.Quaternion;
+import com.jogamp.opengl.math.VectorUtil;
 
 public class GLMatrix
 {
@@ -413,6 +414,11 @@ public class GLMatrix
 		lNorm = (float) sqrt(lNorm);
 
 		return lNorm;
+	}
+
+	public static void cross(float[] pResult, float[] pA, float[] pB)
+	{
+		VectorUtil.crossVec3(pResult, pA, pB);
 	}
 
 }
