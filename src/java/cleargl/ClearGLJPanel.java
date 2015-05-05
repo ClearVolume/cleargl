@@ -28,7 +28,7 @@ public class ClearGLJPanel implements ClearGLDisplayable
 
 	public ClearGLJPanel(ClearGLEventListener pClearGLEventListener)
 	{
-		final GLProfile lProfile = GLProfile.get(GLProfile.GL4);
+		final GLProfile lProfile = GLProfile.getMaxProgrammable(true);
 		final GLCapabilities lGlCapabilities = new GLCapabilities(lProfile);
 		mGLJPanel = new GLJPanel(lGlCapabilities);
 

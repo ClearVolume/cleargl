@@ -6,7 +6,7 @@ import java.nio.ByteOrder;
 import java.util.Arrays;
 
 import javax.media.opengl.GL;
-import javax.media.opengl.GL4;
+import javax.media.opengl.GL2;
 import javax.media.opengl.GLException;
 
 import com.jogamp.common.nio.Buffers;
@@ -85,58 +85,58 @@ public class GLTexture implements GLInterface, GLCloseable
 		mTextureDepth = pTextureDepth;
 		mMipMapLevels = pMipMapLevels;
 
-		mTextureTarget = mTextureDepth == 1	? GL4.GL_TEXTURE_2D
-		                                   	: GL4.GL_TEXTURE_3D;
-		mTextureOpenGLFormat = mNumberOfChannels == 4 ? GL4.GL_RGBA// GL_BGRA
-		                                              : GL4.GL_RED;
+		mTextureTarget = mTextureDepth == 1	? GL.GL_TEXTURE_2D
+																				: GL2.GL_TEXTURE_3D;
+		mTextureOpenGLFormat = mNumberOfChannels == 4 ? GL.GL_RGBA// GL_BGRA
+																									: GL2.GL_RED;
 
 		if (mType == NativeTypeEnum.Byte)
 		{
-			mTextureOpenGLDataType = GL4.GL_BYTE;
-			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL4.GL_RGBA8
-																														: GL4.GL_R8;
+			mTextureOpenGLDataType = GL.GL_BYTE;
+			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL.GL_RGBA8
+																														: GL2.GL_R8;
 			mBytesPerChannel = 1;
 		}
 		else if (mType == NativeTypeEnum.UnsignedByte)
 		{
-			mTextureOpenGLDataType = GL4.GL_UNSIGNED_BYTE;
-			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL4.GL_RGBA8
-			                                                     	: GL4.GL_R8;
+			mTextureOpenGLDataType = GL.GL_UNSIGNED_BYTE;
+			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL.GL_RGBA8
+																														: GL2.GL_R8;
 			mBytesPerChannel = 1;
 		}
 		else if (mType == NativeTypeEnum.Short)
 		{
-			mTextureOpenGLDataType = GL4.GL_SHORT;
-			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL4.GL_RGBA16F
-			                                                     	: GL4.GL_R16F;
+			mTextureOpenGLDataType = GL.GL_SHORT;
+			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL.GL_RGBA16F
+																														: GL2.GL_R16F;
 			mBytesPerChannel = 2;
 		}
 		else if (mType == NativeTypeEnum.UnsignedShort)
 		{
-			mTextureOpenGLDataType = GL4.GL_UNSIGNED_SHORT;
-			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL4.GL_RGBA16F
-			                                                     	: GL4.GL_R16F;
+			mTextureOpenGLDataType = GL.GL_UNSIGNED_SHORT;
+			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL.GL_RGBA16F
+																														: GL2.GL_R16F;
 			mBytesPerChannel = 2;
 		}
 		else if (mType == NativeTypeEnum.Int)
 		{
-			mTextureOpenGLDataType = GL4.GL_INT;
-			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL4.GL_RGBA32F
-																														: GL4.GL_R32F;
+			mTextureOpenGLDataType = GL2.GL_INT;
+			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL.GL_RGBA32F
+																														: GL2.GL_R32F;
 			mBytesPerChannel = 4;
 		}
 		else if (mType == NativeTypeEnum.UnsignedInt)
 		{
-			mTextureOpenGLDataType = GL4.GL_UNSIGNED_INT;
-			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL4.GL_RGBA32F
-			                                                     	: GL4.GL_R32F;
+			mTextureOpenGLDataType = GL.GL_UNSIGNED_INT;
+			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL.GL_RGBA32F
+																														: GL2.GL_R32F;
 			mBytesPerChannel = 4;
 		}
 		else if (mType == NativeTypeEnum.Float)
 		{
-			mTextureOpenGLDataType = GL4.GL_FLOAT;
-			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL4.GL_RGBA32F
-			                                                     	: GL4.GL_R32F;
+			mTextureOpenGLDataType = GL.GL_FLOAT;
+			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL.GL_RGBA32F
+																														: GL2.GL_R32F;
 			mBytesPerChannel = 4;
 		}
 
@@ -147,22 +147,22 @@ public class GLTexture implements GLInterface, GLCloseable
 		bind();
 		mGLInterface.getGL()
 		.glTexParameterf(	mTextureTarget,
-		                 	GL4.GL_TEXTURE_MAG_FILTER,
-		                 	pLinearInterpolation ? GL4.GL_LINEAR
-		                 	                     : GL4.GL_NEAREST);
+																	GL.GL_TEXTURE_MAG_FILTER,
+																	pLinearInterpolation ? GL.GL_LINEAR
+																											: GL.GL_NEAREST);
 		mGLInterface.getGL()
 		.glTexParameterf(	mTextureTarget,
-		                 	GL4.GL_TEXTURE_MIN_FILTER,
-		                 	pMipMapLevels > 1	? (pLinearInterpolation	? GL4.GL_LINEAR_MIPMAP_LINEAR
-		                 	                 	                       	: GL4.GL_NEAREST_MIPMAP_NEAREST)
-		                 	                 	                       	: (pLinearInterpolation	? GL4.GL_LINEAR
-		                 	                 	                       	                       	: GL4.GL_NEAREST));
+																	GL.GL_TEXTURE_MIN_FILTER,
+																	pMipMapLevels > 1	? (pLinearInterpolation	? GL.GL_LINEAR_MIPMAP_LINEAR
+																																						: GL.GL_NEAREST_MIPMAP_NEAREST)
+																										: (pLinearInterpolation	? GL.GL_LINEAR
+																																						: GL.GL_NEAREST));
 		mGLInterface.getGL().glTexParameterf(	mTextureTarget,
-		                                     	GL4.GL_TEXTURE_WRAP_S,
-		                                     	GL4.GL_CLAMP_TO_EDGE);
+																					GL.GL_TEXTURE_WRAP_S,
+																					GL.GL_CLAMP_TO_EDGE);
 		mGLInterface.getGL().glTexParameterf(	mTextureTarget,
-		                                     	GL4.GL_TEXTURE_WRAP_T,
-		                                     	GL4.GL_CLAMP_TO_EDGE);
+																					GL.GL_TEXTURE_WRAP_T,
+																					GL.GL_CLAMP_TO_EDGE);
 
 		mGLInterface.getGL().glTexStorage2D(mTextureTarget,
 		                                    pMipMapLevels,
@@ -210,14 +210,14 @@ public class GLTexture implements GLInterface, GLCloseable
 
 	public void bind()
 	{
-		mGLInterface.getGL().glActiveTexture(GL4.GL_TEXTURE0);
+		mGLInterface.getGL().glActiveTexture(GL.GL_TEXTURE0);
 		mGLInterface.getGL().glBindTexture(mTextureTarget, getId());
 	}
 
 	public void bind(int pTextureUnit)
 	{
 		mGLInterface.getGL()
-		.glActiveTexture(GL4.GL_TEXTURE0 + pTextureUnit);
+								.glActiveTexture(GL.GL_TEXTURE0 + pTextureUnit);
 		mGLInterface.getGL().glBindTexture(mTextureTarget, getId());
 	}
 

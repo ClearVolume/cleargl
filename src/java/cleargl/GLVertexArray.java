@@ -20,14 +20,14 @@ public class GLVertexArray implements GLCloseable, GLInterface
 		super();
 		mGLInterface = pGLInterface;
 		mVertexArrayId = new int[1];
-		getGL().getGL2().glGenVertexArrays(1, mVertexArrayId, 0);
+		getGL().getGL3().glGenVertexArrays(1, mVertexArrayId, 0);
 	}
 
 	@Override
 	public void close() throws GLException
 	{
 		mGLInterface.getGL()
-								.getGL2()
+								.getGL3()
 								.glDeleteVertexArrays(1, mVertexArrayId, 0);
 	}
 
@@ -47,8 +47,8 @@ public class GLVertexArray implements GLCloseable, GLInterface
 													pFloatBuffer.remaining() * (Float.SIZE / 8),
 													pFloatBuffer,
 													GL.GL_STATIC_DRAW);
-		getGL().getGL2().glEnableVertexAttribArray(lAttribute.getIndex());
-		getGL().getGL2().glVertexAttribPointer(	lAttribute.getIndex(),
+		getGL().getGL3().glEnableVertexAttribArray(lAttribute.getIndex());
+		getGL().getGL3().glVertexAttribPointer(	lAttribute.getIndex(),
 																	lElementsPerIndex,
 																	GL.GL_FLOAT,
 																	false,

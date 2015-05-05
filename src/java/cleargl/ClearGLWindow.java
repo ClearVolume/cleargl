@@ -122,7 +122,9 @@ public class ClearGLWindow implements ClearGLDisplayable
 		mProjectionMatrix = new GLMatrix();
 		mViewMatrix = new GLMatrix();
 
-		final GLProfile lProfile = GLProfile.get(GLProfile.GL4);
+		final GLProfile lProfile = GLProfile.getMaxProgrammable(true);
+		System.out.println(this.getClass().getSimpleName() + ": "
+												+ lProfile);
 		final GLCapabilities lCapabilities = new GLCapabilities(lProfile);
 
 		lCapabilities.setSampleBuffers(true);

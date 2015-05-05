@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import javax.media.opengl.GL;
-import javax.media.opengl.GL4;
+import javax.media.opengl.GL2;
 import javax.media.opengl.GLException;
 
 public class GLProgram implements GLInterface, GLCloseable
@@ -119,12 +119,12 @@ public class GLProgram implements GLInterface, GLCloseable
 		final int lVertexShaderId = mVerteShader.getId();
 		final int lFragmentShaderId = mFragmentShader.getId();
 
-		mProgramId = mGL.getGL2().glCreateProgram();
-		mGL.getGL2().glAttachShader(mProgramId, lVertexShaderId);
-		mGL.getGL2().glAttachShader(mProgramId, lFragmentShaderId);
-		mGL.getGL2().glLinkProgram(mProgramId);
+		mProgramId = mGL.getGL3().glCreateProgram();
+		mGL.getGL3().glAttachShader(mProgramId, lVertexShaderId);
+		mGL.getGL3().glAttachShader(mProgramId, lFragmentShaderId);
+		mGL.getGL3().glLinkProgram(mProgramId);
 
-		mGL.getGL2().glBindFragDataLocation(mProgramId, 0, "outColor");
+		mGL.getGL3().glBindFragDataLocation(mProgramId, 0, "outColor");
 	}
 
 	public GLProgram(GL pGL, HashMap<GLShaderType, GLShader> pipeline)
@@ -133,24 +133,24 @@ public class GLProgram implements GLInterface, GLCloseable
 
 		mGL = pGL;
 
-		mProgramId = mGL.getGL2().glCreateProgram();
+		mProgramId = mGL.getGL3().glCreateProgram();
 
     for(final GLShader shader: pipeline.values()) {
-			mGL.getGL2().glAttachShader(mProgramId, shader.getId());
+			mGL.getGL3().glAttachShader(mProgramId, shader.getId());
     }
 
-		mGL.getGL2().glLinkProgram(mProgramId);
+		mGL.getGL3().glLinkProgram(mProgramId);
   }
 
 	@Override
 	public void close() throws GLException
 	{
-		mGL.getGL2().glDeleteProgram(mProgramId);
+		mGL.getGL3().glDeleteProgram(mProgramId);
 	}
 
 	public GLAttribute getAtribute(String pAttributeName)
 	{
-		final int lAttributeId = mGL.getGL2()
+		final int lAttributeId = mGL.getGL3()
 																.glGetAttribLocation(	mProgramId,
 																								pAttributeName);
 		final GLAttribute lGLAttribute = new GLAttribute(this, lAttributeId);
@@ -159,7 +159,7 @@ public class GLProgram implements GLInterface, GLCloseable
 
 	public GLUniform getUniform(String pUniformName)
 	{
-		final int lUniformId = mGL.getGL2()
+		final int lUniformId = mGL.getGL3()
 															.glGetUniformLocation(mProgramId,
 																								pUniformName);
 		final GLUniform lGLUniform = new GLUniform(this, lUniformId);
@@ -168,12 +168,12 @@ public class GLProgram implements GLInterface, GLCloseable
 
 	public void bind()
 	{
-		mGL.getGL2().glUseProgram(mProgramId);
+		mGL.getGL3().glUseProgram(mProgramId);
 	}
 
 	public void unbind()
 	{
-		mGL.getGL2().glUseProgram(0);
+		mGL.getGL3().glUseProgram(0);
 	}
 
 	public void use(GL pGL)
@@ -184,13 +184,13 @@ public class GLProgram implements GLInterface, GLCloseable
 
 	public String getProgramInfoLog()
 	{
-		final int lLogLength = getProgramParameter(GL4.GL_INFO_LOG_LENGTH);
+		final int lLogLength = getProgramParameter(GL2.GL_INFO_LOG_LENGTH);
 		if (lLogLength <= 0)
 			return "";
 
 		final int[] lLength = new int[1];
 		final byte[] lBytes = new byte[lLogLength + 1];
-		mGL.getGL2().glGetProgramInfoLog(	mProgramId,
+		mGL.getGL3().glGetProgramInfoLog(	mProgramId,
 															lLogLength,
 															lLength,
 															0,
@@ -204,7 +204,7 @@ public class GLProgram implements GLInterface, GLCloseable
 	public int getProgramParameter(int pParameterName)
 	{
 		final int lParameter[] = new int[1];
-		mGL.getGL2().glGetProgramiv(mProgramId,
+		mGL.getGL3().glGetProgramiv(mProgramId,
 																pParameterName,
 																lParameter,
 																0);

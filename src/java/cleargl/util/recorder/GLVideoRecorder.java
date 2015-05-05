@@ -16,7 +16,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
-import javax.media.opengl.GL4;
 import javax.media.opengl.GLAutoDrawable;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -320,14 +319,14 @@ public class GLVideoRecorder
 
 				final GL lGL = pDrawable.getGL();
 
-				lGL.getGL2().glReadBuffer(GL4.GL_BACK);
-				lGL.glPixelStorei(GL4.GL_PACK_ALIGNMENT, 1);
+				lGL.getGL3().glReadBuffer(GL.GL_BACK);
+				lGL.glPixelStorei(GL.GL_PACK_ALIGNMENT, 1);
 				lGL.glReadPixels(0, // GLint x
 													0, // GLint y
 													lWidth, // GLsizei width
 													lHeight, // GLsizei height
-													GL4.GL_RGB, // GLenum format
-													GL4.GL_UNSIGNED_BYTE, // GLenum type
+													GL.GL_RGB, // GLenum format
+													GL.GL_UNSIGNED_BYTE, // GLenum type
 													lByteBuffer); // GLvoid *pixels
 				mLastImageTimePoint = System.nanoTime();
 

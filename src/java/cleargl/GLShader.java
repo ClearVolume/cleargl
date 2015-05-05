@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
+import javax.media.opengl.GL3;
 import javax.media.opengl.GL4;
 import javax.media.opengl.GLException;
 
@@ -18,7 +20,7 @@ public class GLShader implements GLInterface, GLCloseable
 	private final String mShaderSource;
 
 	public GLShader(GL pGL,
-	                Class<?> pRootClass,
+									Class<?> pRootClass,
 									String pRessourceName,
 									GLShaderType pShaderType) throws IOException
 	{
@@ -28,19 +30,24 @@ public class GLShader implements GLInterface, GLCloseable
 		mShaderSource = IOUtils.toString(lResourceAsStream, "UTF-8");
 		mShaderType = pShaderType;
 
-    final HashMap<GLShaderType, Integer> glShaderTypeMapping = new HashMap<>();
-    glShaderTypeMapping.put(GLShaderType.VertexShader, GL4.GL_VERTEX_SHADER);
-    glShaderTypeMapping.put(GLShaderType.GeometryShader, GL4.GL_GEOMETRY_SHADER);
-    glShaderTypeMapping.put(GLShaderType.TesselationControlShader, GL4.GL_TESS_CONTROL_SHADER);
-    glShaderTypeMapping.put(GLShaderType.TesselationEvaluationShader, GL4.GL_TESS_EVALUATION_SHADER);
-    glShaderTypeMapping.put(GLShaderType.FragmentShader, GL4.GL_FRAGMENT_SHADER);
+		final HashMap<GLShaderType, Integer> glShaderTypeMapping = new HashMap<>();
+		glShaderTypeMapping.put(GLShaderType.VertexShader,
+														GL2.GL_VERTEX_SHADER);
+		glShaderTypeMapping.put(GLShaderType.GeometryShader,
+														GL3.GL_GEOMETRY_SHADER);
+		glShaderTypeMapping.put(GLShaderType.TesselationControlShader,
+														GL4.GL_TESS_CONTROL_SHADER);
+		glShaderTypeMapping.put(GLShaderType.TesselationEvaluationShader,
+														GL4.GL_TESS_EVALUATION_SHADER);
+		glShaderTypeMapping.put(GLShaderType.FragmentShader,
+														GL2.GL_FRAGMENT_SHADER);
 
-    final int lShaderTypeInt = glShaderTypeMapping.get(pShaderType);
+		final int lShaderTypeInt = glShaderTypeMapping.get(pShaderType);
 
-		mShaderId = pGL.getGL2().glCreateShader(lShaderTypeInt);
-		mGL.getGL2().glShaderSource(mShaderId, 1, new String[]
+		mShaderId = pGL.getGL3().glCreateShader(lShaderTypeInt);
+		mGL.getGL3().glShaderSource(mShaderId, 1, new String[]
 		{ mShaderSource }, null);
-		mGL.getGL2().glCompileShader(mShaderId);
+		mGL.getGL3().glCompileShader(mShaderId);
 
 	}
 
@@ -53,26 +60,31 @@ public class GLShader implements GLInterface, GLCloseable
 		mShaderSource = pShaderSourceAsString;
 		mShaderType = pShaderType;
 
-    final HashMap<GLShaderType, Integer> glShaderTypeMapping = new HashMap<>();
-    glShaderTypeMapping.put(GLShaderType.VertexShader, GL4.GL_VERTEX_SHADER);
-    glShaderTypeMapping.put(GLShaderType.GeometryShader, GL4.GL_GEOMETRY_SHADER);
-    glShaderTypeMapping.put(GLShaderType.TesselationControlShader, GL4.GL_TESS_CONTROL_SHADER);
-    glShaderTypeMapping.put(GLShaderType.TesselationEvaluationShader, GL4.GL_TESS_EVALUATION_SHADER);
-    glShaderTypeMapping.put(GLShaderType.FragmentShader, GL4.GL_FRAGMENT_SHADER);
+		final HashMap<GLShaderType, Integer> glShaderTypeMapping = new HashMap<>();
+		glShaderTypeMapping.put(GLShaderType.VertexShader,
+														GL4.GL_VERTEX_SHADER);
+		glShaderTypeMapping.put(GLShaderType.GeometryShader,
+														GL4.GL_GEOMETRY_SHADER);
+		glShaderTypeMapping.put(GLShaderType.TesselationControlShader,
+														GL4.GL_TESS_CONTROL_SHADER);
+		glShaderTypeMapping.put(GLShaderType.TesselationEvaluationShader,
+														GL4.GL_TESS_EVALUATION_SHADER);
+		glShaderTypeMapping.put(GLShaderType.FragmentShader,
+														GL4.GL_FRAGMENT_SHADER);
 
 		final int lShaderTypeInt = glShaderTypeMapping.get(pShaderType);
 
-		mShaderId = pGL.getGL2().glCreateShader(lShaderTypeInt);
-		mGL.getGL2().glShaderSource(mShaderId, 1, new String[]
+		mShaderId = pGL.getGL3().glCreateShader(lShaderTypeInt);
+		mGL.getGL3().glShaderSource(mShaderId, 1, new String[]
 		{ mShaderSource }, null);
-		mGL.getGL2().glCompileShader(mShaderId);
+		mGL.getGL3().glCompileShader(mShaderId);
 
 	}
 
 	@Override
 	public void close() throws GLException
 	{
-		mGL.getGL2().glDeleteShader(mShaderId);
+		mGL.getGL3().glDeleteShader(mShaderId);
 	}
 
 	public String getShaderInfoLog()
@@ -83,7 +95,7 @@ public class GLShader implements GLInterface, GLCloseable
 
 		final int[] lLength = new int[1];
 		final byte[] lBytes = new byte[logLen + 1];
-		mGL.getGL2().glGetShaderInfoLog(mShaderId,
+		mGL.getGL3().glGetShaderInfoLog(mShaderId,
 																		logLen,
 																		lLength,
 																		0,
@@ -96,10 +108,9 @@ public class GLShader implements GLInterface, GLCloseable
 	public int getShaderParameter(int pParamName)
 	{
 		final int lParameter[] = new int[1];
-		mGL.getGL2().glGetShaderiv(mShaderId, pParamName, lParameter, 0);
+		mGL.getGL3().glGetShaderiv(mShaderId, pParamName, lParameter, 0);
 		return lParameter[0];
 	}
-
 
 	@Override
 	public int getId()

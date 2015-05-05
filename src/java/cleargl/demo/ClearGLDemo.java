@@ -97,7 +97,7 @@ public class ClearGLDemo
 				{
 					final GL lGL = pDrawable.getGL();
 					lGL.glDisable(GL.GL_DEPTH_TEST);
-					// pGL4.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+					// pGL.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 					mGLProgram1 = GLProgram.buildProgram(	lGL,
 																								ClearGLDemo.class,

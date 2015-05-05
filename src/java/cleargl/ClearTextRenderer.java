@@ -20,7 +20,8 @@ import java.util.HashMap;
 import java.util.Hashtable;
 
 import javax.media.opengl.GL;
-import javax.media.opengl.GL4;
+import javax.media.opengl.GL2;
+
 
 /**
  * Created by ulrik on 11/02/15.
@@ -39,8 +40,9 @@ public class ClearTextRenderer {
 
   protected HashMap<String, ByteBuffer> textureCache = new HashMap<>();
 
-  public ClearTextRenderer(GL4 pGL4, boolean shouldCache) {
-    init(pGL4);
+	public ClearTextRenderer(GL pGL, boolean shouldCache)
+	{
+		init(pGL);
     mShouldCache = true;
   }
 
@@ -119,7 +121,7 @@ public class ClearTextRenderer {
       textureCache.put(text, imageBuffer);
     }
 
-		mGL.glClear(GL4.GL_DEPTH_BUFFER_BIT | GL4.GL_STENCIL_BUFFER_BIT);
+		mGL.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
 
 		mGL.glDisable(mGL.GL_CULL_FACE);
 		mGL.glDisable(mGL.GL_DEPTH_TEST);
@@ -157,84 +159,98 @@ public class ClearTextRenderer {
             1.0f, 1.0f
     });
 
-		mGL.glUseProgram(mProg.getId());
+		mGL.getGL3().glUseProgram(mProg.getId());
 
     ModelMatrix.setIdentity();
     ViewMatrix.setIdentity();
     ProjectionMatrix.setOrthoProjectionMatrix(0.0f, windowSizeX, 0.0f, windowSizeY, -1.0f, 1.0f);
 
-		mGL.glGenVertexArrays(1, ui_vao, 0);
-		mGL.glBindVertexArray(ui_vao[0]);
-		mGL.glGenBuffers(3, ui_vbo, 0);
+		mGL.getGL3().glGenVertexArrays(1, ui_vao, 0);
+		mGL.getGL3().glBindVertexArray(ui_vao[0]);
+		mGL.getGL3().glGenBuffers(3, ui_vbo, 0);
 
-		mGL.glBindBuffer(GL4.GL_ARRAY_BUFFER, ui_vbo[0]);
-		mGL.glBufferData(	GL4.GL_ARRAY_BUFFER,
+		mGL.glBindBuffer(GL.GL_ARRAY_BUFFER, ui_vbo[0]);
+		mGL.glBufferData(	GL.GL_ARRAY_BUFFER,
 											vertices.limit() * (Float.SIZE / Byte.SIZE),
 											vertices,
-											GL4.GL_STATIC_DRAW);
-		mGL.glEnableVertexAttribArray(0);
-		mGL.glVertexAttribPointer(0, 3, GL4.GL_FLOAT, false, 0, 0);
+											GL.GL_STATIC_DRAW);
+		mGL.getGL3().glEnableVertexAttribArray(0);
+		mGL.getGL3().glVertexAttribPointer(	0,
+																				3,
+ GL.GL_FLOAT,
+																				false,
+																				0,
+																				0);
 
-		mGL.glBindBuffer(GL4.GL_ARRAY_BUFFER, ui_vbo[1]);
-		mGL.glBufferData(	GL4.GL_ARRAY_BUFFER,
+		mGL.glBindBuffer(GL.GL_ARRAY_BUFFER, ui_vbo[1]);
+		mGL.glBufferData(	GL.GL_ARRAY_BUFFER,
 											normals.limit() * (Float.SIZE / Byte.SIZE),
 											normals,
-											GL4.GL_STATIC_DRAW);
-		mGL.glEnableVertexAttribArray(1);
-		mGL.glVertexAttribPointer(1, 3, GL4.GL_FLOAT, false, 0, 0);
+											GL.GL_STATIC_DRAW);
+		mGL.getGL3().glEnableVertexAttribArray(1);
+		mGL.getGL3().glVertexAttribPointer(	1,
+																				3,
+ GL.GL_FLOAT,
+																				false,
+																				0,
+																				0);
 
-		mGL.glBindBuffer(GL4.GL_ARRAY_BUFFER, ui_vbo[2]);
-		mGL.glBufferData(	GL4.GL_ARRAY_BUFFER,
+		mGL.glBindBuffer(GL.GL_ARRAY_BUFFER, ui_vbo[2]);
+		mGL.glBufferData(	GL.GL_ARRAY_BUFFER,
 											texCoords.limit() * (Float.SIZE / Byte.SIZE),
 											texCoords,
-											GL4.GL_STATIC_DRAW);
-		mGL.glEnableVertexAttribArray(2);
-		mGL.glVertexAttribPointer(2, 2, GL4.GL_FLOAT, false, 0, 0);
+											GL.GL_STATIC_DRAW);
+		mGL.getGL3().glEnableVertexAttribArray(2);
+		mGL.getGL3().glVertexAttribPointer(	2,
+																				2,
+ GL.GL_FLOAT,
+																				false,
+																				0,
+																				0);
 
-		mGL.glActiveTexture(GL4.GL_TEXTURE1);
+		mGL.glActiveTexture(GL.GL_TEXTURE1);
 		mGL.glGenTextures(1, uiTexture, 0);
-		mGL.glBindTexture(GL4.GL_TEXTURE_2D, uiTexture[0]);
+		mGL.glBindTexture(GL.GL_TEXTURE_2D, uiTexture[0]);
 
-		mGL.glTexParameteri(GL4.GL_TEXTURE_2D,
-												GL4.GL_TEXTURE_MIN_FILTER,
-												GL4.GL_NEAREST);
-		mGL.glTexParameteri(GL4.GL_TEXTURE_2D,
-												GL4.GL_TEXTURE_MAG_FILTER,
-												GL4.GL_NEAREST);
+		mGL.glTexParameteri(GL.GL_TEXTURE_2D,
+												GL.GL_TEXTURE_MIN_FILTER,
+												GL.GL_NEAREST);
+		mGL.glTexParameteri(GL.GL_TEXTURE_2D,
+												GL.GL_TEXTURE_MAG_FILTER,
+												GL.GL_NEAREST);
 
-		mGL.glTexParameteri(GL4.GL_TEXTURE_2D,
-												GL4.GL_TEXTURE_BASE_LEVEL,
+		mGL.glTexParameteri(GL.GL_TEXTURE_2D,
+												GL2.GL_TEXTURE_BASE_LEVEL,
 												0);
-		mGL.glTexParameteri(GL4.GL_TEXTURE_2D,
-												GL4.GL_TEXTURE_MAX_LEVEL,
+		mGL.glTexParameteri(GL.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAX_LEVEL,
 												0);
 
-		mGL.glTexImage2D(	GL4.GL_TEXTURE_2D,
+		mGL.glTexImage2D(	GL.GL_TEXTURE_2D,
 											0,
-											GL4.GL_RGBA8,
+											GL.GL_RGBA8,
 											width,
 											height,
 											0,
-											GL4.GL_RGBA,
-											GL4.GL_UNSIGNED_BYTE,
+											GL.GL_RGBA,
+											GL.GL_UNSIGNED_BYTE,
 											textureCache.get(text));
 
     mProg.getUniform("uitex").set(1);
     ModelMatrix.mult(ViewMatrix);
     mProg.getUniform("ModelViewMatrix").setFloatMatrix(ModelMatrix.getFloatArray(), false);
     mProg.getUniform("ProjectionMatrix").setFloatMatrix(ProjectionMatrix.getFloatArray(), false);
-		mGL.glUseProgram(mProg.getId());
+		mGL.getGL3().glUseProgram(mProg.getId());
 
-		mGL.glDrawArrays(GL4.GL_TRIANGLE_STRIP, 0, 4);
+		mGL.glDrawArrays(GL.GL_TRIANGLE_STRIP, 0, 4);
 
-		mGL.glDisableVertexAttribArray(0);
+		mGL.getGL3().glDisableVertexAttribArray(0);
 
-		mGL.glBindBuffer(GL4.GL_ARRAY_BUFFER, 0);
-		mGL.glBindTexture(GL4.GL_TEXTURE_2D, 0);
+		mGL.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+		mGL.glBindTexture(GL.GL_TEXTURE_2D, 0);
 
 		mGL.glDeleteTextures(1, uiTexture, 0);
 		mGL.glDeleteBuffers(3, ui_vbo, 0);
-		mGL.glDeleteVertexArrays(1, ui_vao, 0);
+		mGL.getGL3().glDeleteVertexArrays(1, ui_vao, 0);
   }
 
 }
