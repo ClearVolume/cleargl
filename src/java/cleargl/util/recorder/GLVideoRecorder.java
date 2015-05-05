@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.imageio.ImageIO;
+import javax.media.opengl.GL;
 import javax.media.opengl.GL4;
 import javax.media.opengl.GLAutoDrawable;
 import javax.swing.JDialog;
@@ -317,11 +318,11 @@ public class GLVideoRecorder
 																	.order(ByteOrder.nativeOrder());
 				}
 
-				final GL4 lGL4 = pDrawable.getGL().getGL4();
+				final GL lGL = pDrawable.getGL();
 
-				lGL4.glReadBuffer(GL4.GL_BACK);
-				lGL4.glPixelStorei(GL4.GL_PACK_ALIGNMENT, 1);
-				lGL4.glReadPixels(0, // GLint x
+				lGL.getGL2().glReadBuffer(GL4.GL_BACK);
+				lGL.glPixelStorei(GL4.GL_PACK_ALIGNMENT, 1);
+				lGL.glReadPixels(0, // GLint x
 													0, // GLint y
 													lWidth, // GLsizei width
 													lHeight, // GLsizei height

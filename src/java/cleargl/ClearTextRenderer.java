@@ -1,15 +1,26 @@
 package cleargl;
 
-import javax.media.opengl.GL4;
-import java.awt.*;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.Transparency;
 import java.awt.color.ColorSpace;
-import java.awt.image.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DataBuffer;
+import java.awt.image.DataBufferByte;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Hashtable;
+
+import javax.media.opengl.GL;
+import javax.media.opengl.GL4;
 
 /**
  * Created by ulrik on 11/02/15.
@@ -23,7 +34,7 @@ public class ClearTextRenderer {
   protected GLMatrix ViewMatrix = new GLMatrix();
   protected GLMatrix ProjectionMatrix = new GLMatrix();
 
-  protected GL4 mGL4;
+	protected GL mGL;
   protected final boolean mShouldCache;
 
   protected HashMap<String, ByteBuffer> textureCache = new HashMap<>();
@@ -33,25 +44,30 @@ public class ClearTextRenderer {
     mShouldCache = true;
   }
 
-  public void init(GL4 pGL4) {
-    mGL4 = pGL4;
+	public void init(GL pGL)
+	{
+		mGL = pGL;
     try {
-      mProg = GLProgram.buildProgram(	pGL4,
+			mProg = GLProgram.buildProgram(	pGL,
               ClearTextRenderer.class,
               new String[]{"shaders/text_vert.glsl",
                       "shaders/text_frag.glsl"});
-    } catch (IOException e) {
+    } catch (final IOException e) {
       e.printStackTrace();
     }
   }
 
   public void drawTextAtPosition(String text, int screenX, int screenY, Font font, FloatBuffer color, boolean antiAliased) {
 
-    int windowSizeX = mGL4.getContext().getGLDrawable().getSurfaceWidth()/2;
-    int windowSizeY = mGL4.getContext().getGLDrawable().getSurfaceHeight()/2;
+		final int windowSizeX = mGL.getContext()
+																.getGLDrawable()
+																.getSurfaceWidth() / 2;
+		final int windowSizeY = mGL.getContext()
+																.getGLDrawable()
+																.getSurfaceHeight() / 2;
 
-    int width = text.length() * font.getSize();
-    int height = font.getSize();
+    final int width = text.length() * font.getSize();
+    final int height = font.getSize();
 
     // don't store more then 50 textures
     if(textureCache.size() > 50) {
@@ -61,7 +77,7 @@ public class ClearTextRenderer {
     if(!mShouldCache || (mShouldCache && !textureCache.containsKey(text))) {
       ByteBuffer imageBuffer;
 
-      ColorModel glAlphaColorModel = new ComponentColorModel(ColorSpace
+      final ColorModel glAlphaColorModel = new ComponentColorModel(ColorSpace
               .getInstance(ColorSpace.CS_sRGB), new int[]{8, 8, 8, 8},
               true, false, Transparency.TRANSLUCENT, DataBuffer.TYPE_BYTE);
       WritableRaster raster;
@@ -80,7 +96,7 @@ public class ClearTextRenderer {
       g2d.setFont(font);
 
       if (antiAliased) {
-        RenderingHints rh = new RenderingHints(
+        final RenderingHints rh = new RenderingHints(
                 RenderingHints.KEY_TEXT_ANTIALIASING,
                 RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
 
@@ -89,7 +105,7 @@ public class ClearTextRenderer {
 
       g2d.drawString(text, 0, font.getSize());
 
-      byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
+      final byte[] data = ((DataBufferByte) image.getRaster().getDataBuffer()).getData();
 
       imageBuffer = ByteBuffer.allocateDirect(data.length);
       imageBuffer.order(ByteOrder.nativeOrder());
@@ -103,97 +119,122 @@ public class ClearTextRenderer {
       textureCache.put(text, imageBuffer);
     }
 
-    mGL4.glClear(GL4.GL_DEPTH_BUFFER_BIT | GL4.GL_STENCIL_BUFFER_BIT);
+		mGL.glClear(GL4.GL_DEPTH_BUFFER_BIT | GL4.GL_STENCIL_BUFFER_BIT);
 
-    mGL4.glDisable(mGL4.GL_CULL_FACE);
-    mGL4.glDisable(mGL4.GL_DEPTH_TEST);
+		mGL.glDisable(mGL.GL_CULL_FACE);
+		mGL.glDisable(mGL.GL_DEPTH_TEST);
 
-    mGL4.glEnable(mGL4.GL_BLEND);
-    mGL4.glBlendFunc(mGL4.GL_SRC_ALPHA, mGL4.GL_ONE_MINUS_SRC_ALPHA);
+		mGL.glEnable(mGL.GL_BLEND);
+		mGL.glBlendFunc(mGL.GL_SRC_ALPHA, mGL.GL_ONE_MINUS_SRC_ALPHA);
 
-    int[] uiTexture = new int[1];
-    int[] ui_vbo = new int[3];
-    int[] ui_vao = new int[1];
+    final int[] uiTexture = new int[1];
+    final int[] ui_vbo = new int[3];
+    final int[] ui_vao = new int[1];
 
-    float w = width;
-    float h = height;
-    float x = (float)screenX;
-    float y = (float)screenY;
+    final float w = width;
+    final float h = height;
+    final float x = screenX;
+    final float y = screenY;
 
-    FloatBuffer vertices = FloatBuffer.wrap(new float[]{
+    final FloatBuffer vertices = FloatBuffer.wrap(new float[]{
             x, y+h, 0.0f,
             x+w, y+h, 0.0f,
             x, y, 0.0f,
             x+w, y, 0.0f
     });
 
-    FloatBuffer normals = FloatBuffer.wrap(new float[]{
+    final FloatBuffer normals = FloatBuffer.wrap(new float[]{
             0.0f, 0.0f, -1.0f,
             0.0f, 0.0f, -1.0f,
             0.0f, 0.0f, -1.0f,
             0.0f, 0.0f, -1.0f,
     });
 
-    FloatBuffer texCoords = FloatBuffer.wrap(new float[] {
+    final FloatBuffer texCoords = FloatBuffer.wrap(new float[] {
             0.0f, 0.0f,
             1.0f, 0.0f,
             0.0f, 1.0f,
             1.0f, 1.0f
     });
 
-    mGL4.glUseProgram(mProg.getId());
+		mGL.glUseProgram(mProg.getId());
 
     ModelMatrix.setIdentity();
     ViewMatrix.setIdentity();
     ProjectionMatrix.setOrthoProjectionMatrix(0.0f, windowSizeX, 0.0f, windowSizeY, -1.0f, 1.0f);
 
-    mGL4.glGenVertexArrays(1, ui_vao, 0);
-    mGL4.glBindVertexArray(ui_vao[0]);
-    mGL4.glGenBuffers(3, ui_vbo, 0);
+		mGL.glGenVertexArrays(1, ui_vao, 0);
+		mGL.glBindVertexArray(ui_vao[0]);
+		mGL.glGenBuffers(3, ui_vbo, 0);
 
-    mGL4.glBindBuffer(GL4.GL_ARRAY_BUFFER, ui_vbo[0]);
-    mGL4.glBufferData(GL4.GL_ARRAY_BUFFER, vertices.limit() * (Float.SIZE/Byte.SIZE), vertices, GL4.GL_STATIC_DRAW);
-    mGL4.glEnableVertexAttribArray(0);
-    mGL4.glVertexAttribPointer(0, 3, GL4.GL_FLOAT, false, 0, 0);
+		mGL.glBindBuffer(GL4.GL_ARRAY_BUFFER, ui_vbo[0]);
+		mGL.glBufferData(	GL4.GL_ARRAY_BUFFER,
+											vertices.limit() * (Float.SIZE / Byte.SIZE),
+											vertices,
+											GL4.GL_STATIC_DRAW);
+		mGL.glEnableVertexAttribArray(0);
+		mGL.glVertexAttribPointer(0, 3, GL4.GL_FLOAT, false, 0, 0);
 
-    mGL4.glBindBuffer(GL4.GL_ARRAY_BUFFER, ui_vbo[1]);
-    mGL4.glBufferData(GL4.GL_ARRAY_BUFFER, normals.limit() * (Float.SIZE/Byte.SIZE), normals, GL4.GL_STATIC_DRAW);
-    mGL4.glEnableVertexAttribArray(1);
-    mGL4.glVertexAttribPointer(1, 3, GL4.GL_FLOAT, false, 0, 0);
+		mGL.glBindBuffer(GL4.GL_ARRAY_BUFFER, ui_vbo[1]);
+		mGL.glBufferData(	GL4.GL_ARRAY_BUFFER,
+											normals.limit() * (Float.SIZE / Byte.SIZE),
+											normals,
+											GL4.GL_STATIC_DRAW);
+		mGL.glEnableVertexAttribArray(1);
+		mGL.glVertexAttribPointer(1, 3, GL4.GL_FLOAT, false, 0, 0);
 
-    mGL4.glBindBuffer(GL4.GL_ARRAY_BUFFER, ui_vbo[2]);
-    mGL4.glBufferData(GL4.GL_ARRAY_BUFFER, texCoords.limit() * (Float.SIZE/Byte.SIZE), texCoords, GL4.GL_STATIC_DRAW);
-    mGL4.glEnableVertexAttribArray(2);
-    mGL4.glVertexAttribPointer(2, 2, GL4.GL_FLOAT, false, 0, 0);
+		mGL.glBindBuffer(GL4.GL_ARRAY_BUFFER, ui_vbo[2]);
+		mGL.glBufferData(	GL4.GL_ARRAY_BUFFER,
+											texCoords.limit() * (Float.SIZE / Byte.SIZE),
+											texCoords,
+											GL4.GL_STATIC_DRAW);
+		mGL.glEnableVertexAttribArray(2);
+		mGL.glVertexAttribPointer(2, 2, GL4.GL_FLOAT, false, 0, 0);
 
-    mGL4.glActiveTexture(GL4.GL_TEXTURE1);
-    mGL4.glGenTextures(1, uiTexture, 0);
-    mGL4.glBindTexture(GL4.GL_TEXTURE_2D, uiTexture[0]);
+		mGL.glActiveTexture(GL4.GL_TEXTURE1);
+		mGL.glGenTextures(1, uiTexture, 0);
+		mGL.glBindTexture(GL4.GL_TEXTURE_2D, uiTexture[0]);
 
-    mGL4.glTexParameteri(GL4.GL_TEXTURE_2D, GL4.GL_TEXTURE_MIN_FILTER, GL4.GL_NEAREST);
-    mGL4.glTexParameteri(GL4.GL_TEXTURE_2D, GL4.GL_TEXTURE_MAG_FILTER, GL4.GL_NEAREST);
+		mGL.glTexParameteri(GL4.GL_TEXTURE_2D,
+												GL4.GL_TEXTURE_MIN_FILTER,
+												GL4.GL_NEAREST);
+		mGL.glTexParameteri(GL4.GL_TEXTURE_2D,
+												GL4.GL_TEXTURE_MAG_FILTER,
+												GL4.GL_NEAREST);
 
-    mGL4.glTexParameteri(GL4.GL_TEXTURE_2D, GL4.GL_TEXTURE_BASE_LEVEL, 0);
-    mGL4.glTexParameteri(GL4.GL_TEXTURE_2D, GL4.GL_TEXTURE_MAX_LEVEL, 0);
+		mGL.glTexParameteri(GL4.GL_TEXTURE_2D,
+												GL4.GL_TEXTURE_BASE_LEVEL,
+												0);
+		mGL.glTexParameteri(GL4.GL_TEXTURE_2D,
+												GL4.GL_TEXTURE_MAX_LEVEL,
+												0);
 
-    mGL4.glTexImage2D(GL4.GL_TEXTURE_2D, 0, GL4.GL_RGBA8, width, height, 0, GL4.GL_RGBA, GL4.GL_UNSIGNED_BYTE, textureCache.get(text));
+		mGL.glTexImage2D(	GL4.GL_TEXTURE_2D,
+											0,
+											GL4.GL_RGBA8,
+											width,
+											height,
+											0,
+											GL4.GL_RGBA,
+											GL4.GL_UNSIGNED_BYTE,
+											textureCache.get(text));
 
     mProg.getUniform("uitex").set(1);
     ModelMatrix.mult(ViewMatrix);
     mProg.getUniform("ModelViewMatrix").setFloatMatrix(ModelMatrix.getFloatArray(), false);
     mProg.getUniform("ProjectionMatrix").setFloatMatrix(ProjectionMatrix.getFloatArray(), false);
-    mGL4.glUseProgram(mProg.getId());
+		mGL.glUseProgram(mProg.getId());
 
-    mGL4.glDrawArrays(GL4.GL_TRIANGLE_STRIP, 0, 4);
+		mGL.glDrawArrays(GL4.GL_TRIANGLE_STRIP, 0, 4);
 
-    mGL4.glDisableVertexAttribArray(0);
+		mGL.glDisableVertexAttribArray(0);
 
-    mGL4.glBindBuffer(GL4.GL_ARRAY_BUFFER, 0);
-    mGL4.glBindTexture(GL4.GL_TEXTURE_2D, 0);
+		mGL.glBindBuffer(GL4.GL_ARRAY_BUFFER, 0);
+		mGL.glBindTexture(GL4.GL_TEXTURE_2D, 0);
 
-    mGL4.glDeleteTextures(1, uiTexture, 0);
-    mGL4.glDeleteBuffers(3, ui_vbo, 0);
-    mGL4.glDeleteVertexArrays(1, ui_vao, 0);
+		mGL.glDeleteTextures(1, uiTexture, 0);
+		mGL.glDeleteBuffers(3, ui_vbo, 0);
+		mGL.glDeleteVertexArrays(1, ui_vao, 0);
   }
 
 }

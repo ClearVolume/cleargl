@@ -5,6 +5,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
+import javax.media.opengl.GL;
 import javax.media.opengl.GL4;
 import javax.media.opengl.GLException;
 
@@ -315,7 +316,7 @@ public class GLTexture implements GLInterface, GLCloseable
 	}
 
 	@Override
-	public GL4 getGL()
+	public GL getGL()
 	{
 		return mGLInterface.getGL();
 	}

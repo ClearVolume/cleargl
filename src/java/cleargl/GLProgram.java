@@ -1,63 +1,68 @@
 package cleargl;
 
-import javax.media.opengl.GL4;
-import javax.media.opengl.GLException;
 import java.io.IOException;
 import java.util.HashMap;
 
+import javax.media.opengl.GL;
+import javax.media.opengl.GL4;
+import javax.media.opengl.GLException;
+
 public class GLProgram implements GLInterface, GLCloseable
 {
-	private GL4 mGL4;
-	private int mProgramId;
+	private GL mGL;
+	private final int mProgramId;
 	private GLShader mVerteShader;
 	private GLShader mFragmentShader;
 
-	public static GLProgram buildProgram(	GL4 pGL4,
+	public static GLProgram buildProgram(	GL pGL,
 																				Class<?> pClass,
 																				String pVertexShaderRessourcePath,
 																				String pFragmentShaderRessourcePath) throws IOException
 	{
-		GLShader lVertexShader = new GLShader(pGL4,
+		final GLShader lVertexShader = new GLShader(pGL,
 																					pClass,
 																					pVertexShaderRessourcePath,
 																					GLShaderType.VertexShader);
 		System.out.println(lVertexShader.getShaderInfoLog());
 
-		GLShader lFragmentShader = new GLShader(pGL4,
+		final GLShader lFragmentShader = new GLShader(pGL,
 																						pClass,
 																						pFragmentShaderRessourcePath,
 																						GLShaderType.FragmentShader);
 		System.out.println(lFragmentShader.getShaderInfoLog());
-		GLProgram lGLProgram = new GLProgram(	lVertexShader,
+		final GLProgram lGLProgram = new GLProgram(	lVertexShader,
 																					lFragmentShader);
 		return lGLProgram;
 	}
 
-	public static GLProgram buildProgram(	GL4 pGL4,
+	public static GLProgram buildProgram(	GL pGL,
 																				String pVertexShaderSourceAsString,
 																				String pFragmentShaderSourceAsString) throws IOException
 	{
-		GLShader lVertexShader = new GLShader(pGL4,
+		final GLShader lVertexShader = new GLShader(pGL,
 																					pVertexShaderSourceAsString,
 																					GLShaderType.VertexShader);
 		System.out.println(lVertexShader.getShaderInfoLog());
 
-		GLShader lFragmentShader = new GLShader(pGL4,
+		final GLShader lFragmentShader = new GLShader(pGL,
 																						pFragmentShaderSourceAsString,
 																						GLShaderType.FragmentShader);
 		System.out.println(lFragmentShader.getShaderInfoLog());
-		GLProgram lGLProgram = new GLProgram(	lVertexShader,
+		final GLProgram lGLProgram = new GLProgram(	lVertexShader,
 																					lFragmentShader);
 
     System.out.println(lGLProgram.getProgramInfoLog());
 		return lGLProgram;
 	}
 
-  public static GLProgram buildProgram(	GL4 pGL4,
+	public static GLProgram buildProgram(	GL pGL,
                                          Class<?> pClass,
                                          String[] shaders) throws IOException
   {
-    GLProgram lGLProgram = new GLProgram(pGL4, shaderPipelineFromFilenames(pGL4, pClass, shaders));
+		final GLProgram lGLProgram = new GLProgram(	pGL,
+																								shaderPipelineFromFilenames(pGL,
+																																						pClass,
+																																						shaders));
 
     System.out.println(lGLProgram.getProgramInfoLog());
 
@@ -65,7 +70,7 @@ public class GLProgram implements GLInterface, GLCloseable
   }
 
   private static String shaderFileForType(GLShaderType type, String[] shaders) {
-    HashMap<GLShaderType, String> glslFilenameMapping = new HashMap<>();
+    final HashMap<GLShaderType, String> glslFilenameMapping = new HashMap<>();
 
     glslFilenameMapping.put(GLShaderType.VertexShader, "_vert.glsl");
     glslFilenameMapping.put(GLShaderType.GeometryShader, "_geom.glsl");
@@ -82,13 +87,19 @@ public class GLProgram implements GLInterface, GLCloseable
     return null;
   }
 
-  private static HashMap<GLShaderType, GLShader> shaderPipelineFromFilenames(GL4 pGL4, Class<?> rootClass, String[] shaders) throws IOException {
-    HashMap<GLShaderType, GLShader> pipeline  = new HashMap<>();
+	private static HashMap<GLShaderType, GLShader> shaderPipelineFromFilenames(	GL pGL,
+																																							Class<?> rootClass,
+																																							String[] shaders) throws IOException
+	{
+    final HashMap<GLShaderType, GLShader> pipeline  = new HashMap<>();
 
-    for(GLShaderType type: GLShaderType.values()) {
-      String filename = shaderFileForType(type, shaders);
+    for(final GLShaderType type: GLShaderType.values()) {
+      final String filename = shaderFileForType(type, shaders);
       if(filename != null) {
-        GLShader shader = new GLShader(pGL4, rootClass, filename, type);
+				final GLShader shader = new GLShader(	pGL,
+																							rootClass,
+																							filename,
+																							type);
         System.out.println(shader.getShaderInfoLog());
         pipeline.put(type, shader);
       }
@@ -103,68 +114,71 @@ public class GLProgram implements GLInterface, GLCloseable
 		mVerteShader = pVerteShader;
 		mFragmentShader = pFragmentShader;
 
-		mGL4 = pVerteShader.getGL();
+		mGL = pVerteShader.getGL();
 
 		final int lVertexShaderId = mVerteShader.getId();
 		final int lFragmentShaderId = mFragmentShader.getId();
 
-		mProgramId = mGL4.glCreateProgram();
-		mGL4.glAttachShader(mProgramId, lVertexShaderId);
-		mGL4.glAttachShader(mProgramId, lFragmentShaderId);
-		mGL4.glLinkProgram(mProgramId);
+		mProgramId = mGL.getGL2().glCreateProgram();
+		mGL.getGL2().glAttachShader(mProgramId, lVertexShaderId);
+		mGL.getGL2().glAttachShader(mProgramId, lFragmentShaderId);
+		mGL.getGL2().glLinkProgram(mProgramId);
 
-		mGL4.glBindFragDataLocation(mProgramId, 0, "outColor");
+		mGL.getGL2().glBindFragDataLocation(mProgramId, 0, "outColor");
 	}
 
-  public GLProgram(GL4 pGL4, HashMap<GLShaderType, GLShader> pipeline) {
+	public GLProgram(GL pGL, HashMap<GLShaderType, GLShader> pipeline)
+	{
     super();
 
-    mGL4 = pGL4;
+		mGL = pGL;
 
-    mProgramId = mGL4.glCreateProgram();
+		mProgramId = mGL.getGL2().glCreateProgram();
 
-    for(GLShader shader: pipeline.values()) {
-      mGL4.glAttachShader(mProgramId, shader.getId());
+    for(final GLShader shader: pipeline.values()) {
+			mGL.getGL2().glAttachShader(mProgramId, shader.getId());
     }
 
-    mGL4.glLinkProgram(mProgramId);
+		mGL.getGL2().glLinkProgram(mProgramId);
   }
 
 	@Override
 	public void close() throws GLException
 	{
-		mGL4.glDeleteProgram(mProgramId);
+		mGL.getGL2().glDeleteProgram(mProgramId);
 	}
 
 	public GLAttribute getAtribute(String pAttributeName)
 	{
-		int lAttributeId = mGL4.glGetAttribLocation(mProgramId,
+		final int lAttributeId = mGL.getGL2()
+																.glGetAttribLocation(	mProgramId,
 																								pAttributeName);
-		GLAttribute lGLAttribute = new GLAttribute(this, lAttributeId);
+		final GLAttribute lGLAttribute = new GLAttribute(this, lAttributeId);
 		return lGLAttribute;
 	}
 
 	public GLUniform getUniform(String pUniformName)
 	{
-		int lUniformId = mGL4.glGetUniformLocation(	mProgramId,
+		final int lUniformId = mGL.getGL2()
+															.glGetUniformLocation(mProgramId,
 																								pUniformName);
-		GLUniform lGLUniform = new GLUniform(this, lUniformId);
+		final GLUniform lGLUniform = new GLUniform(this, lUniformId);
 		return lGLUniform;
 	}
 
 	public void bind()
 	{
-		mGL4.glUseProgram(mProgramId);
+		mGL.getGL2().glUseProgram(mProgramId);
 	}
 
 	public void unbind()
 	{
-		mGL4.glUseProgram(0);
+		mGL.getGL2().glUseProgram(0);
 	}
 
-	public void use(GL4 pGL4)
+	public void use(GL pGL)
 	{
-		mGL4 = pGL4;
+		mGL = pGL;
 		bind();
 	}
 
@@ -176,7 +190,7 @@ public class GLProgram implements GLInterface, GLCloseable
 
 		final int[] lLength = new int[1];
 		final byte[] lBytes = new byte[lLogLength + 1];
-		mGL4.glGetProgramInfoLog(	mProgramId,
+		mGL.getGL2().glGetProgramInfoLog(	mProgramId,
 															lLogLength,
 															lLength,
 															0,
@@ -190,19 +204,22 @@ public class GLProgram implements GLInterface, GLCloseable
 	public int getProgramParameter(int pParameterName)
 	{
 		final int lParameter[] = new int[1];
-		mGL4.glGetProgramiv(mProgramId, pParameterName, lParameter, 0);
+		mGL.getGL2().glGetProgramiv(mProgramId,
+																pParameterName,
+																lParameter,
+																0);
 		return lParameter[0];
 	}
 
-	public void setGL(GL4 pGL4)
+	public void setGL(GL pGL)
 	{
-		mGL4 = pGL4;
+		mGL = pGL;
 	}
 
 	@Override
-	public GL4 getGL()
+	public GL getGL()
 	{
-		return mGL4;
+		return mGL;
 	}
 
 	@Override
@@ -214,7 +231,7 @@ public class GLProgram implements GLInterface, GLCloseable
 	@Override
 	public String toString()
 	{
-		return "GLProgram [mGL4=" + mGL4
+		return "GLProgram [mGL=" + mGL
 						+ ", mProgramId="
 						+ mProgramId
 						+ ", mVerteShader="

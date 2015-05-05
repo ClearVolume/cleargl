@@ -6,7 +6,6 @@ import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
 import javax.media.opengl.GL;
-import javax.media.opengl.GL4;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLException;
 
@@ -96,11 +95,11 @@ public class ClearGLDemo
 				super.init(pDrawable);
 				try
 				{
-					final GL4 pGL4 = pDrawable.getGL().getGL4();
-					pGL4.glDisable(GL.GL_DEPTH_TEST);
+					final GL lGL = pDrawable.getGL();
+					lGL.glDisable(GL.GL_DEPTH_TEST);
 					// pGL4.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
-					mGLProgram1 = GLProgram.buildProgram(	pGL4,
+					mGLProgram1 = GLProgram.buildProgram(	lGL,
 																								ClearGLDemo.class,
 																								"vertex.glsl",
 																								"fragment.glsl");
@@ -124,7 +123,7 @@ public class ClearGLDemo
 					mGLVertexArray1.addVertexAttributeArray(mColorAttributeArray1,
 																									Buffers.newDirectFloatBuffer(colors1));
 
-					mGLProgram2 = GLProgram.buildProgram(	pGL4,
+					mGLProgram2 = GLProgram.buildProgram(	lGL,
 																								ClearGLDemo.class,
 																								"vertex.tex.glsl",
 																								"fragment.tex.glsl");
@@ -187,7 +186,6 @@ public class ClearGLDemo
 			{
 				super.reshape(pDrawable, pX, pY, pWidth, pHeight);
 
-				// pDrawable.getGL().getGL4().glViewport(10, 10, 100, 100);
 				if (pHeight == 0)
 					pHeight = 1;
 				final float ratio = (1.0f * pWidth) / pHeight;
@@ -204,12 +202,12 @@ public class ClearGLDemo
 			public void display(GLAutoDrawable pDrawable)
 			{
 				super.display(pDrawable);
-				final GL4 lGL4 = pDrawable.getGL().getGL4();
-				lGL4.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+				final GL lGL = pDrawable.getGL();
+				lGL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
 				getClearGLWindow().lookAt(0f, 0f, 1, 0f, 0f, -1, 0, 1, 0);
 
-				mGLProgram1.use(lGL4);
+				mGLProgram1.use(lGL);
 
 				mProjectionMatrixUniform1.setFloatMatrix(	getClearGLWindow().getProjectionMatrix()
 																																		.getFloatArray(),
@@ -220,7 +218,7 @@ public class ClearGLDemo
 
 				mGLVertexArray1.draw(GL.GL_TRIANGLES);
 
-				mGLProgram2.use(lGL4);
+				mGLProgram2.use(lGL);
 				mTexture2.bind(mGLProgram2);
 
 				mProjectionMatrixUniform2.setFloatMatrix(	getClearGLWindow().getProjectionMatrix()
@@ -240,7 +238,7 @@ public class ClearGLDemo
 				mGLVertexArray2.draw(GL.GL_TRIANGLES);
 
 				// Check out error
-				final int error = lGL4.glGetError();
+				final int error = lGL.glGetError();
 				if (error != 0)
 				{
 					System.err.println("ERROR on render : " + error);

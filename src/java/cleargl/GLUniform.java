@@ -2,7 +2,7 @@ package cleargl;
 
 import java.nio.FloatBuffer;
 
-import javax.media.opengl.GL4;
+import javax.media.opengl.GL;
 
 public class GLUniform implements GLInterface
 {
@@ -19,7 +19,9 @@ public class GLUniform implements GLInterface
 															boolean pTranspose)
 	{
 		mGlProgram.bind();
-		mGlProgram.getGL().glUniformMatrix4fv(mUniformId,
+		mGlProgram.getGL()
+							.getGL2()
+							.glUniformMatrix4fv(mUniformId,
 																					1,
 																					pTranspose,
 																					pProjectionMatrix,
@@ -30,7 +32,9 @@ public class GLUniform implements GLInterface
 															boolean pTranspose)
 	{
 		mGlProgram.bind();
-		mGlProgram.getGL().glUniformMatrix4fv(mUniformId,
+		mGlProgram.getGL()
+							.getGL2()
+							.glUniformMatrix4fv(mUniformId,
 																					1,
 																					pTranspose,
 																					pProjectionMatrix);
@@ -44,7 +48,7 @@ public class GLUniform implements GLInterface
 	public void setFloatVector2(FloatBuffer pVector)
 	{
 		mGlProgram.bind();
-		mGlProgram.getGL().glUniform2fv(mUniformId, 1, pVector);
+		mGlProgram.getGL().getGL2().glUniform2fv(mUniformId, 1, pVector);
 	}
 
 	public void setFloatVector3(float... pVector3)
@@ -55,7 +59,7 @@ public class GLUniform implements GLInterface
 	public void setFloatVector3(FloatBuffer pVector)
 	{
 		mGlProgram.bind();
-		mGlProgram.getGL().glUniform3fv(mUniformId, 1, pVector);
+		mGlProgram.getGL().getGL2().glUniform3fv(mUniformId, 1, pVector);
 	}
 
 	public void setFloatVector4(float... pVector4)
@@ -66,29 +70,29 @@ public class GLUniform implements GLInterface
 	public void setFloatVector4(FloatBuffer pVector)
 	{
 		mGlProgram.bind();
-		mGlProgram.getGL().glUniform4fv(mUniformId, 1, pVector);
+		mGlProgram.getGL().getGL2().glUniform4fv(mUniformId, 1, pVector);
 	}
 
 	public void set(int pInt)
 	{
 		mGlProgram.bind();
-		mGlProgram.getGL().glUniform1i(mUniformId, pInt);
+		mGlProgram.getGL().getGL2().glUniform1i(mUniformId, pInt);
 	}
 
 	public void set(float pFloat)
 	{
 		mGlProgram.bind();
-		mGlProgram.getGL().glUniform1f(mUniformId, pFloat);
+		mGlProgram.getGL().getGL2().glUniform1f(mUniformId, pFloat);
 	}
 
-	public void set(double pDouble)
+	/*public void set(double pDouble)
 	{
 		mGlProgram.bind();
-		mGlProgram.getGL().glUniform1d(mUniformId, pDouble);
-	}
+		mGlProgram.getGL().getGL4().glUniform1d(mUniformId, pDouble);
+	}/**/
 
 	@Override
-	public GL4 getGL()
+	public GL getGL()
 	{
 		return mGlProgram.getGL();
 	}

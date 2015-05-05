@@ -1,6 +1,6 @@
 package cleargl;
 
-import javax.media.opengl.GL4;
+import javax.media.opengl.GL;
 import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLPipelineFactory;
 
@@ -59,11 +59,11 @@ public abstract class ClearGLDefaultEventListener	implements
 		if (mAlreadyInDebugMode || !isDebugMode())
 			return;
 
-		final GL4 gl = pDrawable.getGL().getGL4();
-		gl.getContext()
+		final GL lGL = pDrawable.getGL();
+		lGL.getContext()
 			.setGL(GLPipelineFactory.create("javax.media.opengl.Debug",
 																			null,
-																			gl,
+																				lGL,
 																			null));
 
 		mAlreadyInDebugMode = true;

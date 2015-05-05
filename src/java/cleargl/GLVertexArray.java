@@ -1,17 +1,17 @@
 package cleargl;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GL4;
-import javax.media.opengl.GLException;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.Arrays;
 
+import javax.media.opengl.GL;
+import javax.media.opengl.GLException;
+
 public class GLVertexArray implements GLCloseable, GLInterface
 {
 
-	private GLInterface mGLInterface;
-	private int[] mVertexArrayId;
+	private final GLInterface mGLInterface;
+	private final int[] mVertexArrayId;
 	private int mNumberOfIndices;
     private int mIndexCount = 0;
 
@@ -20,13 +20,15 @@ public class GLVertexArray implements GLCloseable, GLInterface
 		super();
 		mGLInterface = pGLInterface;
 		mVertexArrayId = new int[1];
-		getGL().glGenVertexArrays(1, mVertexArrayId, 0);
+		getGL().getGL2().glGenVertexArrays(1, mVertexArrayId, 0);
 	}
 
 	@Override
 	public void close() throws GLException
 	{
-		mGLInterface.getGL().glDeleteVertexArrays(1, mVertexArrayId, 0);
+		mGLInterface.getGL()
+								.getGL2()
+								.glDeleteVertexArrays(1, mVertexArrayId, 0);
 	}
 
 	public void addVertexAttributeArray(GLVertexAttributeArray pGLVertexAttributeArray,
@@ -34,7 +36,7 @@ public class GLVertexArray implements GLCloseable, GLInterface
 	{
 		bind();
 
-		GLAttribute lAttribute = pGLVertexAttributeArray.getAttribute();
+		final GLAttribute lAttribute = pGLVertexAttributeArray.getAttribute();
 
 		pGLVertexAttributeArray.bind();
 
@@ -45,8 +47,8 @@ public class GLVertexArray implements GLCloseable, GLInterface
 													pFloatBuffer.remaining() * (Float.SIZE / 8),
 													pFloatBuffer,
 													GL.GL_STATIC_DRAW);
-		getGL().glEnableVertexAttribArray(lAttribute.getIndex());
-		getGL().glVertexAttribPointer(lAttribute.getIndex(),
+		getGL().getGL2().glEnableVertexAttribArray(lAttribute.getIndex());
+		getGL().getGL2().glVertexAttribPointer(	lAttribute.getIndex(),
 																	lElementsPerIndex,
 																	GL.GL_FLOAT,
 																	false,
@@ -65,12 +67,12 @@ public class GLVertexArray implements GLCloseable, GLInterface
 
 	public void bind()
 	{
-		getGL().glBindVertexArray(getId());
+		getGL().getGL3().glBindVertexArray(getId());
 	}
 
 	public void unbind()
 	{
-		getGL().glBindVertexArray(0);
+		getGL().getGL3().glBindVertexArray(0);
 	}
 
 	public void draw(int pType)
@@ -84,7 +86,7 @@ public class GLVertexArray implements GLCloseable, GLInterface
 	}
 
 	@Override
-	public GL4 getGL()
+	public GL getGL()
 	{
 		return mGLInterface.getGL();
 	}

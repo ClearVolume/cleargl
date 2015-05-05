@@ -9,10 +9,10 @@ import javax.media.opengl.GLException;
 
 public class GLPixelBufferObject implements GLInterface, GLCloseable
 {
-	private GLInterface mGLInterface;
+	private final GLInterface mGLInterface;
 	private int[] mPixelBufferObjectId = new int[1];
-	private int mTextureWidth;
-	private int mTextureHeight;
+	private final int mTextureWidth;
+	private final int mTextureHeight;
 
 	public GLPixelBufferObject(	GLInterface pGLInterface,
  int pWidth, int pHeight)
@@ -56,7 +56,7 @@ public class GLPixelBufferObject implements GLInterface, GLCloseable
 
 
 	@Override
-	public GL4 getGL()
+	public GL getGL()
 	{
 		return mGLInterface.getGL();
 	}

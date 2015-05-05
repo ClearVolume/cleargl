@@ -1,20 +1,20 @@
 package cleargl;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GL4;
-import javax.media.opengl.GLException;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
+
+import javax.media.opengl.GL;
+import javax.media.opengl.GLException;
 
 public class GLVertexAttributeArray	implements
 																		GLCloseable,
 																		GLInterface
 {
 
-	private GLAttribute mGLAttribute;
-	private int[] mVertexAttributeBuffersId;
+	private final GLAttribute mGLAttribute;
+	private final int[] mVertexAttributeBuffersId;
 
-	private int mElementsPerIndex;
+	private final int mElementsPerIndex;
 
 	public GLVertexAttributeArray(GLAttribute pGLAttribute,
 																final int pElementsPerIndex)
@@ -56,7 +56,7 @@ public class GLVertexAttributeArray	implements
 	}
 
 	@Override
-	public GL4 getGL()
+	public GL getGL()
 	{
 		return mGLAttribute.getGL();
 	}
