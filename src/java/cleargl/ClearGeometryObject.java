@@ -96,7 +96,7 @@ public class ClearGeometryObject implements GLCloseable, GLInterface {
 		getGL().glBufferData(GL.GL_ARRAY_BUFFER,
 				pVertexBuffer.limit() * (Float.SIZE / Byte.SIZE),
 				pVertexBuffer,
-				isIsDynamic() ? GL.GL_DYNAMIC_DRAW : GL.GL_STATIC_DRAW);
+				isDynamic() ? GL.GL_DYNAMIC_DRAW : GL.GL_STATIC_DRAW);
 
 		getGL().getGL3().glVertexAttribPointer(	0,
 																						mGeometrySize,
@@ -127,7 +127,7 @@ public class ClearGeometryObject implements GLCloseable, GLInterface {
 		getGL().getGL3().glEnableVertexAttribArray(0);
 		getGL().glBufferData(GL.GL_ARRAY_BUFFER,
 				pBuffer.limit() * (Float.SIZE / Byte.SIZE), pBuffer,
-				isIsDynamic() ? GL.GL_DYNAMIC_DRAW : GL.GL_STATIC_DRAW);
+				isDynamic() ? GL.GL_DYNAMIC_DRAW : GL.GL_STATIC_DRAW);
 
 		getGL().getGL3()
 						.glVertexAttribPointer(	mVertexBuffers.length - 1,
@@ -148,7 +148,7 @@ public class ClearGeometryObject implements GLCloseable, GLInterface {
 	public void updateVertices(FloatBuffer pVertexBuffer) {
 		mStoredPrimitiveCount = pVertexBuffer.remaining() / mGeometrySize;
 
-		if (!isIsDynamic())
+		if (!isDynamic())
 			throw new UnsupportedOperationException(
 					"Cannot update non dynamic buffers!");
 
@@ -159,7 +159,7 @@ public class ClearGeometryObject implements GLCloseable, GLInterface {
 		getGL().glBufferData(GL.GL_ARRAY_BUFFER,
 				pVertexBuffer.limit() * (Float.SIZE / Byte.SIZE),
 				pVertexBuffer,
-				isIsDynamic() ? GL.GL_DYNAMIC_DRAW : GL.GL_STATIC_DRAW);
+				isDynamic() ? GL.GL_DYNAMIC_DRAW : GL.GL_STATIC_DRAW);
 
 		getGL().getGL3().glVertexAttribPointer(	0,
 																						mGeometrySize,
@@ -180,7 +180,7 @@ public class ClearGeometryObject implements GLCloseable, GLInterface {
 		getGL().glBufferData(GL.GL_ARRAY_BUFFER,
 				pNormalBuffer.limit() * (Float.SIZE / Byte.SIZE),
 				pNormalBuffer,
-				isIsDynamic() ? GL.GL_DYNAMIC_DRAW : GL.GL_STATIC_DRAW);
+				isDynamic() ? GL.GL_DYNAMIC_DRAW : GL.GL_STATIC_DRAW);
 
 		getGL().getGL3().glVertexAttribPointer(	1,
 																						mGeometrySize,
@@ -194,7 +194,7 @@ public class ClearGeometryObject implements GLCloseable, GLInterface {
 	}
 
 	public void updateNormals(FloatBuffer pNormalBuffer) {
-		if (!isIsDynamic())
+		if (!isDynamic())
 			throw new UnsupportedOperationException(
 					"Cannot update non dynamic buffers!");
 
@@ -224,7 +224,7 @@ public class ClearGeometryObject implements GLCloseable, GLInterface {
 		getGL().glBufferData(GL.GL_ARRAY_BUFFER,
 				pTextureCoordsBuffer.limit() * (Float.SIZE / Byte.SIZE),
 				pTextureCoordsBuffer,
-				isIsDynamic() ? GL.GL_DYNAMIC_DRAW : GL.GL_STATIC_DRAW);
+				isDynamic() ? GL.GL_DYNAMIC_DRAW : GL.GL_STATIC_DRAW);
 
 		getGL().getGL3().glVertexAttribPointer(	2,
 																						mTextureCoordSize,
@@ -236,7 +236,7 @@ public class ClearGeometryObject implements GLCloseable, GLInterface {
 	}
 
 	public void updateTextureCoords(FloatBuffer pTextureCoordsBuffer) {
-		if (!isIsDynamic())
+		if (!isDynamic())
 			throw new UnsupportedOperationException(
 					"Cannot update non dynamic buffers!");
 
@@ -279,14 +279,14 @@ public class ClearGeometryObject implements GLCloseable, GLInterface {
 		getGL().glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER,
 				pIndexBuffer.limit() * (Integer.SIZE / Byte.SIZE),
 				pIndexBuffer,
-				isIsDynamic() ? GL.GL_DYNAMIC_DRAW : GL.GL_STATIC_DRAW);
+				isDynamic() ? GL.GL_DYNAMIC_DRAW : GL.GL_STATIC_DRAW);
 
 		getGL().getGL3().glBindVertexArray(0);
 		getGL().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
 	public void updateIndices(IntBuffer pIndexBuffer) {
-		if (!isIsDynamic())
+		if (!isDynamic())
 			throw new UnsupportedOperationException(
 					"Cannot update non dynamic buffers!");
 
@@ -375,7 +375,7 @@ public class ClearGeometryObject implements GLCloseable, GLInterface {
 		return mId;
 	}
 
-	public boolean isIsDynamic() {
+	public boolean isDynamic() {
 		return mIsDynamic;
 	}
 

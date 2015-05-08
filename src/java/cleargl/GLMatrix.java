@@ -421,4 +421,10 @@ public class GLMatrix
 		VectorUtil.crossVec3(pResult, pA, pB);
 	}
 
+	public static void zero(float[] pVector)
+	{
+		for (int i = 0; i < pVector.length; i++)
+			pVector[i] = 0;
+	}
+
 }
