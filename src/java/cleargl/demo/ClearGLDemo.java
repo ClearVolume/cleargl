@@ -135,7 +135,7 @@ public class ClearGLDemo
 					mPosition2 = mGLProgram2.getAtribute("position");
 					mTexCoord2 = mGLProgram2.getAtribute("texcoord");
 					mTexUnit2 = mGLProgram2.getUniform("texUnit");
-					mTexUnit2.set(0);
+					mTexUnit2.setInt(0);
 
 					mGLVertexArray2 = new GLVertexArray(mGLProgram2);
 					mGLVertexArray2.bind();

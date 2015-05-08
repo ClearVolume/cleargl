@@ -251,22 +251,18 @@ public class GLTexture implements GLInterface, GLCloseable
 												boolean pAutoGenerateMipMaps)
 	{
 		bind();
-		mGLInterface.getGL().glTexSubImage2D(	mTextureTarget,
-																					pLODLevel,
-																					0,
-																					0,
-																					mTextureWidth,
-																					mTextureHeight,
-																					mTextureOpenGLFormat,
-																					mTextureOpenGLDataType,
-																					pBuffer);
+		mGLInterface.getGL()
+								.glTexSubImage2D(	mTextureTarget,
+																	pLODLevel,
+																	0,
+																	0,
+																	mTextureWidth >> pLODLevel,
+																	mTextureHeight >> pLODLevel,
+																	mTextureOpenGLFormat,
+																	mTextureOpenGLDataType,
+																	pBuffer);
 		if (pAutoGenerateMipMaps && mMipMapLevels > 1)
 			mGLInterface.getGL().glGenerateMipmap(mTextureTarget);
-	}
-
-	public void copyFrom(Buffer pBuffer, boolean pAutoGenerateMipMaps)
-	{
-		copyFrom(pBuffer, 0, pAutoGenerateMipMaps);
 	}
 
 	public void copyFrom(Buffer pBuffer)

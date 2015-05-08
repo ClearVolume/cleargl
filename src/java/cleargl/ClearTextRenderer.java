@@ -235,7 +235,7 @@ public class ClearTextRenderer {
 											GL.GL_UNSIGNED_BYTE,
 											textureCache.get(text));
 
-    mProg.getUniform("uitex").set(1);
+    mProg.getUniform("uitex").setInt(1);
     ModelMatrix.mult(ViewMatrix);
     mProg.getUniform("ModelViewMatrix").setFloatMatrix(ModelMatrix.getFloatArray(), false);
     mProg.getUniform("ProjectionMatrix").setFloatMatrix(ProjectionMatrix.getFloatArray(), false);

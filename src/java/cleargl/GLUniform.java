@@ -73,13 +73,13 @@ public class GLUniform implements GLInterface
 		mGlProgram.getGL().getGL3().glUniform4fv(mUniformId, 1, pVector);
 	}
 
-	public void set(int pInt)
+	public void setInt(int pInt)
 	{
 		mGlProgram.bind();
 		mGlProgram.getGL().getGL3().glUniform1i(mUniformId, pInt);
 	}
 
-	public void set(float pFloat)
+	public void setFloat(float pFloat)
 	{
 		mGlProgram.bind();
 		mGlProgram.getGL().getGL3().glUniform1f(mUniformId, pFloat);
