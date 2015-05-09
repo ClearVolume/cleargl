@@ -83,9 +83,7 @@ public class ArcBall
 	}
 
 	// Mouse drag, calculate rotation
-	public void drag(	float p2DPointX,
-										float p2DPointY,
-										Quaternion pQuaternion)
+	public Quaternion drag(float p2DPointX, float p2DPointY)
 	{
 		// Map the point to the sphere
 		this.mapToSphere(p2DPointX, p2DPointY, mEndVector);
@@ -119,7 +117,7 @@ public class ArcBall
 		mResultQuaternion.set(mRotationQuaternion);
 		mResultQuaternion.mult(mCurrentQuaternion);
 
-		pQuaternion.set(mResultQuaternion);
+		return mResultQuaternion;
 
 	}
 

@@ -116,7 +116,7 @@ public class GLVideoRecorder
 				}
 			};
 			final Thread lDisplayRequestDeamonThread = new Thread(lDisplayRequestRunnable,
-																											GLVideoRecorder.class.getSimpleName() + ".DisplayRequestThread");
+																														GLVideoRecorder.class.getSimpleName() + ".DisplayRequestThread");
 			lDisplayRequestDeamonThread.setDaemon(true);
 			lDisplayRequestDeamonThread.setPriority(Thread.MIN_PRIORITY);
 			lDisplayRequestDeamonThread.start();
@@ -247,7 +247,8 @@ public class GLVideoRecorder
 
 	private boolean getNewVideoFolder()
 	{
-		final String lVideoFolderName = String.format("Video.%d", mVideoCounter);
+		final String lVideoFolderName = String.format("Video.%d",
+																									mVideoCounter);
 		mVideoFolder = new File(mRootFolder, lVideoFolderName);
 		return mVideoFolder.exists();
 	}
@@ -258,15 +259,18 @@ public class GLVideoRecorder
 	 * 
 	 * @param pGLAutoDrawable
 	 *          JOGL GLAutoDrawable to be used to get pixel data from.
+	 * @param pAsynchronous
 	 */
-	public void screenshot(GLAutoDrawable pGLAutoDrawable)
+	public void screenshot(	GLAutoDrawable pGLAutoDrawable,
+													boolean pAsynchronous)
 	{
 		if (!mActive || tooSoon())
 			return;
 
-		final String lFileName = String.format("image%d.png", mImageCounter);
+		final String lFileName = String.format(	"image%d.png",
+																						mImageCounter);
 		final File lNewFile = new File(mVideoFolder, lFileName);
-		writeDrawableToFile(pGLAutoDrawable, lNewFile);
+		writeDrawableToFile(pGLAutoDrawable, lNewFile, pAsynchronous);
 
 	}
 
@@ -285,7 +289,7 @@ public class GLVideoRecorder
 	}
 
 	/**
-	 * Draws the contents of a GLAutoDrawable onto a file asynchronously.
+	 * Draws the contents of a GLAutoDrawable onto a file asynchronously or not.
 	 * 
 	 * Code adapted from: http://www.java-gaming.org/index.php/topic,5386.
 	 * 
@@ -293,15 +297,17 @@ public class GLVideoRecorder
 	 *          JOGL drawable
 	 * @param pOutputFile
 	 *          output file
+	 * @param pAsynchronous
 	 */
 	private void writeDrawableToFile(	GLAutoDrawable pDrawable,
-																		final File pOutputFile)
+																		final File pOutputFile,
+																		final boolean pAsynchronous)
 	{
 		final int lTargetPeriodInMiliSeconds = (int) (1000 / getTargetFrameRate());
 		try
 		{
 			final boolean lIsLocked = mReadPixelsLock.tryLock(lTargetPeriodInMiliSeconds / 2,
-																									TimeUnit.MILLISECONDS);
+																												TimeUnit.MILLISECONDS);
 
 			if (lIsLocked)
 			{
@@ -331,7 +337,14 @@ public class GLVideoRecorder
 				mLastImageTimePoint = System.nanoTime();
 
 				final ByteBuffer lFinalByteBuffer = lByteBuffer;
-				if (mExecutorService != null)
+				if (pAsynchronous)
+				{
+					writeBufferToFile(pOutputFile,
+														lWidth,
+														lHeight,
+														lFinalByteBuffer);
+				}
+				else if (mExecutorService != null)
 				{
 					mExecutorService.execute(new Runnable()
 					{
@@ -347,7 +360,7 @@ public class GLVideoRecorder
 					});
 
 					mImageCounter++;
-					System.out.println("saved image!");
+					// System.out.println("saved image!");
 				}
 			}
 
