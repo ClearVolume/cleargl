@@ -223,8 +223,13 @@ public class GLTexture implements GLInterface, GLCloseable
 																					mTextureOpenGLDataType,
 																					lEmptyBuffer);
 		if (mMipMapLevels > 1)
-			mGLInterface.getGL().glGenerateMipmap(mTextureTarget);
+			updateMipMaps();
 
+	}
+
+	public void updateMipMaps()
+	{
+		mGLInterface.getGL().glGenerateMipmap(mTextureTarget);
 	}
 
 	public void copyFrom(GLPixelBufferObject pPixelBufferObject)
@@ -241,7 +246,7 @@ public class GLTexture implements GLInterface, GLCloseable
 																					mTextureOpenGLDataType,
 																					0);
 		if (mMipMapLevels > 1)
-			mGLInterface.getGL().glGenerateMipmap(mTextureTarget);
+			updateMipMaps();
 
 		pPixelBufferObject.unbind();
 	}
@@ -262,7 +267,7 @@ public class GLTexture implements GLInterface, GLCloseable
 																	mTextureOpenGLDataType,
 																	pBuffer);
 		if (pAutoGenerateMipMaps && mMipMapLevels > 1)
-			mGLInterface.getGL().glGenerateMipmap(mTextureTarget);
+			updateMipMaps();
 	}
 
 	public void copyFrom(Buffer pBuffer)
