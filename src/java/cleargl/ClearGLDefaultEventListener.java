@@ -1,8 +1,8 @@
 package cleargl;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GLAutoDrawable;
-import javax.media.opengl.GLPipelineFactory;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLPipelineFactory;
 
 public abstract class ClearGLDefaultEventListener	implements
 																									ClearGLEventListener

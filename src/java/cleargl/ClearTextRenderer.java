@@ -19,8 +19,8 @@ import java.nio.FloatBuffer;
 import java.util.HashMap;
 import java.util.Hashtable;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
 
 
 /**

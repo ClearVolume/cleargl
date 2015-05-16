@@ -15,13 +15,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.imageio.ImageIO;
-import javax.media.opengl.GL;
-import javax.media.opengl.GLAutoDrawable;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
+
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GLAutoDrawable;
 
 /**
  * This class offers basic functionality to record the framebuffer of a

@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
-import javax.media.opengl.GL3;
-import javax.media.opengl.GL4;
-import javax.media.opengl.GLException;
-
 import org.apache.commons.io.IOUtils;
+
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GL3;
+import com.jogamp.opengl.GL4;
+import com.jogamp.opengl.GLException;
 
 public class GLShader implements GLInterface, GLCloseable
 {

@@ -1,16 +1,18 @@
 package cleargl;
 
+
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
-import javax.media.opengl.GLException;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLException;
 
 import coremem.ContiguousMemoryInterface;
 import coremem.types.NativeTypeEnum;
+
 
 public class GLTexture implements GLInterface, GLCloseable
 {

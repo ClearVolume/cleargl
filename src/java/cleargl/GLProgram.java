@@ -3,9 +3,9 @@ package cleargl;
 import java.io.IOException;
 import java.util.HashMap;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GL2;
-import javax.media.opengl.GLException;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLException;
 
 public class GLProgram implements GLInterface, GLCloseable
 {

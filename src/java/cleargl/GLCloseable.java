@@ -1,6 +1,6 @@
 package cleargl;
 
-import javax.media.opengl.GLException;
+import com.jogamp.opengl.GLException;
 
 public interface GLCloseable extends AutoCloseable
 {

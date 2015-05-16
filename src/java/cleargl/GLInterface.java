@@ -1,6 +1,6 @@
 package cleargl;
 
-import javax.media.opengl.GL;
+import com.jogamp.opengl.GL;
 
 public interface GLInterface
 {

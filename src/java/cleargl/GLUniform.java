@@ -2,7 +2,7 @@ package cleargl;
 
 import java.nio.FloatBuffer;
 
-import javax.media.opengl.GL;
+import com.jogamp.opengl.GL;
 
 public class GLUniform implements GLInterface
 {

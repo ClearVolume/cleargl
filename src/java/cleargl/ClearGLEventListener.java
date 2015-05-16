@@ -1,6 +1,6 @@
 package cleargl;
 
-import javax.media.opengl.GLEventListener;
+import com.jogamp.opengl.GLEventListener;
 
 public interface ClearGLEventListener extends GLEventListener
 {
