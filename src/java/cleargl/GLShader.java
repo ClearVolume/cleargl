@@ -7,9 +7,8 @@ import java.util.HashMap;
 import org.apache.commons.io.IOUtils;
 
 import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GL2ES2;
 import com.jogamp.opengl.GL3;
-import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLException;
 
 public class GLShader implements GLInterface, GLCloseable
@@ -32,15 +31,15 @@ public class GLShader implements GLInterface, GLCloseable
 
 		final HashMap<GLShaderType, Integer> glShaderTypeMapping = new HashMap<>();
 		glShaderTypeMapping.put(GLShaderType.VertexShader,
-														GL2.GL_VERTEX_SHADER);
+														GL2ES2.GL_VERTEX_SHADER);
 		glShaderTypeMapping.put(GLShaderType.GeometryShader,
 														GL3.GL_GEOMETRY_SHADER);
 		glShaderTypeMapping.put(GLShaderType.TesselationControlShader,
-														GL4.GL_TESS_CONTROL_SHADER);
+														GL3.GL_TESS_CONTROL_SHADER);
 		glShaderTypeMapping.put(GLShaderType.TesselationEvaluationShader,
-														GL4.GL_TESS_EVALUATION_SHADER);
+														GL3.GL_TESS_EVALUATION_SHADER);
 		glShaderTypeMapping.put(GLShaderType.FragmentShader,
-														GL2.GL_FRAGMENT_SHADER);
+														GL2ES2.GL_FRAGMENT_SHADER);
 
 		final int lShaderTypeInt = glShaderTypeMapping.get(pShaderType);
 
@@ -62,15 +61,15 @@ public class GLShader implements GLInterface, GLCloseable
 
 		final HashMap<GLShaderType, Integer> glShaderTypeMapping = new HashMap<>();
 		glShaderTypeMapping.put(GLShaderType.VertexShader,
-														GL4.GL_VERTEX_SHADER);
+														GL2ES2.GL_VERTEX_SHADER);
 		glShaderTypeMapping.put(GLShaderType.GeometryShader,
-														GL4.GL_GEOMETRY_SHADER);
+														GL3.GL_GEOMETRY_SHADER);
 		glShaderTypeMapping.put(GLShaderType.TesselationControlShader,
-														GL4.GL_TESS_CONTROL_SHADER);
+														GL3.GL_TESS_CONTROL_SHADER);
 		glShaderTypeMapping.put(GLShaderType.TesselationEvaluationShader,
-														GL4.GL_TESS_EVALUATION_SHADER);
+														GL3.GL_TESS_EVALUATION_SHADER);
 		glShaderTypeMapping.put(GLShaderType.FragmentShader,
-														GL4.GL_FRAGMENT_SHADER);
+														GL2ES2.GL_FRAGMENT_SHADER);
 
 		final int lShaderTypeInt = glShaderTypeMapping.get(pShaderType);
 
@@ -89,7 +88,7 @@ public class GLShader implements GLInterface, GLCloseable
 
 	public String getShaderInfoLog()
 	{
-		final int logLen = getShaderParameter(GL4.GL_INFO_LOG_LENGTH);
+		final int logLen = getShaderParameter(GL2ES2.GL_INFO_LOG_LENGTH);
 		if (logLen <= 0)
 			return "";
 

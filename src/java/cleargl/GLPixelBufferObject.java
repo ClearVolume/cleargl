@@ -4,7 +4,7 @@ import java.nio.Buffer;
 import java.util.Arrays;
 
 import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GL2ES3;
 import com.jogamp.opengl.GLException;
 
 public class GLPixelBufferObject implements GLInterface, GLCloseable
@@ -15,7 +15,8 @@ public class GLPixelBufferObject implements GLInterface, GLCloseable
 	private final int mTextureHeight;
 
 	public GLPixelBufferObject(	GLInterface pGLInterface,
- int pWidth, int pHeight)
+															int pWidth,
+															int pHeight)
 	{
 		super();
 		mGLInterface = pGLInterface;
@@ -28,22 +29,25 @@ public class GLPixelBufferObject implements GLInterface, GLCloseable
 
 	public void bind()
 	{
-		mGLInterface.getGL().glBindBuffer(GL2.GL_PIXEL_UNPACK_BUFFER,
+		mGLInterface.getGL().glBindBuffer(GL2ES3.GL_PIXEL_UNPACK_BUFFER,
 																			getId());
 	}
 
 	public void unbind()
 	{
-		mGLInterface.getGL().glBindBuffer(GL2.GL_PIXEL_UNPACK_BUFFER, 0);
+		mGLInterface.getGL().glBindBuffer(GL2ES3.GL_PIXEL_UNPACK_BUFFER,
+																			0);
 	}
 
 	public void copyFrom(Buffer pBuffer)
 	{
 		bind();
-		mGLInterface.getGL().glBufferData(GL2.GL_PIXEL_UNPACK_BUFFER,
-											mTextureWidth * mTextureHeight * 1 * 4,
-											null,
-											GL.GL_DYNAMIC_DRAW);
+		mGLInterface.getGL().glBufferData(GL2ES3.GL_PIXEL_UNPACK_BUFFER,
+																			mTextureWidth * mTextureHeight
+																					* 1
+																					* 4,
+																			null,
+																			GL.GL_DYNAMIC_DRAW);
 		unbind();
 	}
 
@@ -53,7 +57,6 @@ public class GLPixelBufferObject implements GLInterface, GLCloseable
 		mGLInterface.getGL().glDeleteBuffers(1, mPixelBufferObjectId, 0);
 		mPixelBufferObjectId = null;
 	}
-
 
 	@Override
 	public GL getGL()

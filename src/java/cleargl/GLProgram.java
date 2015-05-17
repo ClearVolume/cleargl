@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GL2ES2;
 import com.jogamp.opengl.GLException;
 
 public class GLProgram implements GLInterface, GLCloseable
@@ -20,18 +20,18 @@ public class GLProgram implements GLInterface, GLCloseable
 																				String pFragmentShaderRessourcePath) throws IOException
 	{
 		final GLShader lVertexShader = new GLShader(pGL,
-																					pClass,
-																					pVertexShaderRessourcePath,
-																					GLShaderType.VertexShader);
+																								pClass,
+																								pVertexShaderRessourcePath,
+																								GLShaderType.VertexShader);
 		System.out.println(lVertexShader.getShaderInfoLog());
 
 		final GLShader lFragmentShader = new GLShader(pGL,
-																						pClass,
-																						pFragmentShaderRessourcePath,
-																						GLShaderType.FragmentShader);
+																									pClass,
+																									pFragmentShaderRessourcePath,
+																									GLShaderType.FragmentShader);
 		System.out.println(lFragmentShader.getShaderInfoLog());
 		final GLProgram lGLProgram = new GLProgram(	lVertexShader,
-																					lFragmentShader);
+																								lFragmentShader);
 		return lGLProgram;
 	}
 
@@ -40,73 +40,81 @@ public class GLProgram implements GLInterface, GLCloseable
 																				String pFragmentShaderSourceAsString) throws IOException
 	{
 		final GLShader lVertexShader = new GLShader(pGL,
-																					pVertexShaderSourceAsString,
-																					GLShaderType.VertexShader);
+																								pVertexShaderSourceAsString,
+																								GLShaderType.VertexShader);
 		System.out.println(lVertexShader.getShaderInfoLog());
 
 		final GLShader lFragmentShader = new GLShader(pGL,
-																						pFragmentShaderSourceAsString,
-																						GLShaderType.FragmentShader);
+																									pFragmentShaderSourceAsString,
+																									GLShaderType.FragmentShader);
 		System.out.println(lFragmentShader.getShaderInfoLog());
 		final GLProgram lGLProgram = new GLProgram(	lVertexShader,
-																					lFragmentShader);
+																								lFragmentShader);
 
-    System.out.println(lGLProgram.getProgramInfoLog());
+		System.out.println(lGLProgram.getProgramInfoLog());
 		return lGLProgram;
 	}
 
 	public static GLProgram buildProgram(	GL pGL,
-                                         Class<?> pClass,
-                                         String[] shaders) throws IOException
-  {
+																				Class<?> pClass,
+																				String[] shaders) throws IOException
+	{
 		final GLProgram lGLProgram = new GLProgram(	pGL,
 																								shaderPipelineFromFilenames(pGL,
 																																						pClass,
 																																						shaders));
 
-    System.out.println(lGLProgram.getProgramInfoLog());
+		System.out.println(lGLProgram.getProgramInfoLog());
 
-    return lGLProgram;
-  }
+		return lGLProgram;
+	}
 
-  private static String shaderFileForType(GLShaderType type, String[] shaders) {
-    final HashMap<GLShaderType, String> glslFilenameMapping = new HashMap<>();
+	private static String shaderFileForType(GLShaderType type,
+																					String[] shaders)
+	{
+		final HashMap<GLShaderType, String> glslFilenameMapping = new HashMap<>();
 
-    glslFilenameMapping.put(GLShaderType.VertexShader, "_vert.glsl");
-    glslFilenameMapping.put(GLShaderType.GeometryShader, "_geom.glsl");
-    glslFilenameMapping.put(GLShaderType.TesselationControlShader, "_tess_ctrl.glsl");
-    glslFilenameMapping.put(GLShaderType.TesselationEvaluationShader, "_tess_eval.glsl");
-    glslFilenameMapping.put(GLShaderType.FragmentShader, "_frag.glsl");
+		glslFilenameMapping.put(GLShaderType.VertexShader, "_vert.glsl");
+		glslFilenameMapping.put(GLShaderType.GeometryShader, "_geom.glsl");
+		glslFilenameMapping.put(GLShaderType.TesselationControlShader,
+														"_tess_ctrl.glsl");
+		glslFilenameMapping.put(GLShaderType.TesselationEvaluationShader,
+														"_tess_eval.glsl");
+		glslFilenameMapping.put(GLShaderType.FragmentShader, "_frag.glsl");
 
-    for (int i = 0; i < shaders.length; i++) {
-      if(shaders[i].endsWith(glslFilenameMapping.get(type))) {
-        return shaders[i];
-      }
-    }
+		for (int i = 0; i < shaders.length; i++)
+		{
+			if (shaders[i].endsWith(glslFilenameMapping.get(type)))
+			{
+				return shaders[i];
+			}
+		}
 
-    return null;
-  }
+		return null;
+	}
 
 	private static HashMap<GLShaderType, GLShader> shaderPipelineFromFilenames(	GL pGL,
 																																							Class<?> rootClass,
 																																							String[] shaders) throws IOException
 	{
-    final HashMap<GLShaderType, GLShader> pipeline  = new HashMap<>();
+		final HashMap<GLShaderType, GLShader> pipeline = new HashMap<>();
 
-    for(final GLShaderType type: GLShaderType.values()) {
-      final String filename = shaderFileForType(type, shaders);
-      if(filename != null) {
+		for (final GLShaderType type : GLShaderType.values())
+		{
+			final String filename = shaderFileForType(type, shaders);
+			if (filename != null)
+			{
 				final GLShader shader = new GLShader(	pGL,
 																							rootClass,
 																							filename,
 																							type);
-        System.out.println(shader.getShaderInfoLog());
-        pipeline.put(type, shader);
-      }
-    }
+				System.out.println(shader.getShaderInfoLog());
+				pipeline.put(type, shader);
+			}
+		}
 
-    return pipeline;
-  }
+		return pipeline;
+	}
 
 	public GLProgram(GLShader pVerteShader, GLShader pFragmentShader)
 	{
@@ -129,18 +137,19 @@ public class GLProgram implements GLInterface, GLCloseable
 
 	public GLProgram(GL pGL, HashMap<GLShaderType, GLShader> pipeline)
 	{
-    super();
+		super();
 
 		mGL = pGL;
 
 		mProgramId = mGL.getGL3().glCreateProgram();
 
-    for(final GLShader shader: pipeline.values()) {
+		for (final GLShader shader : pipeline.values())
+		{
 			mGL.getGL3().glAttachShader(mProgramId, shader.getId());
-    }
+		}
 
 		mGL.getGL3().glLinkProgram(mProgramId);
-  }
+	}
 
 	@Override
 	public void close() throws GLException
@@ -152,8 +161,9 @@ public class GLProgram implements GLInterface, GLCloseable
 	{
 		final int lAttributeId = mGL.getGL3()
 																.glGetAttribLocation(	mProgramId,
-																								pAttributeName);
-		final GLAttribute lGLAttribute = new GLAttribute(this, lAttributeId);
+																											pAttributeName);
+		final GLAttribute lGLAttribute = new GLAttribute(	this,
+																											lAttributeId);
 		return lGLAttribute;
 	}
 
@@ -161,7 +171,7 @@ public class GLProgram implements GLInterface, GLCloseable
 	{
 		final int lUniformId = mGL.getGL3()
 															.glGetUniformLocation(mProgramId,
-																								pUniformName);
+																										pUniformName);
 		final GLUniform lGLUniform = new GLUniform(this, lUniformId);
 		return lGLUniform;
 	}
@@ -184,18 +194,18 @@ public class GLProgram implements GLInterface, GLCloseable
 
 	public String getProgramInfoLog()
 	{
-		final int lLogLength = getProgramParameter(GL2.GL_INFO_LOG_LENGTH);
+		final int lLogLength = getProgramParameter(GL2ES2.GL_INFO_LOG_LENGTH);
 		if (lLogLength <= 0)
 			return "";
 
 		final int[] lLength = new int[1];
 		final byte[] lBytes = new byte[lLogLength + 1];
 		mGL.getGL3().glGetProgramInfoLog(	mProgramId,
-															lLogLength,
-															lLength,
-															0,
-															lBytes,
-															0);
+																			lLogLength,
+																			lLength,
+																			0,
+																			lBytes,
+																			0);
 		final String logMessage = new String(lBytes);
 
 		return logMessage;

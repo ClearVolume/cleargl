@@ -59,7 +59,7 @@ public class GLIntArray
 	{
 		mIntBuffer.rewind();
 	}
-	
+
 	public void flip()
 	{
 		mIntBuffer.flip();

@@ -25,20 +25,24 @@ public class GLFloatArray
 											.asFloatBuffer();
 	}
 
-  private FloatBuffer allocateN(int pNewCapacity) {
-    return ByteBuffer.allocateDirect(pNewCapacity
-            * (Float.SIZE / Byte.SIZE))
-            .order(ByteOrder.nativeOrder())
-            .asFloatBuffer();
-  }
+	private FloatBuffer allocateN(int pNewCapacity)
+	{
+		return ByteBuffer.allocateDirect(pNewCapacity * (Float.SIZE / Byte.SIZE))
+											.order(ByteOrder.nativeOrder())
+											.asFloatBuffer();
+	}
 
-  public void copyFromBuffer(FloatBuffer buffer) {
-    mFloatBuffer.put(buffer);
-  }
+	public void copyFromBuffer(FloatBuffer buffer)
+	{
+		mFloatBuffer.put(buffer);
+	}
 
 	public void add(float... pElementFloats)
 	{
-    //System.out.println("cap: " + mFloatBuffer.capacity() + " rem: " + mFloatBuffer.remaining() + " lim: " + mFloatBuffer.limit() + " newe: " + pElementFloats.length + " pos " + mFloatBuffer.position() + " ldp " + mLastDataPosition);
+		// System.out.println("cap: " + mFloatBuffer.capacity() + " rem: " +
+		// mFloatBuffer.remaining() + " lim: " + mFloatBuffer.limit() + " newe: " +
+		// pElementFloats.length + " pos " + mFloatBuffer.position() + " ldp " +
+		// mLastDataPosition);
 
 		if (mLastDataPosition + pElementFloats.length > mFloatBuffer.capacity())
 		{
@@ -49,8 +53,8 @@ public class GLFloatArray
 		}
 
 		mFloatBuffer.put(pElementFloats);
-    //System.out.println("new cap: " + mFloatBuffer.capacity());
-    mLastDataPosition = mFloatBuffer.position();
+		// System.out.println("new cap: " + mFloatBuffer.capacity());
+		mLastDataPosition = mFloatBuffer.position();
 	}
 
 	public void clear()

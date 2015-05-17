@@ -61,10 +61,10 @@ public abstract class ClearGLDefaultEventListener	implements
 
 		final GL lGL = pDrawable.getGL();
 		lGL.getContext()
-			.setGL(GLPipelineFactory.create("javax.media.opengl.Debug",
-																			null,
+				.setGL(GLPipelineFactory.create("javax.media.opengl.Debug",
+																				null,
 																				lGL,
-																			null));
+																				null));
 
 		mAlreadyInDebugMode = true;
 	}

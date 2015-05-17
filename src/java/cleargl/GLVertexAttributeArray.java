@@ -71,7 +71,7 @@ public class GLVertexAttributeArray	implements
 	{
 		return mVertexAttributeBuffersId[index];
 	}
-	
+
 	public GLAttribute getAttribute()
 	{
 		return mGLAttribute;

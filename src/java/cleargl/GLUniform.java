@@ -22,10 +22,10 @@ public class GLUniform implements GLInterface
 		mGlProgram.getGL()
 							.getGL3()
 							.glUniformMatrix4fv(mUniformId,
-																					1,
-																					pTranspose,
-																					pProjectionMatrix,
-																					0);
+																	1,
+																	pTranspose,
+																	pProjectionMatrix,
+																	0);
 	}
 
 	public void setFloatMatrix(	FloatBuffer pProjectionMatrix,
@@ -35,9 +35,9 @@ public class GLUniform implements GLInterface
 		mGlProgram.getGL()
 							.getGL3()
 							.glUniformMatrix4fv(mUniformId,
-																					1,
-																					pTranspose,
-																					pProjectionMatrix);
+																	1,
+																	pTranspose,
+																	pProjectionMatrix);
 	}
 
 	public void setFloatVector2(float... pVector2)
@@ -111,6 +111,5 @@ public class GLUniform implements GLInterface
 						+ mUniformId
 						+ "]";
 	}
-
 
 }

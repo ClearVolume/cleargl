@@ -113,7 +113,7 @@ public class ArcBall
 			// The begin and end vectors coincide, so return an identity transform
 			mRotationQuaternion.setIdentity();
 		}
-		
+
 		mResultQuaternion.set(mRotationQuaternion);
 		mResultQuaternion.mult(mCurrentQuaternion);
 

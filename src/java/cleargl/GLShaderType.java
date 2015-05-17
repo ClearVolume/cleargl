@@ -2,5 +2,9 @@ package cleargl;
 
 public enum GLShaderType
 {
-	VertexShader, GeometryShader, TesselationControlShader, TesselationEvaluationShader, FragmentShader
+	VertexShader,
+	GeometryShader,
+	TesselationControlShader,
+	TesselationEvaluationShader,
+	FragmentShader
 }

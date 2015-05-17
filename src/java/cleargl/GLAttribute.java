@@ -7,7 +7,6 @@ public class GLAttribute implements GLInterface
 	private final GLProgram mGlProgram;
 	private final int mAttributeIndex;
 
-
 	public GLAttribute(GLProgram pGlProgram, int pAttributeId)
 	{
 		mGlProgram = pGlProgram;

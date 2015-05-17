@@ -20,6 +20,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
+import javax.swing.WindowConstants;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -213,7 +214,7 @@ public class GLVideoRecorder
 					lJDialog.add(BorderLayout.CENTER, lJProgressBar);
 					lJDialog.add(	BorderLayout.NORTH,
 												new JLabel("Saving images, please wait!"));
-					lJDialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+					lJDialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 					lJDialog.setSize(300, 75);
 					lJDialog.validate();
 					lJDialog.setVisible(true);
@@ -261,6 +262,7 @@ public class GLVideoRecorder
 	 * @param pGLAutoDrawable
 	 *          JOGL GLAutoDrawable to be used to get pixel data from.
 	 * @param pAsynchronous
+	 *          true if call should be asynchronous
 	 */
 	public void screenshot(	GLAutoDrawable pGLAutoDrawable,
 													boolean pAsynchronous)

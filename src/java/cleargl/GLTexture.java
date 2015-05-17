@@ -1,18 +1,16 @@
 package cleargl;
 
-
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
 
 import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GL2ES2;
 import com.jogamp.opengl.GLException;
 
 import coremem.ContiguousMemoryInterface;
 import coremem.types.NativeTypeEnum;
-
 
 public class GLTexture implements GLInterface, GLCloseable
 {
@@ -83,57 +81,57 @@ public class GLTexture implements GLInterface, GLCloseable
 		mMipMapLevels = pMipMapLevels;
 
 		mTextureTarget = mTextureDepth == 1	? GL.GL_TEXTURE_2D
-																				: GL2.GL_TEXTURE_3D;
+																				: GL2ES2.GL_TEXTURE_3D;
 		mTextureOpenGLFormat = mNumberOfChannels == 4 ? GL.GL_RGBA// GL_BGRA
-																									: GL2.GL_RED;
+																									: GL2ES2.GL_RED;
 
 		if (mType == NativeTypeEnum.Byte)
 		{
 			mTextureOpenGLDataType = GL.GL_BYTE;
 			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL.GL_RGBA8
-																														: GL2.GL_R8;
+																														: GL.GL_R8;
 			mBytesPerChannel = 1;
 		}
 		else if (mType == NativeTypeEnum.UnsignedByte)
 		{
 			mTextureOpenGLDataType = GL.GL_UNSIGNED_BYTE;
 			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL.GL_RGBA8
-																														: GL2.GL_R8;
+																														: GL.GL_R8;
 			mBytesPerChannel = 1;
 		}
 		else if (mType == NativeTypeEnum.Short)
 		{
 			mTextureOpenGLDataType = GL.GL_SHORT;
 			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL.GL_RGBA16F
-																														: GL2.GL_R16F;
+																														: GL.GL_R16F;
 			mBytesPerChannel = 2;
 		}
 		else if (mType == NativeTypeEnum.UnsignedShort)
 		{
 			mTextureOpenGLDataType = GL.GL_UNSIGNED_SHORT;
 			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL.GL_RGBA16F
-																														: GL2.GL_R16F;
+																														: GL.GL_R16F;
 			mBytesPerChannel = 2;
 		}
 		else if (mType == NativeTypeEnum.Int)
 		{
-			mTextureOpenGLDataType = GL2.GL_INT;
+			mTextureOpenGLDataType = GL2ES2.GL_INT;
 			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL.GL_RGBA32F
-																														: GL2.GL_R32F;
+																														: GL.GL_R32F;
 			mBytesPerChannel = 4;
 		}
 		else if (mType == NativeTypeEnum.UnsignedInt)
 		{
 			mTextureOpenGLDataType = GL.GL_UNSIGNED_INT;
 			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL.GL_RGBA32F
-																														: GL2.GL_R32F;
+																														: GL.GL_R32F;
 			mBytesPerChannel = 4;
 		}
 		else if (mType == NativeTypeEnum.Float)
 		{
 			mTextureOpenGLDataType = GL.GL_FLOAT;
 			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL.GL_RGBA32F
-																														: GL2.GL_R32F;
+																														: GL.GL_R32F;
 			mBytesPerChannel = 4;
 		}
 

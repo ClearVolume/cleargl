@@ -13,7 +13,7 @@ public class GLVertexArray implements GLCloseable, GLInterface
 	private final GLInterface mGLInterface;
 	private final int[] mVertexArrayId;
 	private int mNumberOfIndices;
-    private int mIndexCount = 0;
+	private int mIndexCount = 0;
 
 	public GLVertexArray(GLInterface pGLInterface)
 	{
@@ -49,20 +49,27 @@ public class GLVertexArray implements GLCloseable, GLInterface
 													GL.GL_STATIC_DRAW);
 		getGL().getGL3().glEnableVertexAttribArray(lAttribute.getIndex());
 		getGL().getGL3().glVertexAttribPointer(	lAttribute.getIndex(),
-																	lElementsPerIndex,
-																	GL.GL_FLOAT,
-																	false,
-																	0,
-																	0);
+																						lElementsPerIndex,
+																						GL.GL_FLOAT,
+																						false,
+																						0,
+																						0);
 	}
-	
-	public void addIndexArray(GLVertexAttributeArray pGLVertexAttributeArray, IntBuffer pIndexBuffer) {
-		bind();
-		
-		getGL().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, pGLVertexAttributeArray.getId(1));
-		getGL().glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER, pIndexBuffer.remaining() * (Integer.SIZE/8) + 1, pIndexBuffer, GL.GL_STATIC_DRAW);
 
-    mIndexCount = pIndexBuffer.remaining();
+	public void addIndexArray(GLVertexAttributeArray pGLVertexAttributeArray,
+														IntBuffer pIndexBuffer)
+	{
+		bind();
+
+		getGL().glBindBuffer(	GL.GL_ELEMENT_ARRAY_BUFFER,
+													pGLVertexAttributeArray.getId(1));
+		getGL().glBufferData(	GL.GL_ELEMENT_ARRAY_BUFFER,
+													pIndexBuffer.remaining() * (Integer.SIZE / 8)
+															+ 1,
+													pIndexBuffer,
+													GL.GL_STATIC_DRAW);
+
+		mIndexCount = pIndexBuffer.remaining();
 	}
 
 	public void bind()
@@ -78,11 +85,17 @@ public class GLVertexArray implements GLCloseable, GLInterface
 	public void draw(int pType)
 	{
 		bind();
-    if(mIndexCount > 0) {
-      getGL().glDrawElements(pType, mIndexCount, GL.GL_UNSIGNED_INT, 0);
-    } else {
-      getGL().glDrawArrays(pType, 0, mNumberOfIndices);
-    }
+		if (mIndexCount > 0)
+		{
+			getGL().glDrawElements(	pType,
+															mIndexCount,
+															GL.GL_UNSIGNED_INT,
+															0);
+		}
+		else
+		{
+			getGL().glDrawArrays(pType, 0, mNumberOfIndices);
+		}
 	}
 
 	@Override

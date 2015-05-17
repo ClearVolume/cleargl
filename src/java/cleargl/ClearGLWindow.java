@@ -167,7 +167,6 @@ public class ClearGLWindow implements ClearGLDisplayable
 			Thread.yield();
 	}
 
-
 	/* (non-Javadoc)
 	 * @see cleargl.ClearGLDisplayable#close()
 	 */
