@@ -65,6 +65,7 @@ dependencies
 
 
 	compile ('org.jogamp.jogl:jogl-all:2.3.1'){transitive = true}
+	compile ('org.jogamp.jogl:jogl-all-main:2.3.1'){transitive = true}
 	compile ('org.jogamp.jogl:jogl-all:2.3.1:natives-macosx-universal'){transitive = true}
 	compile ('org.jogamp.jogl:jogl-all:2.3.1:natives-windows-amd64'){transitive = true}
 	compile ('org.jogamp.jogl:jogl-all:2.3.1:natives-linux-amd64'){transitive = true}
@@ -104,6 +105,20 @@ if (JavaVersion.current().isJava8Compatible()) {
 		}
 	}
 }
+
+//***********************************************************************************
+// BINTRAY PUBLISHING
+
+task TestProgFatJar(type:Jar) {
+	archiveName = "TestProg.jar"
+	from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+	with jar
+
+	manifest {
+		attributes("Class-Path": ".", 'Main-Class': 'cleargl.testprog.JOGLTestProgram')
+	}
+}
+
 
 
 

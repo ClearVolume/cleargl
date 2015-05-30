@@ -201,7 +201,9 @@ public class ClearGLDemo
 			public void display(GLAutoDrawable pDrawable)
 			{
 				super.display(pDrawable);
+
 				final GL lGL = pDrawable.getGL();
+
 				lGL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
 
 				getClearGLWindow().lookAt(0f, 0f, 1, 0f, 0f, -1, 0, 1, 0);
@@ -284,7 +286,10 @@ public class ClearGLDemo
 			// lClearGLWindow.disableClose();
 			lClearGLWindow.setVisible(true);
 
-			Thread.sleep(2000);
+			while (lClearGLWindow.isVisible())
+			{
+				Thread.sleep(100);
+			}
 		}
 
 		/*try (ClearGLJPanel lClearGLJPanel = new ClearGLJPanel(lClearGLWindowEventListener))

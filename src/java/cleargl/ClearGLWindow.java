@@ -113,6 +113,19 @@ public class ClearGLWindow implements ClearGLDisplayable
 												int pDefaultHeight,
 												ClearGLEventListener pClearGLWindowEventListener)
 	{
+		this(	pWindowTitle,
+					pDefaultWidth,
+					pDefaultHeight,
+					16,
+					pClearGLWindowEventListener);
+	}
+
+	public ClearGLWindow(	String pWindowTitle,
+												int pDefaultWidth,
+												int pDefaultHeight,
+												int pNumberOfSamples,
+												ClearGLEventListener pClearGLWindowEventListener)
+	{
 		super();
 		mWindowTitle = pWindowTitle;
 		mWindowDefaultWidth = pDefaultWidth;
@@ -126,14 +139,14 @@ public class ClearGLWindow implements ClearGLDisplayable
 												+ lProfile);
 		final GLCapabilities lCapabilities = new GLCapabilities(lProfile);
 
-		lCapabilities.setSampleBuffers(true);
-		lCapabilities.setNumSamples(16);
+		lCapabilities.setSampleBuffers(pNumberOfSamples > 1);
+		lCapabilities.setNumSamples(pNumberOfSamples);
 
-		final GLCapabilitiesChooser multisampleChooser = new MultisampleChooser();
+		final GLCapabilitiesChooser lMultisampleChooser = new MultisampleChooser();
 
 		mWindow = NewtFactory.createWindow(lCapabilities);
 		mGlWindow = GLWindow.create(mWindow);
-		mGlWindow.setCapabilitiesChooser(multisampleChooser);
+		mGlWindow.setCapabilitiesChooser(lMultisampleChooser);
 		mGlWindow.setTitle(pWindowTitle);
 
 		pClearGLWindowEventListener.setClearGLWindow(this);
