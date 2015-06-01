@@ -107,7 +107,7 @@ if (JavaVersion.current().isJava8Compatible()) {
 }
 
 //***********************************************************************************
-// BINTRAY PUBLISHING
+// TEST PROG
 
 task TestProgFatJar(type:Jar) {
 	archiveName = "TestProg.jar"
