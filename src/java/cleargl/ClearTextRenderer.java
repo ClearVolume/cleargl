@@ -1,8 +1,5 @@
 package cleargl;
 
-import com.jogamp.newt.NewtFactory;
-import jogamp.newt.awt.NewtFactoryAWT;
-
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;

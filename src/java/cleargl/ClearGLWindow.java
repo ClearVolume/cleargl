@@ -1,11 +1,8 @@
 package cleargl;
 
 import java.awt.Component;
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.io.PrintStream;
 import java.util.List;
-import java.lang.reflect.Field;
 
 import com.jogamp.nativewindow.CapabilitiesImmutable;
 import com.jogamp.nativewindow.WindowClosingProtocol.WindowClosingMode;
@@ -375,7 +372,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 	{
 		mGlWindow.display();
 	}
-	
+
 	public static boolean isRetina(GL pGL) {
 		int[] trialSizes = new int[2];
 
