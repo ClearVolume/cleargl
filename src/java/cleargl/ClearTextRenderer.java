@@ -1,5 +1,8 @@
 package cleargl;
 
+import com.jogamp.newt.NewtFactory;
+import jogamp.newt.awt.NewtFactoryAWT;
+
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -78,12 +81,22 @@ public class ClearTextRenderer
 			font = new JLabel().getFont();
 		}
 
+    final int scaleFactor = ClearGLWindow.isRetina(mGL) ? 2 : 1;
+
 		final int windowSizeX = mGL.getContext()
 																.getGLDrawable()
-																.getSurfaceWidth() / 2;
+																.getSurfaceWidth() / scaleFactor;
 		final int windowSizeY = mGL.getContext()
 																.getGLDrawable()
-																.getSurfaceHeight() / 2;
+																.getSurfaceHeight() / scaleFactor;
+
+		int[] windowSizes = new int[2];
+		windowSizes[0] = windowSizeX;
+		windowSizes[1] = windowSizeY;
+
+		System.out.println(windowSizes[0] + ", " + windowSizes[1]);
+		mGL.getContext().getGLDrawable().getNativeSurface().convertToPixelUnits(windowSizes);
+		System.out.println(windowSizes[0] + ", " + windowSizes[1]);
 
 		final int width = text.length() * font.getSize();
 		final int height = font.getSize();

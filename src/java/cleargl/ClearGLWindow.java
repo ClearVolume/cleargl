@@ -1,8 +1,11 @@
 package cleargl;
 
 import java.awt.Component;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.io.PrintStream;
 import java.util.List;
+import java.lang.reflect.Field;
 
 import com.jogamp.nativewindow.CapabilitiesImmutable;
 import com.jogamp.nativewindow.WindowClosingProtocol.WindowClosingMode;
@@ -13,6 +16,7 @@ import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.MouseListener;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.opengl.GLWindow;
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.DefaultGLCapabilitiesChooser;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
@@ -263,12 +267,12 @@ public class ClearGLWindow implements ClearGLDisplayable
 																				final float zFar)
 	{
 		if (mProjectionMatrix != null)
-			mProjectionMatrix.setOrthoProjectionMatrix(	left,
-																									right,
-																									bottom,
-																									top,
-																									zNear,
-																									zFar);
+			mProjectionMatrix.setOrthoProjectionMatrix(left,
+              right,
+              bottom,
+              top,
+              zNear,
+              zFar);
 	}
 
 	/* (non-Javadoc)
@@ -370,6 +374,21 @@ public class ClearGLWindow implements ClearGLDisplayable
 	public void display()
 	{
 		mGlWindow.display();
+	}
+	
+	public static boolean isRetina(GL pGL) {
+		int[] trialSizes = new int[2];
+
+		trialSizes[0] = 512;
+		trialSizes[1] = 512;
+
+		pGL.getContext().getGLDrawable().getNativeSurface().convertToPixelUnits(trialSizes);
+
+		if(trialSizes[0] == 512 && trialSizes[1] == 512) {
+			return false;
+		} else {
+			return true;
+		}
 	}
 
 	/* (non-Javadoc)
