@@ -78,12 +78,14 @@ public class ClearTextRenderer
 			font = new JLabel().getFont();
 		}
 
+    final int scaleFactor = ClearGLWindow.isRetina(mGL) ? 2 : 1;
+
 		final int windowSizeX = mGL.getContext()
 																.getGLDrawable()
-																.getSurfaceWidth() / 2;
+																.getSurfaceWidth() / scaleFactor;
 		final int windowSizeY = mGL.getContext()
 																.getGLDrawable()
-																.getSurfaceHeight() / 2;
+																.getSurfaceHeight() / scaleFactor;
 
 		final int width = text.length() * font.getSize();
 		final int height = font.getSize();
