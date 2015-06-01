@@ -90,14 +90,6 @@ public class ClearTextRenderer
 																.getGLDrawable()
 																.getSurfaceHeight() / scaleFactor;
 
-		int[] windowSizes = new int[2];
-		windowSizes[0] = windowSizeX;
-		windowSizes[1] = windowSizeY;
-
-		System.out.println(windowSizes[0] + ", " + windowSizes[1]);
-		mGL.getContext().getGLDrawable().getNativeSurface().convertToPixelUnits(windowSizes);
-		System.out.println(windowSizes[0] + ", " + windowSizes[1]);
-
 		final int width = text.length() * font.getSize();
 		final int height = font.getSize();
 
