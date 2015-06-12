@@ -328,7 +328,6 @@ public class GLVideoRecorder
 
 				final GL lGL = pDrawable.getGL();
 
-				lGL.getGL3().glReadBuffer(GL.GL_BACK);
 				lGL.glPixelStorei(GL.GL_PACK_ALIGNMENT, 1);
 				lGL.glReadPixels(0, // GLint x
 													0, // GLint y
@@ -361,9 +360,6 @@ public class GLVideoRecorder
 
 						}
 					});
-
-					mImageCounter++;
-					// System.out.println("saved image!");
 				}
 			}
 
@@ -460,6 +456,7 @@ public class GLVideoRecorder
 														pWidth);
 
 			ImageIO.write(lBufferedImage, "PNG", pOutputFile);
+			mImageCounter++;
 		}
 		catch (final Throwable e)
 		{
