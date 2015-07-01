@@ -1,5 +1,6 @@
 package cleargl;
 
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -65,17 +66,17 @@ public class ClearTextRenderer
 		}
 	}
 
-	public void drawTextAtPosition(	String text,
-																	int screenX,
-																	int screenY,
-																	Font font,
-																	FloatBuffer color,
-																	boolean antiAliased)
+	public void drawTextAtPosition(	String pText,
+																	int pWindowPositionX,
+																	int pWindowPositionY,
+																	Font pFont,
+																	Color pColor,
+																	boolean pAntiAliased)
 	{
-		if (font == null)
+		if (pFont == null)
 		{
-			System.err.println("Font invalid for text \"" + text + "\"");
-			font = new JLabel().getFont();
+			System.err.println("Font invalid for text \"" + pText + "\"");
+			pFont = new JLabel().getFont();
 		}
 
     final int scaleFactor = ClearGLWindow.isRetina(mGL) ? 2 : 1;
@@ -87,8 +88,8 @@ public class ClearTextRenderer
 																.getGLDrawable()
 																.getSurfaceHeight() / scaleFactor;
 
-		final int width = text.length() * font.getSize();
-		final int height = font.getSize();
+		final int width = pText.length() * pFont.getSize();
+		final int height = pFont.getSize();
 
 		// don't store more then 50 textures
 		if (textureCache.size() > 50)
@@ -96,7 +97,7 @@ public class ClearTextRenderer
 			textureCache.clear();
 		}
 
-		if (!mShouldCache || (mShouldCache && !textureCache.containsKey(text)))
+		if (!mShouldCache || (mShouldCache && !textureCache.containsKey(pText)))
 		{
 			ByteBuffer imageBuffer;
 
@@ -113,7 +114,7 @@ public class ClearTextRenderer
 			WritableRaster raster;
 
 			raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE,
-																							font.getSize() * text.length(),
+																							pFont.getSize() * pText.length(),
 																							18,
 																							4,
 																							null);
@@ -124,9 +125,10 @@ public class ClearTextRenderer
 																new Hashtable());
 
 			g2d = image.createGraphics();
-			g2d.setFont(font);
+			g2d.setFont(pFont);
+			g2d.setColor(pColor);
 
-			if (antiAliased)
+			if (pAntiAliased)
 			{
 				final RenderingHints rh = new RenderingHints(	RenderingHints.KEY_TEXT_ANTIALIASING,
 																											RenderingHints.VALUE_TEXT_ANTIALIAS_GASP);
@@ -134,7 +136,7 @@ public class ClearTextRenderer
 				g2d.setRenderingHints(rh);
 			}
 
-			g2d.drawString(text, 0, font.getSize());
+			g2d.drawString(pText, 0, pFont.getSize());
 
 			final byte[] data = ((DataBufferByte) image.getRaster()
 																									.getDataBuffer()).getData();
@@ -149,7 +151,7 @@ public class ClearTextRenderer
 				textureCache.clear();
 			}
 
-			textureCache.put(text, imageBuffer);
+			textureCache.put(pText, imageBuffer);
 		}
 
 		mGL.glClear(GL.GL_DEPTH_BUFFER_BIT | GL.GL_STENCIL_BUFFER_BIT);
@@ -166,8 +168,8 @@ public class ClearTextRenderer
 
 		final float w = width;
 		final float h = height;
-		final float x = screenX;
-		final float y = screenY;
+		final float x = pWindowPositionX;
+		final float y = pWindowPositionY;
 
 		final FloatBuffer vertices = FloatBuffer.wrap(new float[]
 		{ x, y + h, 0.0f, x + w, y + h, 0.0f, x, y, 0.0f, x + w, y, 0.0f });
@@ -257,7 +259,7 @@ public class ClearTextRenderer
 											0,
 											GL.GL_RGBA,
 											GL.GL_UNSIGNED_BYTE,
-											textureCache.get(text));
+											textureCache.get(pText));
 
 		mProg.getUniform("uitex").setInt(1);
 		ModelMatrix.mult(ViewMatrix);
