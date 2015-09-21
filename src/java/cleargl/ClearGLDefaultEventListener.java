@@ -29,7 +29,7 @@ public abstract class ClearGLDefaultEventListener	implements
 	public void display(GLAutoDrawable pDrawable)
 	{
 		setDebugPipeline(pDrawable);
-		if (System.nanoTime() > mNextFPSUpdate)
+		/*if (System.nanoTime() > mNextFPSUpdate)
 		{
 			final String lWindowTitle = getClearGLWindow().getWindowTitle();
 			final float lLastFPS = getClearGLWindow().getLastFPS();
@@ -39,7 +39,7 @@ public abstract class ClearGLDefaultEventListener	implements
 			getClearGLWindow().setWindowTitle(lTitleWithFPS);
 
 			mNextFPSUpdate = System.nanoTime() + 1000 * 1000 * 1000;
-		}
+		}/**/
 
 	}
 
