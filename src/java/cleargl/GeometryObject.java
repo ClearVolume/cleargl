@@ -1,22 +1,23 @@
 package cleargl;
 
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-import java.util.Hashtable;
-
+import cleargl.scenegraph.Node;
+import cleargl.scenegraph.Renderable;
+import cleargl.scenegraph.Scenegraphable;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GLException;
 
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.util.Hashtable;
+import java.util.UUID;
+
 /**
- * ClearGeometryObject -
+ * GeometryObject -
  * 
  * Created by Ulrik Guenter on 05/02/15.
  */
-public class ClearGeometryObject implements GLCloseable, GLInterface
+public class GeometryObject extends Node implements GLCloseable, GLInterface, Renderable, Scenegraphable
 {
-
-	private GLProgram mGLProgram;
-
 	private GLMatrix mModelMatrix;
 	private GLMatrix mViewMatrix;
 	private GLMatrix mModelViewMatrix;
@@ -41,11 +42,19 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 	private final int mId;
 	private static int counter = 0;
 
-	public ClearGeometryObject(	GLProgram pGLProgram,
-															int pVectorSize,
-															int pGeometryType)
+	public GeometryObject() {
+		super(java.util.UUID.randomUUID().toString());
+		mGeometryType = GL.GL_POINTS;
+		mId = -1;
+	}
+
+	public GeometryObject(GLProgram pGLProgram,
+                        int pVectorSize,
+                        int pGeometryType)
 	{
-		mGLProgram = pGLProgram;
+		super(UUID.randomUUID().toString());
+
+		program = pGLProgram;
 		mGeometrySize = pVectorSize;
 		mTextureCoordSize = mGeometrySize - 1;
 		mGeometryType = pGeometryType;
@@ -160,7 +169,7 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 
 	public GLProgram getProgram()
 	{
-		return mGLProgram;
+		return program;
 	}
 
 	public void updateVertices(FloatBuffer pVertexBuffer)
@@ -367,15 +376,15 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 
 	public void draw(int pOffset, int pCount)
 	{
-		mGLProgram.use(getGL());
+		program.use(getGL());
 
 		if (mModelViewMatrix != null)
-			mGLProgram.getUniform("modelview")
+			program.getUniform("modelview")
 								.setFloatMatrix(mModelViewMatrix.getFloatArray(),
 																false);
 
 		if (mProjectionMatrix != null)
-			mGLProgram.getUniform("projection")
+			program.getUniform("projection")
 								.setFloatMatrix(mProjectionMatrix.getFloatArray(),
 																false);
 
@@ -414,9 +423,9 @@ public class ClearGeometryObject implements GLCloseable, GLInterface
 	@Override
 	public GL getGL()
 	{
-		if (mGLProgram == null)
+		if (program == null)
 			return null;
-		return mGLProgram.getGL();
+		return program.getGL();
 	}
 
 	@Override
