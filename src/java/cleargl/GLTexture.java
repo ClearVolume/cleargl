@@ -4,6 +4,9 @@ import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Arrays;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2ES2;
@@ -134,7 +137,6 @@ public class GLTexture implements GLInterface, GLCloseable
 																														: GL.GL_R32F;
 			mBytesPerChannel = 4;
 		}
-
 		else
 			throw new IllegalArgumentException("Data type not supported for texture !");
 
@@ -331,5 +333,18 @@ public class GLTexture implements GLInterface, GLCloseable
 						+ mTextureHeight
 						+ "]";
 	}
+
+  public void dumpToFile(ByteBuffer buf) {
+    try {
+      File file = new File("/Users/ulrik/" + this.getId() + ".dump");
+      FileChannel channel = new FileOutputStream(file, false).getChannel();
+      buf.rewind();
+      channel.write(buf);
+      channel.close();
+    } catch(Exception e) {
+      System.err.println("Unable to dump " + this.getId());
+      e.printStackTrace();
+    }
+  }
 
 }
