@@ -1,12 +1,10 @@
 package cleargl;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.min;
-import static java.lang.Math.sqrt;
-
 import com.jogamp.opengl.math.FloatUtil;
 import com.jogamp.opengl.math.Quaternion;
 import com.jogamp.opengl.math.VectorUtil;
+
+import static java.lang.Math.*;
 
 public class GLMatrix
 {
@@ -16,6 +14,16 @@ public class GLMatrix
 	public GLMatrix()
 	{
 		mMatrix = new float[16];
+	}
+
+	public GLMatrix(float[] matrix) {
+		if(matrix.length == 16) {
+      mMatrix = matrix;
+    } else {
+      System.err.println("Incompatible matrix dimensions while converting from float!");
+      mMatrix = new float[16];
+    }
+		// TODO: error handling! Throw exception?
 	}
 
 	public float get(int pRow, int pColumn)
@@ -45,6 +53,44 @@ public class GLMatrix
 		return lGLMatrix;
 	}
 
+	public static GLMatrix getTranslation(float x, float y, float z) {
+		GLMatrix m = getIdentity();
+
+		m.set(0, 3, x);
+		m.set(1, 3, y);
+		m.set(2, 3, z);
+
+		return m;
+	}
+
+	public static GLMatrix getScaling(float sx, float sy, float sz) {
+		GLMatrix m = getIdentity();
+		final float[] scaling = {sx, sy, sz, 1.0f};
+
+		m.mult(scaling);
+
+		return m;
+	}
+
+	public static GLMatrix getTranslation(GLVector v) {
+		GLMatrix m = getIdentity();
+
+		m.set(0, 3, v.x());
+		m.set(1, 3, v.y());
+		m.set(2, 3, v.z());
+
+		return m;
+	}
+
+	public static GLMatrix getScaling(GLVector v) {
+		GLMatrix m = getIdentity();
+		final float[] scaling = {v.x(), v.y(), v.z(), 1.0f};
+
+		m.mult(scaling);
+
+		return m;
+	}
+
 	public void mult(GLMatrix pGLMatrix)
 	{
 		FloatUtil.multMatrix(mMatrix, pGLMatrix.mMatrix);
@@ -68,6 +114,31 @@ public class GLMatrix
 															pAspectRatio,
 															pNearPlane,
 															pFarPlane);
+	}
+
+	public void setPerspectiveAnaglyphProjectionMatrix(float fov,
+																										 float convergenceDist,
+																										 float aspectRatio,
+																										 float eyeSeparation,
+																										 float near,
+																										 float far
+	) {
+
+		float top, bottom, left, right;
+
+		top = near * (float)Math.tan(fov/2);
+		bottom = -top;
+
+		float a = aspectRatio * (float)Math.tan(fov/2) * convergenceDist;
+		float b = a - eyeSeparation/2.0f;
+		float c = a + eyeSeparation/2.0f;
+
+		left = -b * near/convergenceDist;
+		right = c * near/convergenceDist;
+
+		FloatUtil.makeFrustum(mMatrix, 0, true,
+						left, right, bottom, top, near, far
+		);
 	}
 
 	public void setOrthoProjectionMatrix(	float pLeft,
@@ -346,6 +417,13 @@ public class GLMatrix
 															4,
 															true);
 		return lStringBuilder.toString();
+	}
+
+	public static GLMatrix fromQuaternion(Quaternion q) {
+		float[] rotationMatrix = new float[16];
+		q.toMatrix(rotationMatrix, 0);
+
+		return new GLMatrix(rotationMatrix);
 	}
 
 	public static void mult(float[] pVector, float pValue)

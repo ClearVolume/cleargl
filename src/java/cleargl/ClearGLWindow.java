@@ -1,27 +1,21 @@
 package cleargl;
 
-import java.awt.Component;
-import java.io.PrintStream;
-import java.util.List;
-
 import com.jogamp.nativewindow.CapabilitiesImmutable;
 import com.jogamp.nativewindow.WindowClosingProtocol.WindowClosingMode;
-import com.jogamp.newt.NewtFactory;
+import com.jogamp.newt.*;
 import com.jogamp.newt.Window;
 import com.jogamp.newt.awt.NewtCanvasAWT;
 import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.MouseListener;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.opengl.GLWindow;
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.DefaultGLCapabilitiesChooser;
-import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLCapabilities;
-import com.jogamp.opengl.GLCapabilitiesChooser;
-import com.jogamp.opengl.GLCapabilitiesImmutable;
-import com.jogamp.opengl.GLException;
-import com.jogamp.opengl.GLProfile;
+import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.FPSAnimator;
+
+import java.awt.*;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClearGLWindow implements ClearGLDisplayable
 {
@@ -265,6 +259,16 @@ public class ClearGLWindow implements ClearGLDisplayable
 																												farP);
 	}
 
+	public void setPerspectiveAnaglyphProjectionMatrix(float fov,
+																										 float convergenceDist,
+																										 float aspectRatio,
+																										 float eyeSeparation,
+																										 float near,
+																										 float far
+																										 ) {
+		mProjectionMatrix.setPerspectiveAnaglyphProjectionMatrix(fov, convergenceDist, aspectRatio, eyeSeparation, near, far);
+	}
+
 	/* (non-Javadoc)
 	 * @see cleargl.ClearGLDisplayable#setOrthoProjectionMatrix(float, float, float, float, float, float)
 	 */
@@ -372,9 +376,33 @@ public class ClearGLWindow implements ClearGLDisplayable
 	 * @see cleargl.ClearGLDisplayable#setFullscreen(boolean)
 	 */
 	@Override
-	public void setFullscreen(boolean pFullScreen)
-	{
-		mGlWindow.setFullscreen(pFullScreen);
+	public void setFullscreen(boolean pFullScreen) {
+		if(System.getProperty("ClearVolume.Rift") != null) {
+			final Display display = NewtFactory.createDisplay(null); // local display
+			final Screen screen = NewtFactory.createScreen(display, 0); // screen 0
+			final ArrayList<MonitorDevice> monitors = new ArrayList<MonitorDevice>();
+			int lOVRscreen;
+
+			try {
+				lOVRscreen = Integer.parseInt(System.getenv("CV_OVR_SCREEN"));
+			} catch (java.lang.NumberFormatException e) {
+				lOVRscreen = 0;
+			}
+
+			System.out.println(screen.getMonitorDevices().get(lOVRscreen).toString());
+			System.out.println(screen.getMonitorDevices().get(lOVRscreen).getScreen().getFQName());
+
+			screen.addReference(); // trigger creation
+
+			if (pFullScreen) {
+				monitors.add(screen.getMonitorDevices().get(lOVRscreen)); // Q1
+			} else {
+				// monitor array stays empty
+			}
+			mGlWindow.setFullscreen(monitors);
+		} else {
+			mGlWindow.setFullscreen(pFullScreen);
+		}
 	}
 
 	/* (non-Javadoc)
