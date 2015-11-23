@@ -2,7 +2,7 @@ package cleargl;
 
 import cleargl.scenegraph.Node;
 import cleargl.scenegraph.Renderable;
-import cleargl.scenegraph.Scenegraphable;
+import cleargl.scenegraph.HasGeometry;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GLException;
 
@@ -14,15 +14,10 @@ import java.util.UUID;
 /**
  * GeometryObject -
  * 
- * Created by Ulrik Guenter on 05/02/15.
+ * Created by Ulrik Guenther on 05/02/15.
  */
-public class GeometryObject extends Node implements GLCloseable, GLInterface, Renderable, Scenegraphable
+public class GeometryObject extends Node implements GLCloseable, GLInterface, Renderable, HasGeometry
 {
-	private GLMatrix mModelMatrix;
-	private GLMatrix mViewMatrix;
-	private GLMatrix mModelViewMatrix;
-	private GLMatrix mProjectionMatrix;
-
 	private final Hashtable<String, Integer> additionalBufferIds = new Hashtable<>();
 
 	private final int[] mVertexArrayObject = new int[1];
@@ -96,11 +91,6 @@ public class GeometryObject extends Node implements GLCloseable, GLInterface, Re
 		System.err.println(" ");
 
 		buf.rewind();
-	}
-
-	public void setProgram(GLProgram program)
-	{
-		mGLProgram = program;
 	}
 
 	public void setVerticesAndCreateBuffer(FloatBuffer pVertexBuffer)
@@ -345,23 +335,6 @@ public class GeometryObject extends Node implements GLCloseable, GLInterface, Re
 		getGL().glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
-	public void setMVP(GLMatrix m, GLMatrix v, GLMatrix p)
-	{
-		mModelMatrix = m;
-		mViewMatrix = v;
-		mProjectionMatrix = p;
-	}
-
-	public void setModelView(GLMatrix mv)
-	{
-		mModelViewMatrix = mv;
-	}
-
-	public void setProjection(GLMatrix p)
-	{
-		mProjectionMatrix = p;
-	}
-
 	public void draw()
 	{
 		if (mStoredIndexCount > 0)
@@ -378,14 +351,14 @@ public class GeometryObject extends Node implements GLCloseable, GLInterface, Re
 	{
 		program.use(getGL());
 
-		if (mModelViewMatrix != null)
+		if (this.modelview != null)
 			program.getUniform("modelview")
-								.setFloatMatrix(mModelViewMatrix.getFloatArray(),
+								.setFloatMatrix(this.modelview.getFloatArray(),
 																false);
 
-		if (mProjectionMatrix != null)
+		if (this.projection != null)
 			program.getUniform("projection")
-								.setFloatMatrix(mProjectionMatrix.getFloatArray(),
+								.setFloatMatrix(this.projection.getFloatArray(),
 																false);
 
 		getGL().getGL3().glBindVertexArray(mVertexArrayObject[0]);
