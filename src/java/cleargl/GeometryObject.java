@@ -49,7 +49,7 @@ public class GeometryObject extends Node implements GLCloseable, GLInterface, Re
 	{
 		super(UUID.randomUUID().toString());
 
-		program = pGLProgram;
+		setProgram(pGLProgram);
 		mGeometrySize = pVectorSize;
 		mTextureCoordSize = mGeometrySize - 1;
 		mGeometryType = pGeometryType;
@@ -159,7 +159,7 @@ public class GeometryObject extends Node implements GLCloseable, GLInterface, Re
 
 	public GLProgram getProgram()
 	{
-		return program;
+		return getProgram();
 	}
 
 	public void updateVertices(FloatBuffer pVertexBuffer)
@@ -349,16 +349,16 @@ public class GeometryObject extends Node implements GLCloseable, GLInterface, Re
 
 	public void draw(int pOffset, int pCount)
 	{
-		program.use(getGL());
+		getProgram().use(getGL());
 
-		if (this.modelview != null)
-			program.getUniform("modelview")
-								.setFloatMatrix(this.modelview.getFloatArray(),
+		if (this.getModelview() != null)
+			getProgram().getUniform("modelview")
+								.setFloatMatrix(this.getModelview().getFloatArray(),
 																false);
 
-		if (this.projection != null)
-			program.getUniform("projection")
-								.setFloatMatrix(this.projection.getFloatArray(),
+		if (this.getProjection() != null)
+			getProgram().getUniform("projection")
+								.setFloatMatrix(this.getProjection().getFloatArray(),
 																false);
 
 		getGL().getGL3().glBindVertexArray(mVertexArrayObject[0]);
@@ -396,9 +396,9 @@ public class GeometryObject extends Node implements GLCloseable, GLInterface, Re
 	@Override
 	public GL getGL()
 	{
-		if (program == null)
+		if (getProgram() == null)
 			return null;
-		return program.getGL();
+		return getProgram().getGL();
 	}
 
 	@Override

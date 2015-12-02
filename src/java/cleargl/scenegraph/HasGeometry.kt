@@ -1,0 +1,3 @@
+package cleargl.scenegraph
+
+interface HasGeometry

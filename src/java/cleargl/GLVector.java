@@ -7,22 +7,22 @@ public class GLVector {
   protected float[] elements;
   protected int dimension;
 
-  GLVector(float[] el) {
+  public GLVector(float[] el) {
     this.elements = el;
     this.dimension = el.length;
   }
 
-  GLVector(float x, float y, float z) {
+  public GLVector(float x, float y, float z) {
     this.elements = new float[]{x, y, z};
     this.dimension = 3;
   }
 
-  GLVector(float x, float y, float z, float w) {
+  public GLVector(float x, float y, float z, float w) {
     this.elements = new float[]{x, y, z, w};
     this.dimension = 4;
   }
 
-  GLVector add(GLVector v) throws Exception {
+  public GLVector add(GLVector v) throws Exception {
     if(this.dimension != v.dimension) {
       throw new Exception("Vector dimension mismatch!");
     }
@@ -36,7 +36,7 @@ public class GLVector {
     return n;
   }
 
-  float scalarProduct(GLVector v) throws Exception {
+  public float scalarProduct(GLVector v) throws Exception {
     if(this.dimension != v.dimension) {
       throw new Exception("Vector dimension mismatch!");
     }
@@ -50,7 +50,7 @@ public class GLVector {
     return value;
   }
 
-  GLVector mult(float num) {
+  public GLVector mult(float num) {
     GLVector n = new GLVector(this.getElements());
 
     for(int i = 0; i < this.dimension; i++) {
@@ -60,7 +60,7 @@ public class GLVector {
     return n;
   }
 
-  GLVector mult(int num) {
+  public GLVector mult(int num) {
     return mult((float)num);
   }
 
