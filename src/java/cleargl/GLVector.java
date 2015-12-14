@@ -17,9 +17,21 @@ public class GLVector {
     this.dimension = 3;
   }
 
+  public GLVector GLVector(float x, float y, float z) {
+    this.elements = new float[]{x, y, z};
+    this.dimension = 3;
+    return this;
+  }
+
   public GLVector(float x, float y, float z, float w) {
     this.elements = new float[]{x, y, z, w};
     this.dimension = 4;
+  }
+
+  public GLVector GLVector(float x, float y, float z, float w) {
+    this.elements = new float[]{x, y, z, w};
+    this.dimension = 4;
+    return this;
   }
 
   public GLVector add(GLVector v) throws Exception {
