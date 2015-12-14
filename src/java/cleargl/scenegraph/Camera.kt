@@ -3,9 +3,11 @@ package cleargl.scenegraph
 
 import cleargl.GLVector
 
-class Camera : Node("Camera") {
+open class Camera : Node("Camera") {
 
-    var isTargeted = false
+    var targeted = false
+    var active = false
+
     protected var target: GLVector = GLVector(0.0f, 0.0f, 0.0f)
 
     init {

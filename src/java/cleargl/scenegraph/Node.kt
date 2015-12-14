@@ -11,31 +11,60 @@ import java.util.*
 open class Node(open var name: String) : Renderable {
     var nodeType = "Node"
 
-    open protected var program: GLProgram? = null
-    protected var model: GLMatrix = GLMatrix.getIdentity()
+    override var program: GLProgram? = null
+    override var model: GLMatrix = GLMatrix.getIdentity()
+        set(m) {
+            this.imodel = m.invert()
+            field = m
+        }
+    override var imodel: GLMatrix = GLMatrix.getIdentity()
 
-    protected var customViewProjection = false
-    protected var view: GLMatrix = GLMatrix.getIdentity()
-    protected var projection: GLMatrix = GLMatrix.getIdentity()
-    var modelview: GLMatrix = GLMatrix.getIdentity()
-    var mvp: GLMatrix? = GLMatrix.getIdentity()
+    override var view: GLMatrix? = null
+        set(m) {
+            this.iview = m?.invert()
+            field = m
+        }
+    override var iview: GLMatrix? = null
 
-    var position: GLVector = GLVector(0.0f, 0.0f, 0.0f)
-    var scale: GLVector = GLVector(1.0f, 1.0f, 1.0f)
-    var rotation: Quaternion = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+    override var projection: GLMatrix? = null
+        set(m) {
+            this.iprojection = m?.invert()
+            field = m
+        }
+    override var iprojection: GLMatrix? = null
 
-    protected var children: MutableList<Node>
+    override var modelView: GLMatrix? = null
+        set(m) {
+            this.imodelView = m?.invert()
+            field = m
+        }
+    override var imodelView: GLMatrix? = null
+    override var mvp: GLMatrix? = null
+
+    override var position: GLVector? = null
+    override var scale: GLVector? = null
+    override var rotation: Quaternion = Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
+
+    public var children: ArrayList<Node>
+    public var linkedNodes: ArrayList<Node>
+    public var parent: Node? = null
 
     // metadata
     var createdAt: Long = 0
     var modifiedAt: Long = 0
+
     protected var needsUpdate = false
-    var parent: Node? = null
 
     init {
         this.createdAt = (Timestamp(Date().time).time).toLong()
+        this.model = GLMatrix.getIdentity()
+        this.imodel = GLMatrix.getIdentity()
+
+        this.modelView = GLMatrix.getIdentity()
+        this.imodelView  = GLMatrix.getIdentity()
 
         this.children = ArrayList<Node>()
+        this.linkedNodes = ArrayList<Node>()
         // null should be the signal to use the default shader
         this.program = null
     }
@@ -75,6 +104,7 @@ open class Node(open var name: String) : Renderable {
                 this.composeModel()
             } else {
                 val m = parent!!.model
+
                 this.composeModel()
                 m.mult(this.model)
 
@@ -84,6 +114,12 @@ open class Node(open var name: String) : Renderable {
 
         if (recursive) {
             for (c in this.children) {
+                c.updateWorld(true)
+            }
+
+            // also update linked nodes -- they might need updated
+            // model/view/proj matrices as well
+            for (c in this.linkedNodes) {
                 c.updateWorld(true)
             }
         }
@@ -99,15 +135,15 @@ open class Node(open var name: String) : Renderable {
     }
 
     fun composeModelView() {
-        modelview = model.clone()
-        modelview!!.mult(this.view)
+        modelView = model.clone()
+        modelView!!.mult(this.view)
     }
 
     fun composeMVP() {
         composeModel()
         composeModelView()
 
-        mvp = modelview!!.clone()
+        mvp = modelView!!.clone()
         mvp!!.mult(projection)
     }
 }

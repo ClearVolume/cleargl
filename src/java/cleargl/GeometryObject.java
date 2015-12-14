@@ -157,11 +157,6 @@ public class GeometryObject extends Node implements GLCloseable, GLInterface, Re
 		getGL().glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
 	}
 
-	public GLProgram getProgram()
-	{
-		return getProgram();
-	}
-
 	public void updateVertices(FloatBuffer pVertexBuffer)
 	{
 		mStoredPrimitiveCount = pVertexBuffer.remaining() / mGeometrySize;
@@ -351,9 +346,9 @@ public class GeometryObject extends Node implements GLCloseable, GLInterface, Re
 	{
 		getProgram().use(getGL());
 
-		if (this.getModelview() != null)
+		if (this.getModelView() != null)
 			getProgram().getUniform("modelview")
-								.setFloatMatrix(this.getModelview().getFloatArray(),
+								.setFloatMatrix(this.getModelView().getFloatArray(),
 																false);
 
 		if (this.getProjection() != null)
