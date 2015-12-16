@@ -5,6 +5,7 @@ import java.util.*
 open class Scene : Node("RootNode") {
 
     public var activeObserver: Camera? = null
+    public var initList: ArrayList<Node> = ArrayList()
 
     fun addNode(n: Node, parent: Node) {
         if (n.name == "RootNode") {
@@ -32,7 +33,7 @@ open class Scene : Node("RootNode") {
             }
         }
 
-        discover(s.children[0], func)
+        discover(s as Node, func)
 
         return matched
     }

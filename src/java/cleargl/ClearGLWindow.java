@@ -535,4 +535,8 @@ public class ClearGLWindow implements ClearGLDisplayable
 		return mGlWindow;
 	}
 
+	public GL getGL() {
+		return mGlWindow.getGL();
+	}
+
 }

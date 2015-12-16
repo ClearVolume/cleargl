@@ -4,11 +4,20 @@ package cleargl.scenegraph
 import cleargl.GLMatrix
 import cleargl.GLProgram
 import cleargl.GLVector
+import cleargl.RendererInterface
 import com.jogamp.opengl.math.Quaternion
 import java.sql.Timestamp
 import java.util.*
 
 open class Node(open var name: String) : Renderable {
+    override var initialized: Boolean = false
+    override var dirty: Boolean = true
+
+    override fun init(): Boolean {
+        return true
+    }
+
+    override var renderer: RendererInterface? = null
     var nodeType = "Node"
 
     override var program: GLProgram? = null

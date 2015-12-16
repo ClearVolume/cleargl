@@ -40,6 +40,15 @@ public class GLUniform implements GLInterface
 																	pProjectionMatrix);
 	}
 
+	public void setFloatMatrix(GLMatrix matrix, boolean pTranspose) {
+		mGlProgram.bind();
+		mGlProgram.getGL().getGL3().glUniformMatrix4fv(
+						mUniformId,
+						1,
+						pTranspose,
+						FloatBuffer.wrap(matrix.getFloatArray()));
+	}
+
 	public void setFloatVector2(float... pVector2)
 	{
 		setFloatVector2(FloatBuffer.wrap(pVector2));

@@ -74,13 +74,13 @@ public class GLProgram implements GLInterface, GLCloseable
 	{
 		final HashMap<GLShaderType, String> glslFilenameMapping = new HashMap<>();
 
-		glslFilenameMapping.put(GLShaderType.VertexShader, "_vert.glsl");
-		glslFilenameMapping.put(GLShaderType.GeometryShader, "_geom.glsl");
+		glslFilenameMapping.put(GLShaderType.VertexShader, ".vs");
+		glslFilenameMapping.put(GLShaderType.GeometryShader, ".gs");
 		glslFilenameMapping.put(GLShaderType.TesselationControlShader,
-														"_tess_ctrl.glsl");
+														".tcs");
 		glslFilenameMapping.put(GLShaderType.TesselationEvaluationShader,
-														"_tess_eval.glsl");
-		glslFilenameMapping.put(GLShaderType.FragmentShader, "_frag.glsl");
+														".tes");
+		glslFilenameMapping.put(GLShaderType.FragmentShader, ".fs");
 
 		for (int i = 0; i < shaders.length; i++)
 		{
@@ -244,7 +244,7 @@ public class GLProgram implements GLInterface, GLCloseable
 		return "GLProgram [mGL=" + mGL
 						+ ", mProgramId="
 						+ mProgramId
-						+ ", mVerteShader="
+						+ ", mVertexShader="
 						+ mVerteShader
 						+ ", mFragmentShader="
 						+ mFragmentShader

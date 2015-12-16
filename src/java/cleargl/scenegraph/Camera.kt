@@ -8,7 +8,7 @@ open class Camera : Node("Camera") {
     var targeted = false
     var active = false
 
-    protected var target: GLVector = GLVector(0.0f, 0.0f, 0.0f)
+    protected var target: GLVector = GLVector(floatArrayOf(0.0f, 0.0f, 0.0f))
 
     init {
         this.nodeType = "Camera"

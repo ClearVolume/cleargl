@@ -57,8 +57,8 @@ public class ClearTextRenderer
 			mProg = GLProgram.buildProgram(	pGL,
 																			ClearTextRenderer.class,
 																			new String[]
-																			{ "shaders/text_vert.glsl",
-																				"shaders/text_frag.glsl" });
+																			{ "shaders/TextRenderer.vs",
+																				"shaders/TextRenderer.fs" });
 		}
 		catch (final IOException e)
 		{

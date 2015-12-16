@@ -3,6 +3,7 @@ package cleargl.scenegraph
 import cleargl.GLMatrix
 import cleargl.GLProgram
 import cleargl.GLVector
+import cleargl.RendererInterface
 import com.jogamp.opengl.math.Quaternion
 
 interface Renderable {
@@ -21,4 +22,10 @@ interface Renderable {
     var position: GLVector?
     var scale: GLVector?
     var rotation: Quaternion
+
+    var initialized: Boolean
+    var dirty: Boolean
+    var renderer: RendererInterface?
+
+    fun init(): Boolean
 }
