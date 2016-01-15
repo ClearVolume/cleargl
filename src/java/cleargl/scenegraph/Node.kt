@@ -12,13 +12,14 @@ import java.util.*
 open class Node(open var name: String) : Renderable {
     override var initialized: Boolean = false
     override var dirty: Boolean = true
+    override var visible: Boolean = true
 
     override fun init(): Boolean {
         return true
     }
 
     override var renderer: RendererInterface? = null
-    var nodeType = "Node"
+    open var nodeType = "Node"
 
     override var program: GLProgram? = null
     override var model: GLMatrix = GLMatrix.getIdentity()

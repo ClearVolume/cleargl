@@ -49,5 +49,4 @@ void main() {
     vec3 spec;
 
     FragColor = vec4(ads(VertexIn.Position, VertexIn.Normal), 1.0);
-    //FragColor = vec4(1.0, 0.0, 0.0, 1.0);
 }

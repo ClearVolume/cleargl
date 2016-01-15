@@ -26,6 +26,7 @@ interface Renderable {
     var initialized: Boolean
     var dirty: Boolean
     var renderer: RendererInterface?
+    var visible: Boolean
 
     fun init(): Boolean
 }

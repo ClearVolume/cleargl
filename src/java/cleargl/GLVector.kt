@@ -6,7 +6,7 @@ import java.nio.FloatBuffer
 /**
  * Created by ulrik on 19/11/15.
  */
-open public class GLVector(e: FloatArray)  {
+open public class GLVector(vararg e: Float)  {
     protected var dimension: Int = 0
     protected var elements: FloatArray? = null
 
@@ -15,19 +15,18 @@ open public class GLVector(e: FloatArray)  {
         dimension = e.size
     }
 
-    constructor(x: Float, y: Float, z: Float) : this(floatArrayOf(x, y, z))
-    constructor(x: Float, y: Float, z: Float, w: Float) : this(floatArrayOf(x, y, z, w))
-
     @Throws(Exception::class)
     fun add(v: GLVector): GLVector {
         if (this.dimension != v.dimension) {
-            throw Exception("Vector dimension mismatch!")
+            throw Exception("Vector dimension mismatch: ${this.dimension} vs. ${v.dimension}")
         }
 
-        val n = GLVector(this.elements!!)
+        val n = GLVector()
+        val e = FloatArray(v.dimension)
+        n.set(e)
 
         for (i in 0..this.dimension - 1) {
-            n.setElement(i, n.getElement(i) + v.getElement(i))
+            n.setElement(i, this.getElement(i) + v.getElement(i))
         }
 
         return n
@@ -49,10 +48,10 @@ open public class GLVector(e: FloatArray)  {
     }
 
     fun mult(num: Float): GLVector {
-        val n = GLVector(this.elements!!)
+        val n = GLVector()
 
         for (i in 0..this.dimension - 1) {
-            n.setElement(i, n.getElement(i) * num)
+            n.setElement(i, this.getElement(i) * num)
         }
 
         return n
@@ -92,6 +91,27 @@ open public class GLVector(e: FloatArray)  {
 
     fun toFloatBuffer(): FloatBuffer {
         return FloatBuffer.wrap(elements)
+    }
+
+    fun magnitude(): Float =
+        Math.sqrt(elements!!.map { e -> Math.pow(e.toDouble(), 2.0)}.sum()).toFloat()
+
+    fun normalize() {
+        elements = elements!!.map { e -> e/magnitude() }.toFloatArray()
+    }
+
+    fun getNormalized(): GLVector {
+        var n: GLVector = GLVector(0.0f, 0.0f, 0.0f)
+        n.set(elements!!.map { e -> e/magnitude() }.toFloatArray())
+        return n
+    }
+
+    operator fun plus(b: GLVector): GLVector {
+        return add(b)
+    }
+
+    operator fun minus(b: GLVector): GLVector {
+        return add(b.mult(-1.0f))
     }
 
     override fun toString(): String {
