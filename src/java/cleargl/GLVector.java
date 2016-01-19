@@ -3,7 +3,6 @@ package cleargl;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 
-import gnu.trove.list.array.TFloatArrayList;
 
 public class GLVector
 {
