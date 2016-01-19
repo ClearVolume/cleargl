@@ -2,9 +2,6 @@ buildscript {
   repositories {
     mavenCentral()
   }
-  dependencies {
-    classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.0.0-beta-4583'
-  }
 }
 
 plugins {
@@ -12,7 +9,6 @@ plugins {
 }
 
 apply plugin: 'java'
-apply plugin: 'kotlin'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
@@ -28,24 +24,21 @@ sourceSets
 	{
 		java
 		{ srcDir 'src/java' }
-        kotlin
-        { srcDir 'src/java' }
 		resources
-		{  srcDir 'src/java' }
+		{ srcDir 'src/java' }
 	}
 	test
 	{
 		java
 		{ srcDir 'src/java' }
-        kotlin
-        { srcDir 'src/java' }
 		resources
-		{  srcDir 'src/java' }
+		{ srcDir 'src/java' }
 	}
 }
 
 
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 
 test
