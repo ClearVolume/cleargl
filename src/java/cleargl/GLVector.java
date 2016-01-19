@@ -16,14 +16,15 @@ public class GLVector
 		mElements = Arrays.copyOf(pElements, pElements.length);
 		mDimension = pElements.length;
 	}
-	
+
 	public GLVector(GLVector pGLVector)
 	{
 		super();
-		mElements = Arrays.copyOf(pGLVector.mElements, pGLVector.mElements.length);
+		mElements = Arrays.copyOf(pGLVector.mElements,
+															pGLVector.mElements.length);
 		mDimension = pGLVector.mElements.length;
 	}
-	
+
 	public GLVector clone()
 	{
 		return new GLVector(this);
@@ -53,12 +54,26 @@ public class GLVector
 	{
 		mElements[pIndex] = pValue;
 	}
-
+	
 	public void plusAssign(GLVector pGLVector)
 	{
 		float[] lElements = pGLVector.mElements;
 		for (int i = 0; i < mDimension; i++)
 			mElements[i] += lElements[i];
+	}
+
+	public GLVector minus(GLVector pGLVector)
+	{
+		GLVector lMinus = this.clone();
+		lMinus.minusAssign(pGLVector);
+		return lMinus;
+	}
+
+	public GLVector plus(GLVector pGLVector)
+	{
+		GLVector lPlus = this.clone();
+		lPlus.plusAssign(pGLVector);
+		return lPlus;
 	}
 
 	public void minusAssign(GLVector pGLVector)
@@ -102,14 +117,18 @@ public class GLVector
 		return lResult;
 	}
 
-	public void normalize()
+	public GLVector normalize()
 	{
 		float lFactor = 1f / magnitude();
 		for (int i = 0; i < mDimension; i++)
 			mElements[i] *= lFactor;
+		return this;
 	}
-	
-	
+
+	public GLVector getNormalized()
+	{
+		return this.clone().normalize();
+	}
 
 	public FloatBuffer toFloatBuffer()
 	{
