@@ -4,11 +4,11 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2ES2;
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GLException;
-import org.apache.commons.io.IOUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class GLShader implements GLInterface, GLCloseable
 {
@@ -25,7 +25,7 @@ public class GLShader implements GLInterface, GLCloseable
 		super();
 		mGL = pGL;
 		final InputStream lResourceAsStream = pRootClass.getResourceAsStream(pResourceName);
-		mShaderSource = IOUtils.toString(lResourceAsStream, "UTF-8");
+		mShaderSource = new Scanner(lResourceAsStream, "UTF-8").useDelimiter("\\A").next();
 		mShaderType = pShaderType;
 
 		final HashMap<GLShaderType, Integer> glShaderTypeMapping = new HashMap<>();
