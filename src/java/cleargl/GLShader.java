@@ -1,15 +1,14 @@
 package cleargl;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.HashMap;
-
-import org.apache.commons.io.IOUtils;
-
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2ES2;
 import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GLException;
+import org.apache.commons.io.IOUtils;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.HashMap;
 
 public class GLShader implements GLInterface, GLCloseable
 {
@@ -20,12 +19,12 @@ public class GLShader implements GLInterface, GLCloseable
 
 	public GLShader(GL pGL,
 									Class<?> pRootClass,
-									String pRessourceName,
+									String pResourceName,
 									GLShaderType pShaderType) throws IOException
 	{
 		super();
 		mGL = pGL;
-		final InputStream lResourceAsStream = pRootClass.getResourceAsStream(pRessourceName);
+		final InputStream lResourceAsStream = pRootClass.getResourceAsStream(pResourceName);
 		mShaderSource = IOUtils.toString(lResourceAsStream, "UTF-8");
 		mShaderType = pShaderType;
 
