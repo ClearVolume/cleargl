@@ -160,7 +160,8 @@ public class ClearGLWindow implements ClearGLDisplayable
 	public void start()
 	{
 		mAnimator = new FPSAnimator(this.getGLAutoDrawable(),
-																mFramesPerSecond);
+																mFramesPerSecond, true);
+		mAnimator.setUpdateFPSFrames(30, null);
 		mAnimator.start();
 		while (!mAnimator.isAnimating())
 			Thread.yield();
