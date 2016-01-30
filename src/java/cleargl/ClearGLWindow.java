@@ -515,6 +515,11 @@ public class ClearGLWindow implements ClearGLDisplayable
 	}
 
 	@Override
+	public float getAspectRatio() {
+		return mGlWindow.getSurfaceWidth()/mGlWindow.getSurfaceHeight();
+	}
+
+	@Override
 	public Component getComponent()
 	{
 		return getNewtCanvasAWT();

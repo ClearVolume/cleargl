@@ -1,8 +1,5 @@
 package cleargl;
 
-import java.awt.Component;
-import java.io.PrintStream;
-
 import com.jogamp.nativewindow.WindowClosingProtocol.WindowClosingMode;
 import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.MouseListener;
@@ -14,6 +11,9 @@ import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLJPanel;
+
+import java.awt.*;
+import java.io.PrintStream;
 
 public class ClearGLJPanel implements ClearGLDisplayable
 
@@ -196,6 +196,11 @@ public class ClearGLJPanel implements ClearGLDisplayable
 	{
 		// no fps
 		return 0;
+	}
+
+	@Override
+	public float getAspectRatio() {
+		return getWidth()/getHeight();
 	}
 
 	@Override
