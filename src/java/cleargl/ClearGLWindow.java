@@ -155,6 +155,10 @@ public class ClearGLWindow implements ClearGLDisplayable
 	public void setFPS(int pFramesPerSecond)
 	{
 		mFramesPerSecond = pFramesPerSecond;
+
+		if(mAnimator != null) {
+			mAnimator.setFPS(pFramesPerSecond);
+		}
 	}
 
 	public void start()
