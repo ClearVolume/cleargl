@@ -1,8 +1,8 @@
 package cleargl;
 
-import java.nio.FloatBuffer;
-
 import com.jogamp.opengl.GL;
+
+import java.nio.FloatBuffer;
 
 public class GLUniform implements GLInterface
 {
@@ -69,6 +69,24 @@ public class GLUniform implements GLInterface
 	{
 		mGlProgram.bind();
 		mGlProgram.getGL().getGL3().glUniform3fv(mUniformId, 1, pVector);
+	}
+
+	public void setFloatVector(GLVector pVector) {
+		mGlProgram.bind();
+		switch(pVector.mDimension) {
+			case 2:
+				mGlProgram.getGL().getGL3().glUniform2fv(mUniformId, 1, FloatBuffer.wrap(pVector.mElements));
+				break;
+			case 3:
+				mGlProgram.getGL().getGL3().glUniform3fv(mUniformId, 1, FloatBuffer.wrap(pVector.mElements));
+				break;
+			case 4:
+				mGlProgram.getGL().getGL3().glUniform4fv(mUniformId, 1, FloatBuffer.wrap(pVector.mElements));
+				break;
+			default:
+				System.err.println("Unsupported vector dimension " + pVector.mDimension + " for uniform assignment!");
+				break;
+		}
 	}
 
 	public void setFloatVector4(float... pVector4)
