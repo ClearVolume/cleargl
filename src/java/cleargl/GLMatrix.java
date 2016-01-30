@@ -409,14 +409,14 @@ public class GLMatrix
 	{
 		final StringBuilder lStringBuilder = new StringBuilder();
 		FloatUtil.matrixToString(	lStringBuilder,
-															"GLMatrix ",
+															"",
 															"%10.5f",
 															mMatrix,
 															0,
 															4,
 															4,
-															true);
-		return lStringBuilder.toString();
+															false);
+		return "GLMatrix:\n" + lStringBuilder.toString();
 	}
 
 	public static GLMatrix fromQuaternion(Quaternion q) {
