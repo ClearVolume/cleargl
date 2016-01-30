@@ -3,6 +3,9 @@ package cleargl;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 
+/*
+@author Ulrik Günther, Loïc Royer
+ */
 
 public class GLVector
 {
@@ -14,6 +17,16 @@ public class GLVector
 		super();
 		mElements = Arrays.copyOf(pElements, pElements.length);
 		mDimension = pElements.length;
+	}
+
+	public GLVector(float element, int dimension) {
+		super();
+		mElements = new float[dimension];
+		for(int i = 0; i < dimension; i++) {
+			mElements[i] = element;
+		}
+
+		mDimension = dimension;
 	}
 
 	public GLVector(GLVector pGLVector)
@@ -165,6 +178,14 @@ public class GLVector
 						+ ", mDimension="
 						+ mDimension
 						+ "]";
+	}
+
+	public static GLVector getOneVector(int dimension) {
+		return new GLVector(1.0f, dimension);
+	}
+
+	public static GLVector getNullVector(int dimension) {
+	  return new GLVector(0.0f, dimension);
 	}
 
 }
