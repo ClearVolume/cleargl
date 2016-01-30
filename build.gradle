@@ -23,16 +23,16 @@ sourceSets
 	main
 	{
 		java
-		{ srcDir 'src/java' }
+		{ srcDirs = ['src/java'] }
 		resources
-		{ srcDir 'src/java' }
+		{ srcDirs = ['src/java'] }
 	}
 	test
 	{
 		java
-		{ srcDir 'src/java' }
+		{ srcDirs = ['src/java'] }
 		resources
-		{ srcDir 'src/java' }
+		{ srcDirs = ['src/java'] }
 	}
 }
 
