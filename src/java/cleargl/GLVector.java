@@ -36,17 +36,17 @@ public class GLVector
 
 	public float y()
 	{
-		return mElements[0];
+		return mElements[1];
 	}
 
 	public float z()
 	{
-		return mElements[1];
+		return mElements[2];
 	}
 
 	public float get(int pIndex)
 	{
-		return mElements[2];
+		return mElements[pIndex];
 	}
 
 	public void set(int pIndex, float pValue)
