@@ -23,16 +23,16 @@ sourceSets
 	main
 	{
 		java
-		{ srcDirs = ['src/java'] }
+		{ srcDirs = ['src/main/java'] }
 		resources
-		{ srcDirs = ['src/java'] }
+		{ srcDirs = ['src/main/resources'] }
 	}
 	test
 	{
 		java
-		{ srcDirs = ['src/java'] }
+		{ srcDirs = ['src/test/java'] }
 		resources
-		{ srcDirs = ['src/java'] }
+		{ srcDirs = ['src/test/resources'] }
 	}
 }
 
@@ -55,8 +55,6 @@ test
 
 dependencies
 {
-    compile 'org.jetbrains.kotlin:kotlin-stdlib:1.0.0-beta-4583'
-
 	compile ('org.jogamp.gluegen:gluegen-rt:2.3.1'){transitive = true}
 	compile ('org.jogamp.gluegen:gluegen-rt:2.3.1:natives-macosx-universal'){transitive = true}
 	compile ('org.jogamp.gluegen:gluegen-rt:2.3.1:natives-windows-amd64'){transitive = true}

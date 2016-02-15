@@ -390,7 +390,7 @@ public class GLMatrix
 		final float[] tmp = new float[16];
 		System.arraycopy(mMatrix, 0, tmp, 0, mMatrix.length);
 
-		FloatUtil.invertMatrix(tmp, mMatrix);
+		FloatUtil.invertMatrix(mMatrix, tmp);
 		return this;
 	}
 
@@ -415,7 +415,7 @@ public class GLMatrix
 															0,
 															4,
 															4,
-															false);
+															true);
 		return "GLMatrix:\n" + lStringBuilder.toString();
 	}
 
@@ -503,6 +503,25 @@ public class GLMatrix
 	{
 		for (int i = 0; i < pVector.length; i++)
 			pVector[i] = 0;
+	}
+
+	public static boolean compare(GLMatrix left, GLMatrix right, boolean explainDiff) {
+		float EPSILON = 0.00001f;
+		float[] l = left.getFloatArray();
+		float[] r = right.getFloatArray();
+
+		for(int i = 0; i < l.length; i++) {
+			if(Math.abs(l[i] - r[i]) > EPSILON) {
+				if(explainDiff) {
+					System.err.println("Matrices differ at least in component " + i + ", |delta|=" + Math.abs(l[i] - r[i]));
+					System.err.println("LHS: " + left);
+					System.err.println("RHS: " + right);
+				}
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 }

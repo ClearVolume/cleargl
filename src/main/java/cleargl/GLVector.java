@@ -57,6 +57,14 @@ public class GLVector
 		return mElements[2];
 	}
 
+	public GLVector xyz() {
+		return new GLVector(mElements[0], mElements[1], mElements[2]);
+	}
+
+	public GLVector xyzw() {
+		return new GLVector(mElements[0], mElements[1], mElements[2], mElements[3]);
+	}
+
 	public float get(int pIndex)
 	{
 		return mElements[pIndex];

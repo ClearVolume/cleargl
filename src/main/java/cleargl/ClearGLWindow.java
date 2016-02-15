@@ -382,14 +382,21 @@ public class ClearGLWindow implements ClearGLDisplayable
 	 */
 	@Override
 	public void setFullscreen(boolean pFullScreen) {
-		if(System.getProperty("ClearVolume.Rift") != null) {
+		if(System.getProperty("ClearVolume.EnableVR") != null) {
 			final Display display = NewtFactory.createDisplay(null); // local display
 			final Screen screen = NewtFactory.createScreen(display, 0); // screen 0
 			final ArrayList<MonitorDevice> monitors = new ArrayList<MonitorDevice>();
 			int lOVRscreen;
 
+			int index = 0;
+			for(MonitorDevice m: screen.getMonitorDevices()) {
+				System.out.println(index + ": " + m.toString());
+				index++;
+			}
+
 			try {
-				lOVRscreen = Integer.parseInt(System.getenv("CV_OVR_SCREEN"));
+				lOVRscreen = Integer.parseInt(System.getProperty("ClearVolume.EnableVR"));
+				System.out.println("Oculus HMD screen set to " + lOVRscreen + " by property.");
 			} catch (java.lang.NumberFormatException e) {
 				lOVRscreen = 0;
 			}
