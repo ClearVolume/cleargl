@@ -1,5 +1,8 @@
 package cleargl;
 
+import com.jogamp.opengl.math.Quaternion;
+import com.jogamp.opengl.math.VectorUtil;
+
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 
@@ -126,6 +129,24 @@ public class GLVector
 		return lResult;
 	}
 
+	public GLVector times(Quaternion q) {
+		final float[] in = this.mElements.clone();
+		float[] out = new float[mDimension];
+
+		q.rotateVector(out, 0, in, 0);
+
+		return new GLVector(out);
+	}
+
+	public GLVector times(float num) {
+		GLVector n = this.clone();
+		for(int i = 0; i < mDimension; i++) {
+			n.mElements[i] = num * n.mElements[i];
+		}
+
+		return n;
+	}
+
 	public float magnitude()
 	{
 		float lResult = 0;
@@ -143,6 +164,13 @@ public class GLVector
 		for (int i = 0; i < mDimension; i++)
 			mElements[i] *= lFactor;
 		return this;
+	}
+
+	public GLVector cross(GLVector v) {
+		float result[] = new float[3];
+		VectorUtil.crossVec3(result, this.toFloatBuffer().array(), v.toFloatBuffer().array());
+
+		return new GLVector(result);
 	}
 
 	public GLVector getNormalized()

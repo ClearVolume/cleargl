@@ -205,6 +205,14 @@ public class GLMatrix
 
 	}
 
+	public void setCamera(GLVector position, GLVector target, GLVector up) {
+		setCamera(
+						position.x(), position.y(), position.z(),
+						target.x(), target.y(), target.z(),
+						up.x(), up.y(), up.z()
+		);
+	}
+
 	public void euler(final double bankX,
 										final double headingY,
 										final double attitudeZ)
@@ -264,11 +272,13 @@ public class GLMatrix
 		FloatUtil.multMatrix(mMatrix, lScaleMatrix);
 	}
 
-	public void mult(Quaternion pQuaternion)
+	public GLMatrix mult(Quaternion pQuaternion)
 	{
 		final float[] lQuaternionMatrix = pQuaternion.toMatrix(	new float[16],
 																														0);
 		FloatUtil.multMatrix(mMatrix, lQuaternionMatrix);
+
+		return this;
 	}
 
 	public float[] mult(float[] pVector)
