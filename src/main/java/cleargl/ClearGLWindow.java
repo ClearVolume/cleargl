@@ -136,6 +136,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 
 		lCapabilities.setSampleBuffers(pNumberOfSamples > 1);
 		lCapabilities.setNumSamples(pNumberOfSamples);
+		lCapabilities.setDepthBits(32);
 
 		final GLCapabilitiesChooser lMultisampleChooser = new MultisampleChooser();
 
