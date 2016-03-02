@@ -99,7 +99,7 @@ public class GLShader implements GLInterface, GLCloseable
 																		0,
 																		lBytes,
 																		0);
-		final String logMessage = new String(lBytes);
+		final String logMessage = toString() + ":\n" + new String(lBytes);
 		return logMessage;
 	}
 

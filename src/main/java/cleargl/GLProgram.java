@@ -1,17 +1,17 @@
 package cleargl;
 
-import java.io.IOException;
-import java.util.HashMap;
-
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2ES2;
 import com.jogamp.opengl.GLException;
+
+import java.io.IOException;
+import java.util.HashMap;
 
 public class GLProgram implements GLInterface, GLCloseable
 {
 	private GL mGL;
 	private final int mProgramId;
-	private GLShader mVerteShader;
+	private GLShader mVertexShader;
 	private GLShader mFragmentShader;
 
 	public static GLProgram buildProgram(	GL pGL,
@@ -32,6 +32,7 @@ public class GLProgram implements GLInterface, GLCloseable
 		System.out.println(lFragmentShader.getShaderInfoLog());
 		final GLProgram lGLProgram = new GLProgram(	lVertexShader,
 																								lFragmentShader);
+
 		return lGLProgram;
 	}
 
@@ -119,12 +120,12 @@ public class GLProgram implements GLInterface, GLCloseable
 	public GLProgram(GLShader pVerteShader, GLShader pFragmentShader)
 	{
 		super();
-		mVerteShader = pVerteShader;
+		mVertexShader = pVerteShader;
 		mFragmentShader = pFragmentShader;
 
 		mGL = pVerteShader.getGL();
 
-		final int lVertexShaderId = mVerteShader.getId();
+		final int lVertexShaderId = mVertexShader.getId();
 		final int lFragmentShaderId = mFragmentShader.getId();
 
 		mProgramId = mGL.getGL3().glCreateProgram();
@@ -206,7 +207,7 @@ public class GLProgram implements GLInterface, GLCloseable
 																			0,
 																			lBytes,
 																			0);
-		final String logMessage = new String(lBytes);
+		final String logMessage = toString() + "\n" + new String(lBytes);
 
 		return logMessage;
 	}
@@ -245,7 +246,7 @@ public class GLProgram implements GLInterface, GLCloseable
 						+ ", mProgramId="
 						+ mProgramId
 						+ ", mVertexShader="
-						+ mVerteShader
+						+ mVertexShader
 						+ ", mFragmentShader="
 						+ mFragmentShader
 						+ "]";
