@@ -6,5 +6,6 @@ public enum GLShaderType
 	GeometryShader,
 	TesselationControlShader,
 	TesselationEvaluationShader,
-	FragmentShader
+	FragmentShader,
+	ComputeShader
 }

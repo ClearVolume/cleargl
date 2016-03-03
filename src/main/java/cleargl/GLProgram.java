@@ -75,13 +75,12 @@ public class GLProgram implements GLInterface, GLCloseable
 	{
 		final HashMap<GLShaderType, String> glslFilenameMapping = new HashMap<>();
 
-		glslFilenameMapping.put(GLShaderType.VertexShader, ".vs");
-		glslFilenameMapping.put(GLShaderType.GeometryShader, ".gs");
-		glslFilenameMapping.put(GLShaderType.TesselationControlShader,
-														".tcs");
-		glslFilenameMapping.put(GLShaderType.TesselationEvaluationShader,
-														".tes");
-		glslFilenameMapping.put(GLShaderType.FragmentShader, ".fs");
+		glslFilenameMapping.put(GLShaderType.VertexShader, ".vert");
+		glslFilenameMapping.put(GLShaderType.GeometryShader, ".geom");
+		glslFilenameMapping.put(GLShaderType.TesselationControlShader, ".tesc");
+		glslFilenameMapping.put(GLShaderType.TesselationEvaluationShader, ".tese");
+		glslFilenameMapping.put(GLShaderType.FragmentShader, ".frag");
+		glslFilenameMapping.put(GLShaderType.ComputeShader, ".comp");
 
 		for (int i = 0; i < shaders.length; i++)
 		{
