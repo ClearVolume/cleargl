@@ -165,7 +165,6 @@ public class GLFramebuffer {
       for (int i = 0; i < depthBuffers.size(); i++) {
         gl.glActiveTexture(GL.GL_TEXTURE0 + offset + i + colorUnits + 1);
         gl.glBindTexture(GL.GL_TEXTURE_2D, depthBuffers.get(i).getId());
-        System.err.println("DB bound to GL_TEXTURE" + (offset+i+colorUnits + 1));
       }
     }
   }
