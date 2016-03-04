@@ -102,7 +102,7 @@ public class GLMatrix
 		mult(pGLMatrix);
 	}
 
-	public void setPerspectiveProjectionMatrix(	float pFOV,
+	public GLMatrix setPerspectiveProjectionMatrix(	float pFOV,
 																							float pAspectRatio,
 																							float pNearPlane,
 																							float pFarPlane)
@@ -114,6 +114,8 @@ public class GLMatrix
 															pAspectRatio,
 															pNearPlane,
 															pFarPlane);
+
+		return this;
 	}
 
 	public void setPerspectiveAnaglyphProjectionMatrix(float fov,
@@ -176,7 +178,7 @@ public class GLMatrix
 		return lGLMatrix;
 	}
 
-	public void setCamera(float pPosX,
+	public GLMatrix setCamera(float pPosX,
 												float pPosY,
 												float pPosZ,
 												float pLookAtX,
@@ -203,14 +205,17 @@ public class GLMatrix
 													0,
 													new float[16]);
 
+		return this;
 	}
 
-	public void setCamera(GLVector position, GLVector target, GLVector up) {
+	public GLMatrix setCamera(GLVector position, GLVector target, GLVector up) {
 		setCamera(
 						position.x(), position.y(), position.z(),
 						target.x(), target.y(), target.z(),
 						up.x(), up.y(), up.z()
 		);
+
+		return this;
 	}
 
 	public void euler(final double bankX,
