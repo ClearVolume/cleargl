@@ -7,13 +7,21 @@ import com.jogamp.opengl.GLException;
 import coremem.ContiguousMemoryInterface;
 import coremem.types.NativeTypeEnum;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.color.ColorSpace;
+import java.awt.image.*;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Hashtable;
 
 public class GLTexture implements GLInterface, GLCloseable
 {
@@ -31,6 +39,22 @@ public class GLTexture implements GLInterface, GLCloseable
 	private final int mTextureDepth;
 	private final int mTextureTarget;
 	private final int mNumberOfChannels;
+
+	private static ColorModel glAlphaColorModel = new ComponentColorModel(
+					ColorSpace.getInstance(ColorSpace.CS_sRGB),
+					new int[]{8, 8, 8, 8},
+					true,
+					false,
+					ComponentColorModel.TRANSLUCENT,
+					DataBuffer.TYPE_BYTE);
+
+	private static ColorModel glColorModel = new ComponentColorModel(
+					ColorSpace.getInstance(ColorSpace.CS_sRGB),
+					new int[]{8, 8, 8, 0},
+					false,
+					false,
+					ComponentColorModel.OPAQUE,
+					DataBuffer.TYPE_BYTE);
 
 	public GLTexture(	GLInterface pGLInterface,
 										NativeTypeEnum pType,
@@ -113,13 +137,38 @@ public class GLTexture implements GLInterface, GLCloseable
 			mTextureOpenGLDataType = GL.GL_BYTE;
 			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL.GL_RGBA8
 																														: GL.GL_R8;
+			switch(mNumberOfChannels) {
+				case 1:
+					mTextureOpenGLInternalFormat = GL.GL_R8;
+					break;
+				case 3:
+					mTextureOpenGLInternalFormat = GL.GL_RGB8;
+					break;
+				case 4:
+					mTextureOpenGLInternalFormat = GL.GL_RGBA8;
+					break;
+				default:
+					mTextureOpenGLInternalFormat = GL.GL_RGBA8;
+			}
 			mBytesPerChannel = 1;
 		}
 		else if (mType == NativeTypeEnum.UnsignedByte)
 		{
 			mTextureOpenGLDataType = GL.GL_UNSIGNED_BYTE;
-			mTextureOpenGLInternalFormat = mNumberOfChannels == 4	? GL.GL_RGBA8
-																														: GL.GL_R8;
+
+			switch(mNumberOfChannels) {
+				case 1:
+					mTextureOpenGLInternalFormat = GL.GL_R8;
+					break;
+				case 3:
+					mTextureOpenGLInternalFormat = GL.GL_RGB8;
+					break;
+				case 4:
+					mTextureOpenGLInternalFormat = GL.GL_RGBA8;
+					break;
+				default:
+					mTextureOpenGLInternalFormat = GL.GL_RGBA8;
+			}
 			mBytesPerChannel = 1;
 		}
 		else if (mType == NativeTypeEnum.Short)
@@ -391,5 +440,104 @@ public class GLTexture implements GLInterface, GLCloseable
       e.printStackTrace();
     }
   }
+
+	public static GLTexture loadFromFile(GL4 gl, String filename, boolean linearInterpolation, int mipmapLevels) {
+		final BufferedImage bi;
+		final ByteBuffer imageData;
+		final InputStream fis;
+		GLTexture tex;
+
+		try {
+			fis = Files.newInputStream(Paths.get(filename, ""));
+			bi = ImageIO.read(fis);
+			fis.close();
+		} catch (Exception e) {
+			System.err.println("GLTexture: could not read image from " + filename + ".");
+			return null;
+		}
+
+		imageData = convertImageData(bi);
+
+		int texWidth = 2;
+		int texHeight = 2;
+
+		while (texWidth < bi.getWidth()) {
+			texWidth *= 2;
+		}
+		while (texHeight < bi.getHeight()) {
+			texHeight *= 2;
+		}
+
+		tex = new GLTexture(gl,
+						nativeTypeEnumFromBufferedImage(bi),
+						bi.getColorModel().getNumComponents(),
+						texWidth, texHeight, 1,
+						linearInterpolation,
+						mipmapLevels
+		);
+		System.out.println(tex);
+		tex.clear();
+		tex.copyFrom(imageData);
+		tex.updateMipMaps();
+
+		return tex;
+	}
+
+	private static NativeTypeEnum nativeTypeEnumFromBufferedImage(BufferedImage bi) {
+		switch(bi.getData().getDataBuffer().getDataType()) {
+			case DataBuffer.TYPE_BYTE: {
+				return NativeTypeEnum.UnsignedByte;
+			}
+			case DataBuffer.TYPE_DOUBLE: {
+				return NativeTypeEnum.Double;
+			}
+			case DataBuffer.TYPE_INT: {
+				return NativeTypeEnum.Int;
+			}
+			case DataBuffer.TYPE_SHORT: {
+				return NativeTypeEnum.Short;
+			}
+			default:
+				return null;
+		}
+	}
+
+	private static ByteBuffer convertImageData(BufferedImage bufferedImage) {
+		ByteBuffer imageBuffer;
+		WritableRaster raster;
+		BufferedImage texImage;
+
+		int texWidth = 2;
+		int texHeight = 2;
+
+		while (texWidth < bufferedImage.getWidth()) {
+			texWidth *= 2;
+		}
+		while (texHeight < bufferedImage.getHeight()) {
+			texHeight *= 2;
+		}
+
+		if(bufferedImage.getColorModel().hasAlpha()) {
+			raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, texWidth, texHeight, 4, null);
+			texImage = new BufferedImage(GLTexture.glAlphaColorModel, raster, false, new Hashtable<>());
+		} else {
+			raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, texWidth, texHeight, 3, null);
+			texImage = new BufferedImage(GLTexture.glColorModel, raster, false, new Hashtable<>());
+		}
+
+		Graphics g = texImage.getGraphics();
+		g.setColor(new Color(0.0f, 0.0f, 0.0f, 0.0f));
+		g.fillRect(0, 0, texWidth, texHeight);
+		g.drawImage(bufferedImage, 0, 0, null);
+
+		final byte[] data = ((DataBufferByte) texImage.getRaster().getDataBuffer()).getData();
+
+		imageBuffer = ByteBuffer.allocateDirect(data.length);
+		imageBuffer.order(ByteOrder.nativeOrder());
+		imageBuffer.put(data, 0, data.length);
+		imageBuffer.rewind();
+
+		return imageBuffer;
+	}
 
 }
