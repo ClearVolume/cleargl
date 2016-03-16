@@ -116,7 +116,8 @@ public class GLTexture implements GLInterface, GLCloseable
 										 int pTextureHeight,
 										 int pTextureDepth,
 										 boolean pLinearInterpolation,
-										 int pMipMapLevels)
+										 int pMipMapLevels,
+										 int precision)
 	{
 		super();
 		mGL = pGL;
@@ -207,13 +208,25 @@ public class GLTexture implements GLInterface, GLCloseable
 					mTextureOpenGLInternalFormat = GL.GL_R32F;
 					break;
 				case 3:
-					mTextureOpenGLInternalFormat = GL.GL_RGB32F;
+					if(precision == 16) {
+						mTextureOpenGLInternalFormat = GL.GL_RGB16F;
+					} else if(precision == 32) {
+						mTextureOpenGLInternalFormat = GL.GL_RGB32F;
+					}
 					break;
 				case 4:
-					mTextureOpenGLInternalFormat = GL.GL_RGBA32F;
+					if(precision == 16) {
+						mTextureOpenGLInternalFormat = GL.GL_RGBA16F;
+					} else if(precision == 32) {
+						mTextureOpenGLInternalFormat = GL.GL_RGBA32F;
+					}
 					break;
 				case -1:
-					mTextureOpenGLInternalFormat = GL.GL_DEPTH_COMPONENT24;
+					if(precision == 24) {
+						mTextureOpenGLInternalFormat = GL.GL_DEPTH_COMPONENT24;
+					} else {
+						mTextureOpenGLInternalFormat = GL.GL_DEPTH_COMPONENT32;
+					}
 					break;
 			}
 
@@ -247,6 +260,27 @@ public class GLTexture implements GLInterface, GLCloseable
 																				mTextureWidth,
 																				mTextureHeight);
 
+	}
+
+	public GLTexture(	GL4 pGL,
+										 NativeTypeEnum pType,
+										 int pNumberOfChannels,
+										 int pTextureWidth,
+										 int pTextureHeight,
+										 int pTextureDepth,
+										 boolean pLinearInterpolation,
+										 int pMipMapLevels) {
+		this(
+						pGL,
+						pType,
+						pNumberOfChannels,
+						pTextureWidth,
+						pTextureHeight,
+						pTextureDepth,
+						pLinearInterpolation,
+						pMipMapLevels,
+						0
+		);
 	}
 
 	public void unbind()

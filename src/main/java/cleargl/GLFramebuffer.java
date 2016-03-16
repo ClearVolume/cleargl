@@ -46,7 +46,7 @@ public class GLFramebuffer {
             gl,
             NativeTypeEnum.Float,
             3,
-            width, height, 1, true, 1
+            width, height, 1, true, 1, channelDepth
     ));
 
     gl.getGL().glFramebufferTexture2D(GL.GL_FRAMEBUFFER,
@@ -70,7 +70,7 @@ public class GLFramebuffer {
             gl,
             NativeTypeEnum.Float,
             3,
-            width, height, 1, true, 1
+            width, height, 1, true, 1, channelDepth
     ));
 
     gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
@@ -93,7 +93,7 @@ public class GLFramebuffer {
             gl,
             NativeTypeEnum.UnsignedByte,
             4,
-            width, height, 1, true, 1
+            width, height, 1, true, 1, channelDepth
     ));
 
     gl.getGL().glFramebufferTexture2D(GL.GL_FRAMEBUFFER,
@@ -117,7 +117,7 @@ public class GLFramebuffer {
             gl,
             NativeTypeEnum.Float,
             -1,
-            width, height, 1, true, 1
+            width, height, 1, true, 1, depth
     ));
 
     gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
