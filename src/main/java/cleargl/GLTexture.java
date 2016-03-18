@@ -210,27 +210,31 @@ public class GLTexture implements GLInterface, GLCloseable
 				case 3:
 					if(precision == 16) {
 						mTextureOpenGLInternalFormat = GL.GL_RGB16F;
+						mBytesPerChannel = 2;
 					} else if(precision == 32) {
 						mTextureOpenGLInternalFormat = GL.GL_RGB32F;
+						mBytesPerChannel = 4;
 					}
 					break;
 				case 4:
 					if(precision == 16) {
 						mTextureOpenGLInternalFormat = GL.GL_RGBA16F;
+						mBytesPerChannel = 2;
 					} else if(precision == 32) {
 						mTextureOpenGLInternalFormat = GL.GL_RGBA32F;
+						mBytesPerChannel = 4;
 					}
 					break;
 				case -1:
 					if(precision == 24) {
 						mTextureOpenGLInternalFormat = GL.GL_DEPTH_COMPONENT24;
+						mBytesPerChannel = 3;
 					} else {
 						mTextureOpenGLInternalFormat = GL.GL_DEPTH_COMPONENT32;
+						mBytesPerChannel = 4;
 					}
 					break;
 			}
-
-			mBytesPerChannel = 4;
 		}
 		else
 			throw new IllegalArgumentException("Data type not supported for texture !");
