@@ -13,6 +13,7 @@ public class GLProgram implements GLInterface, GLCloseable
 	private final int mProgramId;
 	private GLShader mVertexShader;
 	private GLShader mFragmentShader;
+	private HashMap<GLShaderType, GLShader> mShaders = new HashMap<>();
 
 	public static GLProgram buildProgram(	GL pGL,
 																				Class<?> pClass,
@@ -36,6 +37,7 @@ public class GLProgram implements GLInterface, GLCloseable
 		return lGLProgram;
 	}
 
+	@Deprecated
 	public static GLProgram buildProgram(	GL pGL,
 																				String pVertexShaderSourceAsString,
 																				String pFragmentShaderSourceAsString) throws IOException
@@ -122,6 +124,9 @@ public class GLProgram implements GLInterface, GLCloseable
 		mVertexShader = pVerteShader;
 		mFragmentShader = pFragmentShader;
 
+		mShaders.put(GLShaderType.VertexShader, pVerteShader);
+		mShaders.put(GLShaderType.FragmentShader, pFragmentShader);
+
 		mGL = pVerteShader.getGL();
 
 		final int lVertexShaderId = mVertexShader.getId();
@@ -142,6 +147,7 @@ public class GLProgram implements GLInterface, GLCloseable
 		mGL = pGL;
 
 		mProgramId = mGL.getGL3().glCreateProgram();
+		mShaders = pipeline;
 
 		for (final GLShader shader : pipeline.values())
 		{
@@ -224,6 +230,10 @@ public class GLProgram implements GLInterface, GLCloseable
 	public void setGL(GL pGL)
 	{
 		mGL = pGL;
+	}
+
+	public HashMap<GLShaderType, GLShader> getShaderPipeline() {
+		return mShaders;
 	}
 
 	@Override

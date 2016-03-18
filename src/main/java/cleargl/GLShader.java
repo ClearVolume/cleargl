@@ -16,6 +16,8 @@ public class GLShader implements GLInterface, GLCloseable
 	private final int mShaderId;
 	private final GLShaderType mShaderType;
 	private final String mShaderSource;
+	private final String mShaderSourcePath;
+	private final Class<?> mShaderSourceRootClass;
 
 	public GLShader(GL pGL,
 									Class<?> pRootClass,
@@ -27,6 +29,8 @@ public class GLShader implements GLInterface, GLCloseable
 		final InputStream lResourceAsStream = pRootClass.getResourceAsStream(pResourceName);
 		mShaderSource = new Scanner(lResourceAsStream, "UTF-8").useDelimiter("\\A").next();
 		mShaderType = pShaderType;
+		mShaderSourcePath = pResourceName;
+		mShaderSourceRootClass = pRootClass;
 
 		final HashMap<GLShaderType, Integer> glShaderTypeMapping = new HashMap<>();
 		glShaderTypeMapping.put(GLShaderType.VertexShader,
@@ -57,6 +61,8 @@ public class GLShader implements GLInterface, GLCloseable
 		mGL = pGL;
 		mShaderSource = pShaderSourceAsString;
 		mShaderType = pShaderType;
+		mShaderSourceRootClass = null;
+		mShaderSourcePath = null;
 
 		final HashMap<GLShaderType, Integer> glShaderTypeMapping = new HashMap<>();
 		glShaderTypeMapping.put(GLShaderType.VertexShader,
@@ -108,6 +114,14 @@ public class GLShader implements GLInterface, GLCloseable
 		final int lParameter[] = new int[1];
 		mGL.getGL3().glGetShaderiv(mShaderId, pParamName, lParameter, 0);
 		return lParameter[0];
+	}
+
+	public String getSourcePath() {
+		return mShaderSourcePath;
+	}
+
+	public Class<?> getShaderSourceRootClass() {
+		return mShaderSourceRootClass;
 	}
 
 	@Override
