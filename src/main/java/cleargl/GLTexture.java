@@ -10,6 +10,7 @@ import coremem.types.NativeTypeEnum;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.color.ColorSpace;
+import java.awt.geom.AffineTransform;
 import java.awt.image.*;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -253,10 +254,10 @@ public class GLTexture implements GLInterface, GLCloseable
 																																						: GL.GL_NEAREST));
 		mGL.glTexParameterf(	mTextureTarget,
 																					GL.GL_TEXTURE_WRAP_S,
-																					GL.GL_CLAMP_TO_EDGE);
+																					GL.GL_REPEAT);
 		mGL.glTexParameterf(	mTextureTarget,
 																					GL.GL_TEXTURE_WRAP_T,
-																					GL.GL_CLAMP_TO_EDGE);
+																					GL.GL_REPEAT);
 
 		mGL.glTexStorage2D(mTextureTarget,
 																				mMipMapLevels,
@@ -480,21 +481,45 @@ public class GLTexture implements GLInterface, GLCloseable
   }
 
 	public static GLTexture loadFromFile(GL4 gl, String filename, boolean linearInterpolation, int mipmapLevels) {
-		final BufferedImage bi;
+		BufferedImage bi;
+		BufferedImage flippedImage;
 		final ByteBuffer imageData;
 		final InputStream fis;
+		int[] pixels = null;
 		GLTexture tex;
 
-		try {
-			fis = Files.newInputStream(Paths.get(filename, ""));
-			bi = ImageIO.read(fis);
-			fis.close();
-		} catch (Exception e) {
-			System.err.println("GLTexture: could not read image from " + filename + ".");
-			return null;
+		if (filename.substring(filename.lastIndexOf('.')).endsWith("tga")) {
+			byte[] buffer = null;
+
+			try {
+				fis = Files.newInputStream(Paths.get(filename, ""));
+				buffer = new byte[fis.available()];
+				fis.read(buffer);
+				fis.close();
+
+				pixels = TGAReader.read(buffer, TGAReader.ARGB);
+				int width = TGAReader.getWidth(buffer);
+				int height = TGAReader.getHeight(buffer);
+				bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+				bi.setRGB(0, 0, width, height, pixels, 0, width);
+			} catch (Exception e) {
+				System.err.println("GLTexture: could not read image from TGA" + filename + ".");
+				return null;
+			}
+		} else {
+			try {
+				fis = Files.newInputStream(Paths.get(filename, ""));
+				bi = ImageIO.read(fis);
+				fis.close();
+			} catch (Exception e) {
+				System.err.println("GLTexture: could not read image from " + filename + ".");
+				return null;
+			}
 		}
 
-		imageData = convertImageData(bi);
+		// convert to OpenGL UV space
+		flippedImage = createFlipped(bi);
+		imageData = bufferedImageToRGBABuffer(flippedImage);
 
 		int texWidth = 2;
 		int texHeight = 2;
@@ -513,7 +538,7 @@ public class GLTexture implements GLInterface, GLCloseable
 						linearInterpolation,
 						mipmapLevels
 		);
-		System.out.println(tex);
+
 		tex.clear();
 		tex.copyFrom(imageData);
 		tex.updateMipMaps();
@@ -530,7 +555,7 @@ public class GLTexture implements GLInterface, GLCloseable
 				return NativeTypeEnum.Double;
 			}
 			case DataBuffer.TYPE_INT: {
-				return NativeTypeEnum.Int;
+				return NativeTypeEnum.UnsignedByte;
 			}
 			case DataBuffer.TYPE_SHORT: {
 				return NativeTypeEnum.Short;
@@ -540,7 +565,7 @@ public class GLTexture implements GLInterface, GLCloseable
 		}
 	}
 
-	private static ByteBuffer convertImageData(BufferedImage bufferedImage) {
+	private static ByteBuffer bufferedImageToRGBABuffer(BufferedImage bufferedImage) {
 		ByteBuffer imageBuffer;
 		WritableRaster raster;
 		BufferedImage texImage;
@@ -564,9 +589,10 @@ public class GLTexture implements GLInterface, GLCloseable
 		}
 
 		Graphics g = texImage.getGraphics();
-		g.setColor(new Color(0.0f, 0.0f, 0.0f, 0.0f));
+		g.setColor(new Color(0.0f, 0.0f, 0.0f, 1.0f));
 		g.fillRect(0, 0, texWidth, texHeight);
 		g.drawImage(bufferedImage, 0, 0, null);
+		g.dispose();
 
 		final byte[] data = ((DataBufferByte) texImage.getRaster().getDataBuffer()).getData();
 
@@ -576,6 +602,36 @@ public class GLTexture implements GLInterface, GLCloseable
 		imageBuffer.rewind();
 
 		return imageBuffer;
+	}
+
+	// the following three routines are from http://stackoverflow.com/a/23458883/2129040,
+	// authored by MarcoG
+	private static BufferedImage createFlipped(BufferedImage image)
+	{
+		AffineTransform at = new AffineTransform();
+		at.concatenate(AffineTransform.getScaleInstance(1, -1));
+		at.concatenate(AffineTransform.getTranslateInstance(0, -image.getHeight()));
+		return createTransformed(image, at);
+	}
+
+	private static BufferedImage createRotated(BufferedImage image)
+	{
+		AffineTransform at = AffineTransform.getRotateInstance(
+						Math.PI, image.getWidth()/2, image.getHeight()/2.0);
+		return createTransformed(image, at);
+	}
+
+	private static BufferedImage createTransformed(
+					BufferedImage image, AffineTransform at)
+	{
+		BufferedImage newImage = new BufferedImage(
+						image.getWidth(), image.getHeight(),
+						BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g = newImage.createGraphics();
+		g.transform(at);
+		g.drawImage(image, 0, 0, null);
+		g.dispose();
+		return newImage;
 	}
 
 }
