@@ -10,10 +10,13 @@ import java.util.HashMap;
 public class GLProgram implements GLInterface, GLCloseable
 {
 	private GL mGL;
-	private final int mProgramId;
+	private int mProgramId;
 	private GLShader mVertexShader;
 	private GLShader mFragmentShader;
 	private HashMap<GLShaderType, GLShader> mShaders = new HashMap<>();
+	private HashMap<String, String> parameters = new HashMap<>();
+
+	private boolean stale = false;
 
 	public static GLProgram buildProgram(	GL pGL,
 																				Class<?> pClass,
@@ -72,6 +75,63 @@ public class GLProgram implements GLInterface, GLCloseable
 		return lGLProgram;
 	}
 
+	public static GLProgram buildProgram(	GL pGL,
+																				 Class<?> pClass,
+																				 String[] shaders,
+																				 HashMap<String, String> parameters) throws IOException
+	{
+		final GLProgram lGLProgram = new GLProgram(	pGL,
+						shaderPipelineFromFilenames(pGL,
+										pClass,
+										shaders, parameters),
+						parameters
+						);
+
+		System.out.println(lGLProgram.getProgramInfoLog());
+
+		return lGLProgram;
+	}
+
+	public void recompileProgram(GL pGL) {
+
+		pGL.getGL3().glDeleteProgram(mProgramId);
+
+		mProgramId = mGL.getGL3().glCreateProgram();
+
+		for (final GLShader shader : mShaders.values())
+		{
+			shader.setParameters(parameters);
+			shader.recompile(pGL);
+			mGL.getGL3().glAttachShader(mProgramId, shader.getId());
+		}
+
+		mGL.getGL3().glLinkProgram(mProgramId);
+		stale = false;
+	}
+
+	public void addParameter(String name, String value) {
+		parameters.put(name, value);
+		stale = true;
+	}
+
+	public void removeParameter(String name) {
+		parameters.remove(name);
+		stale = true;
+	}
+
+	public void updateParameter(String name, String value) {
+		parameters.replace(name, value);
+		stale = true;
+	}
+
+	public boolean isStale() {
+		return stale;
+	}
+
+	public void setStale(boolean stale) {
+		this.stale = stale;
+	}
+
 	private static String shaderFileForType(GLShaderType type,
 																					String[] shaders)
 	{
@@ -110,6 +170,32 @@ public class GLProgram implements GLInterface, GLCloseable
 																							rootClass,
 																							filename,
 																							type);
+				System.out.println(shader.getShaderInfoLog());
+				pipeline.put(type, shader);
+			}
+		}
+
+		return pipeline;
+	}
+
+	private static HashMap<GLShaderType, GLShader> shaderPipelineFromFilenames(	GL pGL,
+																																							 Class<?> rootClass,
+																																							 String[] shaders,
+																																							 HashMap<String, String> params) throws IOException
+	{
+		final HashMap<GLShaderType, GLShader> pipeline = new HashMap<>();
+
+		for (final GLShaderType type : GLShaderType.values())
+		{
+			final String filename = shaderFileForType(type, shaders);
+			if (filename != null)
+			{
+				final GLShader shader = new GLShader(	pGL,
+								rootClass,
+								filename,
+								type,
+								params);
+
 				System.out.println(shader.getShaderInfoLog());
 				pipeline.put(type, shader);
 			}
@@ -157,6 +243,24 @@ public class GLProgram implements GLInterface, GLCloseable
 		mGL.getGL3().glLinkProgram(mProgramId);
 	}
 
+	public GLProgram(GL pGL, HashMap<GLShaderType, GLShader> pipeline, HashMap<String, String> parameters)
+	{
+		super();
+
+		mGL = pGL;
+		this.parameters = parameters;
+
+		mProgramId = mGL.getGL3().glCreateProgram();
+		mShaders = pipeline;
+
+		for (final GLShader shader : pipeline.values())
+		{
+			mGL.getGL3().glAttachShader(mProgramId, shader.getId());
+		}
+
+		mGL.getGL3().glLinkProgram(mProgramId);
+	}
+
 	@Override
 	public void close() throws GLException
 	{
@@ -184,6 +288,10 @@ public class GLProgram implements GLInterface, GLCloseable
 
 	public void bind()
 	{
+		if(stale) {
+			recompileProgram(mGL);
+		}
+
 		mGL.getGL3().glUseProgram(mProgramId);
 	}
 
