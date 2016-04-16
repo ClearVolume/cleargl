@@ -13,8 +13,8 @@ import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.MouseListener;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.opengl.GLWindow;
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.DefaultGLCapabilitiesChooser;
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLCapabilitiesChooser;
@@ -39,6 +39,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 
 	private FPSAnimator mAnimator;
 	private int mFramesPerSecond = 60;
+	private ClearGLEventListener mClearGLWindowEventListener;
 
 	static
 	{
@@ -131,6 +132,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 		mWindowTitle = pWindowTitle;
 		mWindowDefaultWidth = pDefaultWidth;
 		mWindowDefaultHeight = pDefaultHeight;
+		mClearGLWindowEventListener = pClearGLWindowEventListener;
 
 		mProjectionMatrix = new GLMatrix();
 		mViewMatrix = new GLMatrix();
@@ -150,8 +152,8 @@ public class ClearGLWindow implements ClearGLDisplayable
 		mGlWindow.setCapabilitiesChooser(lMultisampleChooser);
 		mGlWindow.setTitle(pWindowTitle);
 
-		pClearGLWindowEventListener.setClearGLWindow(this);
-		mGlWindow.addGLEventListener(pClearGLWindowEventListener);
+		mClearGLWindowEventListener.setClearGLWindow(this);
+		mGlWindow.addGLEventListener(mClearGLWindowEventListener);
 		mGlWindow.setSize(pDefaultWidth, pDefaultHeight);
 		mGlWindow.setAutoSwapBufferMode(true);
 
@@ -192,6 +194,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 			try
 			{
 				mGlWindow.setVisible(false);
+				mGlWindow.removeGLEventListener(mClearGLWindowEventListener);
 			}
 			catch (final Throwable e)
 			{
@@ -277,12 +280,12 @@ public class ClearGLWindow implements ClearGLDisplayable
 																				final float zFar)
 	{
 		if (mProjectionMatrix != null)
-			mProjectionMatrix.setOrthoProjectionMatrix(left,
-              right,
-              bottom,
-              top,
-              zNear,
-              zFar);
+			mProjectionMatrix.setOrthoProjectionMatrix(	left,
+																									right,
+																									bottom,
+																									top,
+																									zNear,
+																									zFar);
 	}
 
 	/* (non-Javadoc)
@@ -386,17 +389,24 @@ public class ClearGLWindow implements ClearGLDisplayable
 		mGlWindow.display();
 	}
 
-	public static boolean isRetina(GL pGL) {
+	public static boolean isRetina(GL pGL)
+	{
 		int[] trialSizes = new int[2];
 
 		trialSizes[0] = 512;
 		trialSizes[1] = 512;
 
-		pGL.getContext().getGLDrawable().getNativeSurface().convertToPixelUnits(trialSizes);
+		pGL.getContext()
+				.getGLDrawable()
+				.getNativeSurface()
+				.convertToPixelUnits(trialSizes);
 
-		if(trialSizes[0] == 512 && trialSizes[1] == 512) {
+		if (trialSizes[0] == 512 && trialSizes[1] == 512)
+		{
 			return false;
-		} else {
+		}
+		else
+		{
 			return true;
 		}
 	}
@@ -417,7 +427,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 	public int getHeight()
 	{
 		int factor = isRetina(this.mGlWindow.getGL()) ? 2 : 1;
-		return mGlWindow.getHeight()*factor;
+		return mGlWindow.getHeight() * factor;
 	}
 
 	/* (non-Javadoc)
@@ -427,7 +437,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 	public int getWidth()
 	{
 		int factor = isRetina(this.mGlWindow.getGL()) ? 2 : 1;
-		return mGlWindow.getWidth()*factor;
+		return mGlWindow.getWidth() * factor;
 	}
 
 	@Override
