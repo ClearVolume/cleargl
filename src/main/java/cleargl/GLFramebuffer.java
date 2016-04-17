@@ -107,6 +107,10 @@ public class GLFramebuffer {
   }
 
   public void addDepthBuffer(GL4 gl, int depth) {
+    addDepthBuffer(gl, depth, 1);
+  }
+
+  public void addDepthBuffer(GL4 gl, int depth, int scale) {
     if(!initialized) {
       return;
     }
@@ -117,7 +121,7 @@ public class GLFramebuffer {
             gl,
             NativeTypeEnum.Float,
             -1,
-            width, height, 1, true, 1, depth
+            width/scale, height/scale, 1, true, 1, depth
     ));
 
     gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
@@ -200,6 +204,10 @@ public class GLFramebuffer {
     } else {
       return -1;
     }
+  }
+
+  public int getBoundBufferNum() {
+    return backingTextures.size()+depthBuffers.size();
   }
 
   private int getCurrentFramebufferColorAttachment() {
