@@ -269,7 +269,7 @@ public class GLProgram implements GLInterface, GLCloseable
 		mGL.getGL3().glDeleteProgram(mProgramId);
 	}
 
-	public GLAttribute getAtribute(String pAttributeName)
+	public GLAttribute getAttribute(String pAttributeName)
 	{
 		final int lAttributeId = mGL.getGL3()
 																.glGetAttribLocation(	mProgramId,
