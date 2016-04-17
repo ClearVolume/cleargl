@@ -70,7 +70,7 @@ public class GLProgram implements GLInterface, GLCloseable
 																																						pClass,
 																																						shaders));
 
-		System.out.println(lGLProgram.getProgramInfoLog());
+		lGLProgram.printProgramInfoLog();
 
 		return lGLProgram;
 	}
@@ -87,13 +87,14 @@ public class GLProgram implements GLInterface, GLCloseable
 						parameters
 						);
 
-		System.out.println(lGLProgram.getProgramInfoLog());
+		lGLProgram.printProgramInfoLog();
 
 		return lGLProgram;
 	}
 
 	public void recompileProgram(GL pGL) {
 
+		long start = System.nanoTime();
 		pGL.getGL3().glDeleteProgram(mProgramId);
 
 		mProgramId = mGL.getGL3().glCreateProgram();
@@ -106,6 +107,7 @@ public class GLProgram implements GLInterface, GLCloseable
 		}
 
 		mGL.getGL3().glLinkProgram(mProgramId);
+		long diff = System.nanoTime() - start;
 		stale = false;
 	}
 
@@ -170,7 +172,7 @@ public class GLProgram implements GLInterface, GLCloseable
 																							rootClass,
 																							filename,
 																							type);
-				System.out.println(shader.getShaderInfoLog());
+				//System.out.println(shader.getShaderInfoLog());
 				pipeline.put(type, shader);
 			}
 		}
@@ -304,6 +306,14 @@ public class GLProgram implements GLInterface, GLCloseable
 	{
 		mGL = pGL;
 		bind();
+	}
+
+	public void printProgramInfoLog() {
+		final String log = getProgramInfoLog();
+
+		if(log.length() >= 1) {
+			System.err.println(log);
+		}
 	}
 
 	public String getProgramInfoLog()
