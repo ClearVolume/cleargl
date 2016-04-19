@@ -189,24 +189,28 @@ public class ClearGLWindow implements ClearGLDisplayable
 	@Override
 	public void close() throws GLException
 	{
-		try
-		{
-			try
-			{
-				mGlWindow.setVisible(false);
-				mGlWindow.removeGLEventListener(mClearGLWindowEventListener);
-			}
-			catch (final Throwable e)
-			{
-				System.err.println(e.getLocalizedMessage());
-			}
-			if (mGlWindow.isRealized())
-				mGlWindow.destroy();
-		}
-		catch (final Throwable e)
-		{
-			System.err.println(e.getLocalizedMessage());
-		}
+		runOnEDT(	true,
+							() -> {
+								try
+								{
+									try
+									{
+										mGlWindow.setVisible(false);
+										mGlWindow.removeGLEventListener(mClearGLWindowEventListener);
+									}
+									catch (final Throwable e)
+									{
+										System.err.println(e.getLocalizedMessage());
+									}
+									if (mGlWindow.isRealized())
+										mGlWindow.destroy();
+								}
+								catch (final Throwable e)
+								{
+									System.err.println(e.getLocalizedMessage());
+								}
+							});
+
 	}
 
 	/* (non-Javadoc)
@@ -215,7 +219,9 @@ public class ClearGLWindow implements ClearGLDisplayable
 	@Override
 	public void setWindowTitle(final String pTitleString)
 	{
-		mGlWindow.setTitle(pTitleString);
+		runOnEDT(false, () -> {
+			mGlWindow.setTitle(pTitleString);
+		});
 	}
 
 	/* (non-Javadoc)
@@ -224,7 +230,16 @@ public class ClearGLWindow implements ClearGLDisplayable
 	@Override
 	public void setVisible(final boolean pIsVisible)
 	{
-		mGlWindow.setVisible(pIsVisible);
+		runOnEDT(false, () -> {
+			mGlWindow.setVisible(pIsVisible);
+		});
+	}
+
+	public void requestFocus()
+	{
+		runOnEDT(false, () -> {
+			mGlWindow.requestFocus();
+		});
 	}
 
 	/* (non-Javadoc)
@@ -233,23 +248,28 @@ public class ClearGLWindow implements ClearGLDisplayable
 	@Override
 	public void toggleFullScreen()
 	{
-		try
-		{
-			if (mGlWindow.isFullscreen())
-			{
-				mGlWindow.setFullscreen(false);
-			}
-			else
-			{
-				mGlWindow.setSize(mWindowDefaultWidth, mWindowDefaultHeight);
-				mGlWindow.setFullscreen(true);
-			}
-			mGlWindow.display();
-		}
-		catch (final Exception e)
-		{
-			e.printStackTrace();
-		}
+		runOnEDT(	false,
+							() -> {
+								try
+								{
+									if (mGlWindow.isFullscreen())
+									{
+										mGlWindow.setFullscreen(false);
+									}
+									else
+									{
+										mGlWindow.setSize(mWindowDefaultWidth,
+																			mWindowDefaultHeight);
+										mGlWindow.setFullscreen(true);
+									}
+									mGlWindow.display();
+								}
+								catch (final Exception e)
+								{
+									e.printStackTrace();
+								}
+							});
+
 	}
 
 	/* (non-Javadoc)
@@ -515,6 +535,11 @@ public class ClearGLWindow implements ClearGLDisplayable
 	public GLAutoDrawable getGLAutoDrawable()
 	{
 		return mGlWindow;
+	}
+
+	public void runOnEDT(boolean pWait, Runnable pRunnable)
+	{
+		mGlWindow.runOnEDTIfAvail(pWait, pRunnable);
 	}
 
 }
