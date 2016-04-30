@@ -31,7 +31,7 @@ sourceSets
 }
 
 
-sourceCompatibility = 1.7
+sourceCompatibility = 1.8
 
 
 test
@@ -79,10 +79,8 @@ dependencies
 repositories
 {
 	mavenCentral()
-	maven
-	{ url "http://oss.sonatype.org/content/groups/public" }
-	maven
-	{ url  "http://dl.bintray.com/rtlib/CoreMem" }
+	maven { url "http://oss.sonatype.org/content/groups/public" }
+	maven { url  "http://dl.bintray.com/clearcontrol/ClearControl" }
 
 }
 
