@@ -492,7 +492,7 @@ public class GLTexture implements GLInterface, GLCloseable
 		int[] pixels = null;
 		GLTexture tex;
 
-		if (filename.substring(filename.lastIndexOf('.')).endsWith("tga")) {
+		if (filename.substring(filename.lastIndexOf('.')).toLowerCase().endsWith("tga")) {
 			byte[] buffer = null;
 
 			try {
