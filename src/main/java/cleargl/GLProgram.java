@@ -314,6 +314,9 @@ public class GLProgram implements GLInterface, GLCloseable
 
 		if(log.length() >= 1) {
 			System.err.println(log);
+			for(GLShader s: this.getShaderPipeline().values()) {
+				System.err.println(s.getShaderInfoLog());
+			}
 		}
 	}
 
