@@ -15,7 +15,6 @@ import java.util.List;
  */
 public class GLFramebuffer {
   protected int framebufferId[];
-  protected int buffers[];
   protected List<GLTexture> backingTextures;
   protected List<GLTexture> depthBuffers;
   protected int width;
@@ -24,7 +23,6 @@ public class GLFramebuffer {
 
   public GLFramebuffer(GL4 gl, int width, int height) {
     framebufferId = new int[1];
-    buffers = new int[16];
     backingTextures = new ArrayList<>();
     depthBuffers = new ArrayList<>();
     this.width = width;
@@ -49,11 +47,10 @@ public class GLFramebuffer {
             width, height, 1, true, 1, channelDepth
     ));
 
-    gl.getGL().glFramebufferTexture2D(GL.GL_FRAMEBUFFER,
+    gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
             getCurrentFramebufferColorAttachment(),
-            GL.GL_TEXTURE_2D,
             backingTextures.get(backingTextures.size()-1).getId(),
-            1
+            0
     );
 
     gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
@@ -96,9 +93,8 @@ public class GLFramebuffer {
             width, height, 1, true, 1, channelDepth
     ));
 
-    gl.getGL().glFramebufferTexture2D(GL.GL_FRAMEBUFFER,
+    gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
             getCurrentFramebufferColorAttachment(),
-            GL.GL_TEXTURE_2D,
             backingTextures.get(backingTextures.size()-1).getId(),
             0
     );
@@ -142,7 +138,7 @@ public class GLFramebuffer {
     int status = gl.getGL().getGL4().glCheckFramebufferStatus(GL.GL_FRAMEBUFFER);
 
     if(status != GL.GL_FRAMEBUFFER_COMPLETE) {
-      System.err.println("Framebuffer is incomplete, " + Integer.toHexString(status));
+      System.err.println("Framebuffer " + framebufferId[0] + " is incomplete, " + Integer.toHexString(status));
       return false;
     }
 
@@ -174,6 +170,68 @@ public class GLFramebuffer {
   }
 
   public void revertToDefaultFramebuffer(GL4 gl) {
+    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
+  }
+
+  public void resize(GL4 gl, int newWidth, int newHeight) {
+    int oldIds[] = framebufferId.clone();
+
+    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
+    gl.glGenFramebuffers(1, framebufferId, 0);
+    gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, getId());
+
+    List<GLTexture> newBackingTextures = new ArrayList<>();
+    List<GLTexture> newDepthBuffers = new ArrayList<>();
+
+    for(int i = 0; i < backingTextures.size(); i++) {
+      GLTexture t = backingTextures.get(i);
+      GLTexture newT = new GLTexture(gl,
+              t.getNativeType(),
+              t.getChannels(),
+              newWidth, newHeight,
+              1, true, 1, t.getBitsPerChannel()
+      );
+
+      newT.clear();
+      newBackingTextures.add(newT);
+      t.close();
+
+      gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
+              getCurrentFramebufferColorAttachment(newBackingTextures),
+              newBackingTextures.get(newBackingTextures.size()-1).getId(),
+              0
+      );
+    }
+
+    for(int i = 0; i < depthBuffers.size(); i++) {
+      GLTexture t = depthBuffers.get(i);
+      GLTexture newT = new GLTexture(gl,
+              t.getNativeType(),
+              -1,
+              newWidth, newHeight,
+              1, true, 1, t.getBitsPerChannel()
+      );
+
+      newDepthBuffers.add(newT);
+      t.close();
+
+      gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
+              GL.GL_DEPTH_ATTACHMENT,
+              newDepthBuffers.get(newDepthBuffers.size()-1).getId(),
+              0
+      );
+    }
+
+    backingTextures.clear();
+    depthBuffers.clear();
+
+    backingTextures.addAll(newBackingTextures);
+    depthBuffers.addAll(newDepthBuffers);
+
+    width = newWidth;
+    height = newHeight;
+
+    gl.glDeleteFramebuffers(1, oldIds, 0);
     gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
   }
 
@@ -212,5 +270,9 @@ public class GLFramebuffer {
 
   private int getCurrentFramebufferColorAttachment() {
     return GL.GL_COLOR_ATTACHMENT0 + backingTextures.size() - 1;
+  }
+
+  private int getCurrentFramebufferColorAttachment(List<GLTexture> base) {
+    return GL.GL_COLOR_ATTACHMENT0 + base.size() - 1;
   }
 }

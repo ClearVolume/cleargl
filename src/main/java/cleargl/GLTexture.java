@@ -430,6 +430,10 @@ public class GLTexture implements GLInterface, GLCloseable
 		return mTextureOpenGLDataType;
 	}
 
+	public NativeTypeEnum getNativeType() {
+		return mType;
+	}
+
 	public int getChannels() {
 		return mNumberOfChannels;
 	}
