@@ -2,6 +2,7 @@ package cleargl;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2ES2;
+import com.jogamp.opengl.GL3;
 import com.jogamp.opengl.GLException;
 
 import java.io.IOException;
@@ -318,8 +319,11 @@ public class GLProgram implements GLInterface, GLCloseable
 
 	public String getProgramInfoLog()
 	{
+		final int status[] = new int[1];
+		mGL.getGL3().glGetProgramiv(mProgramId, GL3.GL_LINK_STATUS, status, 0);
 		final int lLogLength = getProgramParameter(GL2ES2.GL_INFO_LOG_LENGTH);
-		if (lLogLength <= 0)
+
+		if (status[0] == GL3.GL_TRUE)
 			return "";
 
 		final int[] lLength = new int[1];
