@@ -12,15 +12,12 @@ import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
 import java.awt.image.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Hashtable;
 
@@ -488,7 +485,8 @@ public class GLTexture implements GLInterface, GLCloseable
 		BufferedImage bi;
 		BufferedImage flippedImage;
 		final ByteBuffer imageData;
-		final InputStream fis;
+		FileInputStream fis = null;
+		FileChannel channel = null;
 		int[] pixels = null;
 		GLTexture tex;
 
@@ -496,9 +494,14 @@ public class GLTexture implements GLInterface, GLCloseable
 			byte[] buffer = null;
 
 			try {
-				fis = Files.newInputStream(Paths.get(filename, ""));
-				buffer = new byte[fis.available()];
-				fis.read(buffer);
+				fis = new FileInputStream(filename);
+				channel = fis.getChannel();
+				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+				channel.transferTo(0, channel.size(), Channels.newChannel(byteArrayOutputStream));
+
+				buffer = byteArrayOutputStream.toByteArray();
+
+				channel.close();
 				fis.close();
 
 				pixels = TGAReader.read(buffer, TGAReader.ARGB);
@@ -512,9 +515,13 @@ public class GLTexture implements GLInterface, GLCloseable
 			}
 		} else {
 			try {
-				fis = Files.newInputStream(Paths.get(filename, ""));
-				bi = ImageIO.read(fis);
-				fis.close();
+				fis = new FileInputStream(filename);
+				channel = fis.getChannel();
+				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+				channel.transferTo(0, channel.size(), Channels.newChannel(byteArrayOutputStream));
+				bi = ImageIO.read(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
+
+				channel.close();
 			} catch (Exception e) {
 				System.err.println("GLTexture: could not read image from " + filename + ".");
 				return null;
