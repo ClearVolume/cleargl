@@ -53,7 +53,7 @@ public class GLShader implements GLInterface, GLCloseable
 		mShaderSourcePath = pResourceName;
 		mShaderSourceRootClass = pRootClass;
 		mParameters = new HashMap<>();
-		mShaderBasePath = pRootClass.getResource(pResourceName).getPath().substring(0, pRootClass.getResource(pResourceName).getPath().lastIndexOf(File.separator));
+		mShaderBasePath = pRootClass.getResource(pResourceName).getPath().substring(0, pRootClass.getResource(pResourceName).getPath().lastIndexOf("/"));
 
 		// preprocess shader
 		String shaderSourceProcessed = preprocessShader(mShaderSource);

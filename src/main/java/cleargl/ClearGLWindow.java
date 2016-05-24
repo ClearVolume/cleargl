@@ -10,6 +10,8 @@ import com.jogamp.newt.event.MouseListener;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.*;
+import com.jogamp.opengl.util.Animator;
+import com.jogamp.opengl.util.AnimatorBase;
 import com.jogamp.opengl.util.FPSAnimator;
 
 import java.awt.*;
@@ -31,7 +33,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 	private final GLMatrix mViewMatrix;
 	private NewtCanvasAWT mNewtCanvasAWT;
 
-	private FPSAnimator mAnimator;
+	private Animator mAnimator;
 	private int mFramesPerSecond = 60;
 
 	static
@@ -111,7 +113,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 		this(	pWindowTitle,
 					pDefaultWidth,
 					pDefaultHeight,
-					16,
+					2,
 					pClearGLWindowEventListener);
 	}
 
@@ -129,7 +131,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 		mProjectionMatrix = new GLMatrix();
 		mViewMatrix = new GLMatrix();
 
-		final GLProfile lProfile = GLProfile.getMaxProgrammable(true);
+		final GLProfile lProfile = GLProfile.getMaxProgrammableCore(true);
 		System.out.println(this.getClass().getSimpleName() + ": "
 												+ lProfile);
 		final GLCapabilities lCapabilities = new GLCapabilities(lProfile);
@@ -137,6 +139,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 		lCapabilities.setSampleBuffers(pNumberOfSamples > 1);
 		lCapabilities.setNumSamples(pNumberOfSamples);
 		lCapabilities.setDepthBits(32);
+		//lCapabilities.setHardwareAccelerated(true);
 
 		final GLCapabilitiesChooser lMultisampleChooser = new MultisampleChooser();
 
@@ -147,7 +150,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 
 		pClearGLWindowEventListener.setClearGLWindow(this);
 		mGlWindow.addGLEventListener(pClearGLWindowEventListener);
-		mGlWindow.setSize(pDefaultWidth, pDefaultHeight);
+		mGlWindow.setSurfaceSize(pDefaultWidth, pDefaultHeight);
 		mGlWindow.setAutoSwapBufferMode(true);
 
 		// lAnimator.add(mClearGLWindow.getGLAutoDrawable());
@@ -158,18 +161,27 @@ public class ClearGLWindow implements ClearGLDisplayable
 		mFramesPerSecond = pFramesPerSecond;
 
 		if(mAnimator != null) {
-			mAnimator.setFPS(pFramesPerSecond);
+			mAnimator.setRunAsFastAsPossible(true);
 		}
 	}
 
 	public void start()
 	{
-		mAnimator = new FPSAnimator(this.getGLAutoDrawable(),
-																mFramesPerSecond, true);
-		mAnimator.setUpdateFPSFrames(30, null);
+		mAnimator = new Animator(this.getGLAutoDrawable()
+				);
+		mAnimator.setUpdateFPSFrames(60, null);
+		//mAnimator.setModeBits(false, AnimatorBase.MODE_EXPECT_AWT_RENDERING_THREAD);
 		mAnimator.start();
 		while (!mAnimator.isAnimating())
 			Thread.yield();
+	}
+
+	public void pause() {
+		mAnimator.pause();
+	}
+
+	public void resume() {
+		mAnimator.resume();
 	}
 
 	public void stop()
@@ -230,23 +242,28 @@ public class ClearGLWindow implements ClearGLDisplayable
 	@Override
 	public void toggleFullScreen()
 	{
-		try
-		{
-			if (mGlWindow.isFullscreen())
-			{
-				mGlWindow.setFullscreen(false);
-			}
-			else
-			{
-				mGlWindow.setSize(mWindowDefaultWidth, mWindowDefaultHeight);
-				mGlWindow.setFullscreen(true);
-			}
-			mGlWindow.display();
-		}
-		catch (final Exception e)
-		{
-			e.printStackTrace();
-		}
+		runOnEDT(	false,
+				() -> {
+					try
+					{
+						if (mGlWindow.isFullscreen())
+						{
+							mGlWindow.setFullscreen(false);
+						}
+						else
+						{
+							mGlWindow.setSize(mWindowDefaultWidth,
+									mWindowDefaultHeight);
+							mGlWindow.setFullscreen(true);
+						}
+						mGlWindow.display();
+					}
+					catch (final Exception e)
+					{
+						e.printStackTrace();
+					}
+				});
+
 	}
 
 	/* (non-Javadoc)
@@ -383,14 +400,14 @@ public class ClearGLWindow implements ClearGLDisplayable
 	 */
 	@Override
 	public void setFullscreen(boolean pFullScreen) {
-		if(System.getProperty("ClearVolume.EnableVR") != null) {
+		if(pFullScreen) {
 			final Display display = NewtFactory.createDisplay(null); // local display
 			final Screen screen = NewtFactory.createScreen(display, 0); // screen 0
 			final ArrayList<MonitorDevice> monitors = new ArrayList<MonitorDevice>();
 			int lOVRscreen;
 
 			int index = 0;
-			for(MonitorDevice m: screen.getMonitorDevices()) {
+			for (MonitorDevice m : screen.getMonitorDevices()) {
 				System.out.println(index + ": " + m.toString());
 				index++;
 			}
@@ -414,7 +431,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 			}
 			mGlWindow.setFullscreen(monitors);
 		} else {
-			mGlWindow.setFullscreen(pFullScreen);
+			mGlWindow.setFullscreen(false);
 		}
 	}
 
@@ -555,6 +572,10 @@ public class ClearGLWindow implements ClearGLDisplayable
 
 	public GL getGL() {
 		return mGlWindow.getGL();
+	}
+
+	public void runOnEDT(boolean pWait, Runnable pRunnable) {
+		mGlWindow.runOnEDTIfAvail(pWait, pRunnable);
 	}
 
 }
