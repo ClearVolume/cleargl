@@ -129,18 +129,23 @@ public class GLFramebuffer {
     gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
   }
 
-  public boolean checkAndSetDrawBuffers(GL4 gl) {
-    if(!initialized) {
+  public boolean checkDrawBuffers(GL4 gl) {
+    if (!initialized) {
       return false;
     }
 
     gl.getGL4().glBindFramebuffer(GL.GL_FRAMEBUFFER, getId());
     int status = gl.getGL().getGL4().glCheckFramebufferStatus(GL.GL_FRAMEBUFFER);
 
-    if(status != GL.GL_FRAMEBUFFER_COMPLETE) {
+    if (status != GL.GL_FRAMEBUFFER_COMPLETE) {
       System.err.println("Framebuffer " + framebufferId[0] + " is incomplete, " + Integer.toHexString(status));
       return false;
     }
+
+    return true;
+  }
+
+  public void setDrawBuffers(GL4 gl) {
 
     int attachments[] = new int[backingTextures.size()];
     for(int i = 0; i < backingTextures.size(); i++) {
@@ -149,8 +154,6 @@ public class GLFramebuffer {
 
     gl.getGL().getGL4().glBindFramebuffer(GL.GL_FRAMEBUFFER, getId());
     gl.getGL().getGL4().glDrawBuffers(backingTextures.size(), IntBuffer.wrap(attachments));
-
-    return true;
   }
 
   public void bindTexturesToUnitsWithOffset(GL4 gl, int offset) {
@@ -262,6 +265,14 @@ public class GLFramebuffer {
     } else {
       return -1;
     }
+  }
+
+  public int getWidth() {
+    return this.width;
+  }
+
+  public int getHeight() {
+    return this.height;
   }
 
   public int getBoundBufferNum() {
