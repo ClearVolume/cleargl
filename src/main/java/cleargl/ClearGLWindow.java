@@ -404,7 +404,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 			final Display display = NewtFactory.createDisplay(null); // local display
 			final Screen screen = NewtFactory.createScreen(display, 0); // screen 0
 			final ArrayList<MonitorDevice> monitors = new ArrayList<MonitorDevice>();
-			int lOVRscreen;
+			int lFullscreen;
 
 			int index = 0;
 			for (MonitorDevice m : screen.getMonitorDevices()) {
@@ -413,22 +413,24 @@ public class ClearGLWindow implements ClearGLDisplayable
 			}
 
 			try {
-				lOVRscreen = Integer.parseInt(System.getProperty("ClearVolume.EnableVR"));
-				System.out.println("Oculus HMD screen set to " + lOVRscreen + " by property.");
+				lFullscreen = Integer.parseInt(System.getProperty("ClearGL.FullscreenDevice"));
+				System.out.println("Fullscreen ID set to " + lFullscreen+ " by property.");
 			} catch (java.lang.NumberFormatException e) {
-				lOVRscreen = 0;
+				lFullscreen = 0;
 			}
 
-			System.out.println(screen.getMonitorDevices().get(lOVRscreen).toString());
-			System.out.println(screen.getMonitorDevices().get(lOVRscreen).getScreen().getFQName());
+			System.out.println(screen.getMonitorDevices().get(lFullscreen).toString());
+			System.out.println(screen.getMonitorDevices().get(lFullscreen).getScreen().getFQName());
 
 			screen.addReference(); // trigger creation
 
 			if (pFullScreen) {
-				monitors.add(screen.getMonitorDevices().get(lOVRscreen)); // Q1
+				monitors.add(screen.getMonitorDevices().get(lFullscreen)); // Q1
 			} else {
 				// monitor array stays empty
 			}
+			mGlWindow.setSurfaceSize(screen.getMonitorDevices().get(lFullscreen).getCurrentMode().getSurfaceSize().getResolution().getWidth(),
+					screen.getMonitorDevices().get(lFullscreen).getCurrentMode().getSurfaceSize().getResolution().getHeight());
 			mGlWindow.setFullscreen(monitors);
 		} else {
 			mGlWindow.setFullscreen(false);
