@@ -116,6 +116,7 @@ public class GLTexture implements GLInterface, GLCloseable
 										 boolean pLinearInterpolation,
 										 int pMipMapLevels,
 										 int precision)
+
 	{
 		super();
 		mGL = pGL;
@@ -318,6 +319,15 @@ public class GLTexture implements GLInterface, GLCloseable
 		mGL.glBindTexture(mTextureTarget, getId());
 	}
 
+	public void setClamp(boolean clampS, boolean clampT) {
+		mGL.glTexParameterf(mTextureTarget,
+						GL.GL_TEXTURE_WRAP_S,
+						clampS ? GL.GL_CLAMP_TO_EDGE : GL.GL_REPEAT);
+		mGL.glTexParameterf(mTextureTarget,
+						GL.GL_TEXTURE_WRAP_T,
+						clampT ? GL.GL_CLAMP_TO_EDGE : GL.GL_REPEAT);
+	}
+
 	public void clear()
 	{
 		bind();
@@ -498,7 +508,6 @@ public class GLTexture implements GLInterface, GLCloseable
 				channel = fis.getChannel();
 				ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 				channel.transferTo(0, channel.size(), Channels.newChannel(byteArrayOutputStream));
-
 				buffer = byteArrayOutputStream.toByteArray();
 
 				channel.close();
