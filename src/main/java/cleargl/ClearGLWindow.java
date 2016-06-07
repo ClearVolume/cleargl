@@ -10,8 +10,6 @@ import com.jogamp.newt.event.MouseListener;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.*;
-import com.jogamp.opengl.util.Animator;
-import com.jogamp.opengl.util.AnimatorBase;
 import com.jogamp.opengl.util.FPSAnimator;
 
 import java.awt.*;
@@ -33,7 +31,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 	private final GLMatrix mViewMatrix;
 	private NewtCanvasAWT mNewtCanvasAWT;
 
-	private Animator mAnimator;
+	private FPSAnimator mAnimator;
 	private int mFramesPerSecond = 60;
 
 	static
@@ -161,14 +159,13 @@ public class ClearGLWindow implements ClearGLDisplayable
 		mFramesPerSecond = pFramesPerSecond;
 
 		if(mAnimator != null) {
-			mAnimator.setRunAsFastAsPossible(true);
+			//mAnimator.setRunAsFastAsPossible(true);
 		}
 	}
 
 	public void start()
 	{
-		mAnimator = new Animator(this.getGLAutoDrawable()
-				);
+		mAnimator = new FPSAnimator(this.getGLAutoDrawable(), 60);
 		mAnimator.setUpdateFPSFrames(60, null);
 		//mAnimator.setModeBits(false, AnimatorBase.MODE_EXPECT_AWT_RENDERING_THREAD);
 		mAnimator.start();
