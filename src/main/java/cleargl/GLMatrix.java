@@ -405,8 +405,20 @@ public class GLMatrix
 		final float[] tmp = new float[16];
 		System.arraycopy(mMatrix, 0, tmp, 0, mMatrix.length);
 
-		FloatUtil.invertMatrix(mMatrix, tmp);
+		FloatUtil.invertMatrix(tmp, mMatrix);
 		return this;
+	}
+
+	public GLMatrix getInverse()
+	{
+		final float[] tmp = new float[16];
+		final GLMatrix inverse;
+		System.arraycopy(mMatrix, 0, tmp, 0, mMatrix.length);
+
+		FloatUtil.invertMatrix(mMatrix, tmp);
+		inverse = new GLMatrix(tmp);
+
+		return inverse;
 	}
 
 	public GLMatrix transpose()
