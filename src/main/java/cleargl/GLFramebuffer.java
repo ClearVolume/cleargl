@@ -172,6 +172,16 @@ public class GLFramebuffer {
     }
   }
 
+  public List<Integer> getTextureIds(GL4 gl) {
+    ArrayList<Integer> list = new ArrayList<>();
+
+    for(int i = 0; i < backingTextures.size(); i++) {
+      list.add(backingTextures.get(i).getId());
+    }
+
+    return list;
+  }
+
   public void revertToDefaultFramebuffer(GL4 gl) {
     gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
   }
