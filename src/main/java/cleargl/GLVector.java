@@ -60,6 +60,11 @@ public class GLVector
 		return mElements[2];
 	}
 
+	public float w()
+	{
+		return mElements[3];
+	}
+
 	public GLVector xyz() {
 		return new GLVector(mElements[0], mElements[1], mElements[2]);
 	}
