@@ -1,4 +1,4 @@
-package cleargl.test;
+package cleargl;
 
 import static org.junit.Assert.assertEquals;
 
