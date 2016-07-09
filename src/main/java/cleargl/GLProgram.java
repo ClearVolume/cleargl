@@ -16,6 +16,7 @@ public class GLProgram implements GLInterface, GLCloseable
 	private GLShader mFragmentShader;
 	private HashMap<GLShaderType, GLShader> mShaders = new HashMap<>();
 	private HashMap<String, String> parameters = new HashMap<>();
+	private HashMap<String, GLUniform> uniforms = new HashMap<>();
 
 	private boolean stale = false;
 
@@ -282,11 +283,15 @@ public class GLProgram implements GLInterface, GLCloseable
 
 	public GLUniform getUniform(String pUniformName)
 	{
-		final int lUniformId = mGL.getGL3()
-															.glGetUniformLocation(mProgramId,
-																										pUniformName);
-		final GLUniform lGLUniform = new GLUniform(this, lUniformId);
-		return lGLUniform;
+		if(uniforms.containsKey(pUniformName) && !isStale()) {
+			return uniforms.get(pUniformName);
+		} else {
+			final int lUniformId = mGL.getGL3().glGetUniformLocation(mProgramId, pUniformName);
+			final GLUniform lGLUniform = new GLUniform(this, lUniformId);
+
+			uniforms.put(pUniformName, lGLUniform);
+			return lGLUniform;
+		}
 	}
 
 	public void bind()
