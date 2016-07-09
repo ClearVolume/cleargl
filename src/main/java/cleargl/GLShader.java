@@ -1,10 +1,5 @@
 package cleargl;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2ES2;
-import com.jogamp.opengl.GL3;
-import com.jogamp.opengl.GLException;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,9 +8,12 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Scanner;
 import java.util.stream.Collectors;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2ES2;
+import com.jogamp.opengl.GL3;
+import com.jogamp.opengl.GLException;
 
-public class GLShader implements GLInterface, GLCloseable
-{
+public class GLShader implements GLInterface, GLCloseable {
 	private final GL mGL;
 	private int mShaderId;
 	private final GLShaderType mShaderType;
@@ -26,25 +24,25 @@ public class GLShader implements GLInterface, GLCloseable
 	private HashMap<String, String> mParameters;
 
 	static final HashMap<GLShaderType, Integer> glShaderTypeMapping;
+
 	static {
 		glShaderTypeMapping = new HashMap<>();
 		glShaderTypeMapping.put(GLShaderType.VertexShader,
-						GL2ES2.GL_VERTEX_SHADER);
+				GL2ES2.GL_VERTEX_SHADER);
 		glShaderTypeMapping.put(GLShaderType.GeometryShader,
-						GL3.GL_GEOMETRY_SHADER);
+				GL3.GL_GEOMETRY_SHADER);
 		glShaderTypeMapping.put(GLShaderType.TesselationControlShader,
-						GL3.GL_TESS_CONTROL_SHADER);
+				GL3.GL_TESS_CONTROL_SHADER);
 		glShaderTypeMapping.put(GLShaderType.TesselationEvaluationShader,
-						GL3.GL_TESS_EVALUATION_SHADER);
+				GL3.GL_TESS_EVALUATION_SHADER);
 		glShaderTypeMapping.put(GLShaderType.FragmentShader,
-						GL2ES2.GL_FRAGMENT_SHADER);
+				GL2ES2.GL_FRAGMENT_SHADER);
 	}
 
-	public GLShader(GL pGL,
-									Class<?> pRootClass,
-									String pResourceName,
-									GLShaderType pShaderType) throws IOException
-	{
+	public GLShader(final GL pGL,
+			final Class<?> pRootClass,
+			final String pResourceName,
+			final GLShaderType pShaderType) throws IOException {
 		super();
 		mGL = pGL;
 		final InputStream lResourceAsStream = pRootClass.getResourceAsStream(pResourceName);
@@ -53,24 +51,23 @@ public class GLShader implements GLInterface, GLCloseable
 		mShaderSourcePath = pResourceName;
 		mShaderSourceRootClass = pRootClass;
 		mParameters = new HashMap<>();
-		mShaderBasePath = pRootClass.getResource(pResourceName).getPath().substring(0, pRootClass.getResource(pResourceName).getPath().lastIndexOf("/"));
+		mShaderBasePath = pRootClass.getResource(pResourceName).getPath().substring(0,
+				pRootClass.getResource(pResourceName).getPath().lastIndexOf("/"));
 
 		// preprocess shader
-		String shaderSourceProcessed = preprocessShader(mShaderSource);
+		final String shaderSourceProcessed = preprocessShader(mShaderSource);
 
 		mShaderId = pGL.getGL3().glCreateShader(glShaderTypeMapping.get(pShaderType));
-		mGL.getGL3().glShaderSource(mShaderId, 1, new String[]
-		{ shaderSourceProcessed }, null);
+		mGL.getGL3().glShaderSource(mShaderId, 1, new String[]{shaderSourceProcessed}, null);
 		mGL.getGL3().glCompileShader(mShaderId);
 
 	}
 
-	public GLShader(GL pGL,
-									Class<?> pRootClass,
-									String pResourceName,
-									GLShaderType pShaderType,
-									HashMap<String, String> params) throws IOException
-	{
+	public GLShader(final GL pGL,
+			final Class<?> pRootClass,
+			final String pResourceName,
+			final GLShaderType pShaderType,
+			final HashMap<String, String> params) throws IOException {
 		super();
 		mGL = pGL;
 		final InputStream lResourceAsStream = pRootClass.getResourceAsStream(pResourceName);
@@ -79,22 +76,21 @@ public class GLShader implements GLInterface, GLCloseable
 		mShaderSourcePath = pResourceName;
 		mShaderSourceRootClass = pRootClass;
 		mParameters = params;
-		mShaderBasePath = pRootClass.getResource(pResourceName).getPath().substring(0, pRootClass.getResource(pResourceName).getPath().lastIndexOf(File.separator));
+		mShaderBasePath = pRootClass.getResource(pResourceName).getPath().substring(0,
+				pRootClass.getResource(pResourceName).getPath().lastIndexOf(File.separator));
 
 		// preprocess shader
-		String shaderSourceProcessed = preprocessShader(mShaderSource);
+		final String shaderSourceProcessed = preprocessShader(mShaderSource);
 
 		mShaderId = pGL.getGL3().glCreateShader(glShaderTypeMapping.get(pShaderType));
-		mGL.getGL3().glShaderSource(mShaderId, 1, new String[]
-						{ shaderSourceProcessed }, null);
+		mGL.getGL3().glShaderSource(mShaderId, 1, new String[]{shaderSourceProcessed}, null);
 		mGL.getGL3().glCompileShader(mShaderId);
 
 	}
 
-	public GLShader(GL pGL,
-									String pShaderSourceAsString,
-									GLShaderType pShaderType) throws IOException
-	{
+	public GLShader(final GL pGL,
+			final String pShaderSourceAsString,
+			final GLShaderType pShaderType) throws IOException {
 		super();
 		mGL = pGL;
 		mShaderSource = pShaderSourceAsString;
@@ -105,84 +101,82 @@ public class GLShader implements GLInterface, GLCloseable
 		mShaderBasePath = "";
 
 		// preprocess shader
-		String shaderSourceProcessed = preprocessShader(mShaderSource);
+		final String shaderSourceProcessed = preprocessShader(mShaderSource);
 
 		mShaderId = pGL.getGL3().glCreateShader(glShaderTypeMapping.get(pShaderType));
-		mGL.getGL3().glShaderSource(mShaderId, 1, new String[]
-			{ shaderSourceProcessed }, null);
+		mGL.getGL3().glShaderSource(mShaderId, 1, new String[]{shaderSourceProcessed}, null);
 		mGL.getGL3().glCompileShader(mShaderId);
 
 	}
 
 	@Override
-	public void close() throws GLException
-	{
+	public void close() throws GLException {
 		mGL.getGL3().glDeleteShader(mShaderId);
 	}
 
-	public void setShaderBasePath(String path) {
+	public void setShaderBasePath(final String path) {
 		mShaderBasePath = path;
 	}
 
-	public void recompile(GL pGL) {
+	public void recompile(final GL pGL) {
 		close();
 
 		// preprocess shader
-		String shaderSourceProcessed = preprocessShader(mShaderSource);
+		final String shaderSourceProcessed = preprocessShader(mShaderSource);
 
 		mShaderId = pGL.getGL3().glCreateShader(glShaderTypeMapping.get(mShaderType));
-		mGL.getGL3().glShaderSource(mShaderId, 1, new String[]
-						{ shaderSourceProcessed }, null);
+		mGL.getGL3().glShaderSource(mShaderId, 1, new String[]{shaderSourceProcessed}, null);
 		mGL.getGL3().glCompileShader(mShaderId);
 	}
 
-	public void setParameters(HashMap<String, String> params) {
+	public void setParameters(final HashMap<String, String> params) {
 		mParameters = params;
 	}
 
-	public String preprocessShader(String source) {
+	public String preprocessShader(final String source) {
 		String effectiveSource = source;
 		int startPos = 0;
 		int endPos = 0;
 
 		// replace variables
-		while((startPos = effectiveSource.indexOf("%var(")) != -1) {
+		while ((startPos = effectiveSource.indexOf("%var(")) != -1) {
 			endPos = effectiveSource.indexOf(")", startPos);
-			String varName = effectiveSource.substring(startPos+"%var(".length(), endPos);
-			if(!mParameters.containsKey(varName)) {
+			final String varName = effectiveSource.substring(startPos + "%var(".length(), endPos);
+			if (!mParameters.containsKey(varName)) {
 				System.err.println("Warning: Variable '" + varName + "' does not exist in shader parameters!");
 			}
-			String varContents = mParameters.getOrDefault(varName, "");
+			final String varContents = mParameters.getOrDefault(varName, "");
 
-			effectiveSource = effectiveSource.substring(0, startPos) + varContents + effectiveSource.substring(endPos+")".length());
+			effectiveSource = effectiveSource.substring(0, startPos) + varContents
+					+ effectiveSource.substring(endPos + ")".length());
 		}
 
 		// find includes
 		startPos = 0;
 		endPos = 0;
-		while((startPos = effectiveSource.indexOf("%include <")) != -1) {
+		while ((startPos = effectiveSource.indexOf("%include <")) != -1) {
 			endPos = effectiveSource.indexOf(">", startPos);
-			String includeFileName = effectiveSource.substring(startPos+"%include <".length(), endPos);
+			final String includeFileName = effectiveSource.substring(startPos + "%include <".length(), endPos);
 			String includeSource = "";
 
 			try {
 				includeSource = Files.lines(Paths.get(mShaderBasePath + File.separator + includeFileName))
-								.parallel()
-								.filter(line -> !line.startsWith("//"))
-								.map(String::trim)
-								.collect(Collectors.joining());
-			} catch (IOException e) {
+						.parallel()
+						.filter(line -> !line.startsWith("//"))
+						.map(String::trim)
+						.collect(Collectors.joining());
+			} catch (final IOException e) {
 				e.printStackTrace();
 			}
 
-			effectiveSource = effectiveSource.substring(0, startPos) + "\n// included from " + includeFileName + "\n" + includeSource + "\n// end include\n" + effectiveSource.substring(endPos+">".length());
+			effectiveSource = effectiveSource.substring(0, startPos) + "\n// included from " + includeFileName + "\n"
+					+ includeSource + "\n// end include\n" + effectiveSource.substring(endPos + ">".length());
 		}
 
 		return effectiveSource;
 	}
 
-	public String getShaderInfoLog()
-	{
+	public String getShaderInfoLog() {
 		final int logLen = getShaderParameter(GL2ES2.GL_INFO_LOG_LENGTH);
 		if (logLen <= 0)
 			return "";
@@ -190,17 +184,16 @@ public class GLShader implements GLInterface, GLCloseable
 		final int[] lLength = new int[1];
 		final byte[] lBytes = new byte[logLen + 1];
 		mGL.getGL3().glGetShaderInfoLog(mShaderId,
-																		logLen,
-																		lLength,
-																		0,
-																		lBytes,
-																		0);
+				logLen,
+				lLength,
+				0,
+				lBytes,
+				0);
 		final String logMessage = toString() + ":\n" + new String(lBytes);
 		return logMessage;
 	}
 
-	public int getShaderParameter(int pParamName)
-	{
+	public int getShaderParameter(final int pParamName) {
 		final int lParameter[] = new int[1];
 		mGL.getGL3().glGetShaderiv(mShaderId, pParamName, lParameter, 0);
 		return lParameter[0];
@@ -215,28 +208,25 @@ public class GLShader implements GLInterface, GLCloseable
 	}
 
 	@Override
-	public int getId()
-	{
+	public int getId() {
 		return mShaderId;
 	}
 
 	@Override
-	public GL getGL()
-	{
+	public GL getGL() {
 		return mGL;
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return "GLShader [mGL=" + mGL
-						+ ", mShaderId="
-						+ mShaderId
-						+ ", mShaderType="
-						+ mShaderType
-						+ ", mShaderSource="
-						+ mShaderSource
-						+ "]";
+				+ ", mShaderId="
+				+ mShaderId
+				+ ", mShaderType="
+				+ mShaderType
+				+ ", mShaderSource="
+				+ mShaderSource
+				+ "]";
 	}
 
 }
