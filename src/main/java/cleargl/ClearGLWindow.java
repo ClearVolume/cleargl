@@ -577,4 +577,10 @@ public class ClearGLWindow implements ClearGLDisplayable
 		mGlWindow.runOnEDTIfAvail(pWait, pRunnable);
 	}
 
+	@Override
+	public float[] getBounds() {
+		com.jogamp.nativewindow.util.Rectangle bounds = mGlWindow.getBounds();
+		return new float[]{bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight()};
+	}
+
 }

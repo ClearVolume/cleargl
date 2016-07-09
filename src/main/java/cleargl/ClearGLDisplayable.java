@@ -82,4 +82,6 @@ public interface ClearGLDisplayable extends GLCloseable
 
 	public abstract Component getComponent();
 
+	public abstract float[] getBounds();
+
 }

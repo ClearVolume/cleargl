@@ -250,4 +250,9 @@ public class ClearGLJPanel implements ClearGLDisplayable
 		return mGLJPanel;
 	}
 
+	@Override
+	public float[] getBounds() {
+		return new float[]{0.0f, 0.0f, getWidth(), getHeight()};
+	}
+
 }
