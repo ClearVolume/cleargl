@@ -29,23 +29,33 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2ES2;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLException;
-import coremem.ContiguousMemoryInterface;
-import coremem.types.NativeTypeEnum;
 
 public class GLTexture implements GLInterface, GLCloseable {
 
 	private final GL4 mGL;
+
 	private final int[] mTextureId = new int[1];
-	private final NativeTypeEnum mType;
+
+	private final GLTypeEnum mType;
+
 	private int mBytesPerChannel;
+
 	private final int mTextureWidth;
+
 	private final int mTextureHeight;
-	private int mTextureOpenGLDataType;
+
+	private final int mTextureOpenGLDataType;
+
 	private final int mTextureOpenGLFormat;
+
 	private int mTextureOpenGLInternalFormat;
+
 	private final int mMipMapLevels;
+
 	private final int mTextureDepth;
+
 	private final int mTextureTarget;
+
 	private final int mNumberOfChannels;
 
 	private static ColorModel glAlphaColorModel = new ComponentColorModel(
@@ -65,7 +75,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 			DataBuffer.TYPE_BYTE);
 
 	public GLTexture(final GLInterface pGLInterface,
-			final NativeTypeEnum pType,
+			final GLTypeEnum pType,
 			final int pTextureWidth,
 			final int pTextureHeight,
 			final int pTextureDepth) {
@@ -80,7 +90,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 	}
 
 	public GLTexture(final GLInterface pGLInterface,
-			final NativeTypeEnum pType,
+			final GLTypeEnum pType,
 			final int pTextureWidth,
 			final int pTextureHeight,
 			final int pTextureDepth,
@@ -96,7 +106,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 	}
 
 	public GLTexture(final GLInterface pGLInterface,
-			final NativeTypeEnum pType,
+			final GLTypeEnum pType,
 			final int pNumberOfChannels,
 			final int pTextureWidth,
 			final int pTextureHeight,
@@ -114,7 +124,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 	}
 
 	public GLTexture(final GL4 pGL,
-			final NativeTypeEnum pType,
+			final GLTypeEnum pType,
 			final int pNumberOfChannels,
 			final int pTextureWidth,
 			final int pTextureHeight,
@@ -138,8 +148,8 @@ public class GLTexture implements GLInterface, GLCloseable {
 		mTextureOpenGLFormat = mNumberOfChannels == 4 ? GL.GL_RGBA// GL_BGRA
 				: GL2ES2.GL_RED;
 
-		if (mType == NativeTypeEnum.Byte) {
-			mTextureOpenGLDataType = GL.GL_BYTE;
+		mTextureOpenGLDataType = mType.glType();
+		if (mType == GLTypeEnum.Byte) {
 			mTextureOpenGLInternalFormat = mNumberOfChannels == 4 ? GL.GL_RGBA8
 					: GL.GL_R8;
 			switch (mNumberOfChannels) {
@@ -156,9 +166,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 					mTextureOpenGLInternalFormat = GL.GL_RGBA8;
 			}
 			mBytesPerChannel = 1;
-		} else if (mType == NativeTypeEnum.UnsignedByte) {
-			mTextureOpenGLDataType = GL.GL_UNSIGNED_BYTE;
-
+		} else if (mType == GLTypeEnum.UnsignedByte) {
 			switch (mNumberOfChannels) {
 				case 1:
 					mTextureOpenGLInternalFormat = GL.GL_R8;
@@ -173,28 +181,23 @@ public class GLTexture implements GLInterface, GLCloseable {
 					mTextureOpenGLInternalFormat = GL.GL_RGBA8;
 			}
 			mBytesPerChannel = 1;
-		} else if (mType == NativeTypeEnum.Short) {
-			mTextureOpenGLDataType = GL.GL_SHORT;
+		} else if (mType == GLTypeEnum.Short) {
 			mTextureOpenGLInternalFormat = mNumberOfChannels == 4 ? GL.GL_RGBA16F
 					: GL.GL_R16F;
 			mBytesPerChannel = 2;
-		} else if (mType == NativeTypeEnum.UnsignedShort) {
-			mTextureOpenGLDataType = GL.GL_UNSIGNED_SHORT;
+		} else if (mType == GLTypeEnum.UnsignedShort) {
 			mTextureOpenGLInternalFormat = mNumberOfChannels == 4 ? GL.GL_RGBA16F
 					: GL.GL_R16F;
 			mBytesPerChannel = 2;
-		} else if (mType == NativeTypeEnum.Int) {
-			mTextureOpenGLDataType = GL2ES2.GL_INT;
+		} else if (mType == GLTypeEnum.Int) {
 			mTextureOpenGLInternalFormat = mNumberOfChannels == 4 ? GL.GL_RGBA32F
 					: GL.GL_R32F;
 			mBytesPerChannel = 4;
-		} else if (mType == NativeTypeEnum.UnsignedInt) {
-			mTextureOpenGLDataType = GL.GL_UNSIGNED_INT;
+		} else if (mType == GLTypeEnum.UnsignedInt) {
 			mTextureOpenGLInternalFormat = mNumberOfChannels == 4 ? GL.GL_RGBA32F
 					: GL.GL_R32F;
 			mBytesPerChannel = 4;
-		} else if (mType == NativeTypeEnum.Float) {
-			mTextureOpenGLDataType = GL.GL_FLOAT;
+		} else if (mType == GLTypeEnum.Float) {
 			switch (mNumberOfChannels) {
 				case 1:
 					mTextureOpenGLInternalFormat = GL.GL_R32F;
@@ -258,7 +261,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 	}
 
 	public GLTexture(final GL4 pGL,
-			final NativeTypeEnum pType,
+			final GLTypeEnum pType,
 			final int pNumberOfChannels,
 			final int pTextureWidth,
 			final int pTextureHeight,
@@ -382,20 +385,6 @@ public class GLTexture implements GLInterface, GLCloseable {
 		copyFrom(pBuffer, 0, true);
 	}
 
-	public void copyFrom(final ContiguousMemoryInterface pContiguousMemory) {
-		bind();
-		final ByteBuffer lByteBuffer = pContiguousMemory.getByteBuffer();
-		copyFrom(lByteBuffer);
-	}
-
-	public void copyFrom(final ContiguousMemoryInterface pContiguousMemory,
-			final int pLODLevel,
-			final boolean pAutoGenerateMipMaps) {
-		bind();
-		final ByteBuffer lByteBuffer = pContiguousMemory.getByteBuffer();
-		copyFrom(lByteBuffer, pLODLevel, pAutoGenerateMipMaps);
-	}
-
 	@Override
 	public void close() throws GLException {
 		mGL.glDeleteTextures(1, mTextureId, 0);
@@ -413,7 +402,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 		return mTextureOpenGLDataType;
 	}
 
-	public NativeTypeEnum getNativeType() {
+	public GLTypeEnum getNativeType() {
 		return mType;
 	}
 
@@ -541,19 +530,19 @@ public class GLTexture implements GLInterface, GLCloseable {
 		return tex;
 	}
 
-	private static NativeTypeEnum nativeTypeEnumFromBufferedImage(final BufferedImage bi) {
+	private static GLTypeEnum nativeTypeEnumFromBufferedImage(final BufferedImage bi) {
 		switch (bi.getData().getDataBuffer().getDataType()) {
 			case DataBuffer.TYPE_BYTE: {
-				return NativeTypeEnum.UnsignedByte;
+				return GLTypeEnum.UnsignedByte;
 			}
 			case DataBuffer.TYPE_DOUBLE: {
-				return NativeTypeEnum.Double;
+				return GLTypeEnum.Double;
 			}
 			case DataBuffer.TYPE_INT: {
-				return NativeTypeEnum.UnsignedByte;
+				return GLTypeEnum.UnsignedByte;
 			}
 			case DataBuffer.TYPE_SHORT: {
-				return NativeTypeEnum.Short;
+				return GLTypeEnum.Short;
 			}
 			default:
 				return null;

@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
-import coremem.types.NativeTypeEnum;
 
 /**
  * <Description>
@@ -14,10 +13,15 @@ import coremem.types.NativeTypeEnum;
  */
 public class GLFramebuffer {
 	protected int framebufferId[];
+
 	protected List<GLTexture> backingTextures;
+
 	protected List<GLTexture> depthBuffers;
+
 	protected int width;
+
 	protected int height;
+
 	protected boolean initialized;
 
 	public GLFramebuffer(final GL4 gl, final int width, final int height) {
@@ -41,7 +45,7 @@ public class GLFramebuffer {
 
 		backingTextures.add(new GLTexture(
 				gl,
-				NativeTypeEnum.Float,
+				GLTypeEnum.Float,
 				3,
 				width, height, 1, true, 1, channelDepth));
 
@@ -62,7 +66,7 @@ public class GLFramebuffer {
 
 		backingTextures.add(new GLTexture(
 				gl,
-				NativeTypeEnum.Float,
+				GLTypeEnum.Float,
 				3,
 				width, height, 1, true, 1, channelDepth));
 
@@ -83,7 +87,7 @@ public class GLFramebuffer {
 
 		backingTextures.add(new GLTexture(
 				gl,
-				NativeTypeEnum.UnsignedByte,
+				GLTypeEnum.UnsignedByte,
 				4,
 				width, height, 1, true, 1, channelDepth));
 
@@ -108,7 +112,7 @@ public class GLFramebuffer {
 
 		depthBuffers.add(new GLTexture(
 				gl,
-				NativeTypeEnum.Float,
+				GLTypeEnum.Float,
 				-1,
 				width / scale, height / scale, 1, true, 1, depth));
 
