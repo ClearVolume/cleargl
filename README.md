@@ -1,8 +1,8 @@
-# ClearGL #
+# ClearGL 2.0.0-SNAPSHOT
 
-Facade API on top of JOGL (http://jogamp.org/jogl/www/)
-offering a more pleasant and object-oriented API for
-JOGL in Java.
+Facade API on top of JOGL (http://jogamp.org/jogl/www/) offering a simple interface for creating OpenGL contexts/windows, GLSL shader programs, and textures. Use it in your favourite JVM-based language.
+
+_If you are looking for version 1.x, please check out the [**1-STABLE** branch](https://github.com/ClearVolume/ClearGL/tree/1-STABLE)._
 
 ### How to build project with Gradle
 
@@ -14,5 +14,8 @@ JOGL in Java.
 
 ### Contributors ###
 
-* Loic Royer (royer -at- mpi-cbg -point- de)
-* ... add yourself
+* [Loic Royer](https://github.com/royerloic)
+* [Ulrik Günther](https://github.com/skalarproduktraum)
+* [Tobias Pietzsch](https://github.com/tpietzsch)
+* [Martin Weigert](https://github.com/mweigert)
+* [Florian Jug](https://github.com/fjug)
