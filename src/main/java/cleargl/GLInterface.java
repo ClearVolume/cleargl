@@ -2,8 +2,7 @@ package cleargl;
 
 import com.jogamp.opengl.GL;
 
-public interface GLInterface
-{
+public interface GLInterface {
 
 	GL getGL();
 

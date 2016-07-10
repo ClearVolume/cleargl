@@ -4,33 +4,28 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
 
-public class GLIntArray
-{
+public class GLIntArray {
 
-	private int mElementSize;
+	private final int mElementSize;
 	private IntBuffer mIntBuffer;
 
-	public GLIntArray(int pNumberOfElements, int pElementSize)
-	{
+	public GLIntArray(final int pNumberOfElements, final int pElementSize) {
 		super();
 		mElementSize = pElementSize;
 		mIntBuffer = allocate(pNumberOfElements);
 	}
 
-	private IntBuffer allocate(int pNewCapacity)
-	{
+	private IntBuffer allocate(final int pNewCapacity) {
 		return ByteBuffer.allocateDirect(pNewCapacity * mElementSize
-																			* (Integer.SIZE / Byte.SIZE))
-											.order(ByteOrder.nativeOrder())
-											.asIntBuffer();
+				* (Integer.SIZE / Byte.SIZE))
+				.order(ByteOrder.nativeOrder())
+				.asIntBuffer();
 	}
 
-	public void add(int... pElementInts)
-	{
-		if (mIntBuffer.remaining() < pElementInts.length)
-		{
+	public void add(final int... pElementInts) {
+		if (mIntBuffer.remaining() < pElementInts.length) {
 			final int lNewCapacity = (int) 1.5 * mIntBuffer.capacity();
-			IntBuffer lNewBuffer = allocate(lNewCapacity);
+			final IntBuffer lNewBuffer = allocate(lNewCapacity);
 			lNewBuffer.put(mIntBuffer);
 			mIntBuffer = lNewBuffer;
 		}
@@ -38,46 +33,38 @@ public class GLIntArray
 		mIntBuffer.put(pElementInts);
 	}
 
-	public void clear()
-	{
+	public void clear() {
 		mIntBuffer.clear();
 	}
 
-	public void fillZeros()
-	{
+	public void fillZeros() {
 		mIntBuffer.rewind();
 		padZeros();
 	}
 
-	public void padZeros()
-	{
+	public void padZeros() {
 		while (mIntBuffer.hasRemaining())
 			mIntBuffer.put(0);
 	}
 
-	public void rewind()
-	{
+	public void rewind() {
 		mIntBuffer.rewind();
 	}
 
-	public void flip()
-	{
+	public void flip() {
 		mIntBuffer.flip();
 	}
 
-	public IntBuffer getIntBuffer()
-	{
+	public IntBuffer getIntBuffer() {
 		rewind();
 		return mIntBuffer;
 	}
 
-	public int getNumberOfElements()
-	{
+	public int getNumberOfElements() {
 		return mIntBuffer.limit();
 	}
 
-	public int getElementSize()
-	{
+	public int getElementSize() {
 		return mElementSize;
 	}
 

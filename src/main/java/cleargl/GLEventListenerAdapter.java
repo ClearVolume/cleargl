@@ -3,36 +3,30 @@ package cleargl;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 
-public class GLEventListenerAdapter implements GLEventListener
-{
+public class GLEventListenerAdapter implements GLEventListener {
 
-	public GLEventListenerAdapter()
-	{
+	public GLEventListenerAdapter() {
 		super();
 	}
 
 	@Override
-	public void init(GLAutoDrawable pDrawable)
-	{
+	public void init(final GLAutoDrawable pDrawable) {
 	}
 
 	@Override
-	public void dispose(GLAutoDrawable pDrawable)
-	{
+	public void dispose(final GLAutoDrawable pDrawable) {
 	}
 
 	@Override
-	public void display(GLAutoDrawable pDrawable)
-	{
+	public void display(final GLAutoDrawable pDrawable) {
 	}
 
 	@Override
-	public void reshape(GLAutoDrawable pDrawable,
-											int pX,
-											int pY,
-											int pWidth,
-											int pHeight)
-	{
+	public void reshape(final GLAutoDrawable pDrawable,
+			final int pX,
+			final int pY,
+			final int pWidth,
+			final int pHeight) {
 	}
 
 }
