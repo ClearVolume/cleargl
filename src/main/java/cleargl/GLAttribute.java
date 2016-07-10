@@ -2,41 +2,35 @@ package cleargl;
 
 import com.jogamp.opengl.GL;
 
-public class GLAttribute implements GLInterface
-{
+public class GLAttribute implements GLInterface {
 	private final GLProgram mGlProgram;
 	private final int mAttributeIndex;
 
-	public GLAttribute(GLProgram pGlProgram, int pAttributeId)
-	{
+	public GLAttribute(final GLProgram pGlProgram, final int pAttributeId) {
 		mGlProgram = pGlProgram;
 		mAttributeIndex = pAttributeId;
 	}
 
 	@Override
-	public GL getGL()
-	{
+	public GL getGL() {
 		return mGlProgram.getGL();
 	}
 
 	@Override
-	public int getId()
-	{
+	public int getId() {
 		return mAttributeIndex;
 	}
 
-	public int getIndex()
-	{
+	public int getIndex() {
 		return mAttributeIndex;
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return "GLAttribute [mGlProgram=" + mGlProgram
-						+ ", mAttributeIndex="
-						+ mAttributeIndex
-						+ "]";
+				+ ", mAttributeIndex="
+				+ mAttributeIndex
+				+ "]";
 	}
 
 }

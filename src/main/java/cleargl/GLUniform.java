@@ -1,79 +1,70 @@
 package cleargl;
 
+import java.nio.FloatBuffer;
 import com.jogamp.opengl.GL;
 
-import java.nio.FloatBuffer;
-
-public class GLUniform implements GLInterface
-{
+public class GLUniform implements GLInterface {
 	private final GLProgram mGlProgram;
 	private final int mUniformId;
 
-	public GLUniform(GLProgram pGlProgram, int pUniformId)
-	{
+	public GLUniform(final GLProgram pGlProgram, final int pUniformId) {
 		mGlProgram = pGlProgram;
 		mUniformId = pUniformId;
 	}
 
-	public void setFloatMatrix(	float[] pProjectionMatrix,
-															boolean pTranspose)
-	{
+	public void setFloatMatrix(final float[] pProjectionMatrix,
+			final boolean pTranspose) {
 		mGlProgram.bind();
 		mGlProgram.getGL()
-							.getGL3()
-							.glUniformMatrix4fv(mUniformId,
-																	1,
-																	pTranspose,
-																	pProjectionMatrix,
-																	0);
-	}
-
-	public void setFloatMatrix(	FloatBuffer pProjectionMatrix,
-															boolean pTranspose)
-	{
-		mGlProgram.bind();
-		mGlProgram.getGL()
-							.getGL3()
-							.glUniformMatrix4fv(mUniformId,
-																	1,
-																	pTranspose,
-																	pProjectionMatrix);
-	}
-
-	public void setFloatMatrix(GLMatrix matrix, boolean pTranspose) {
-		mGlProgram.bind();
-		mGlProgram.getGL().getGL3().glUniformMatrix4fv(
-						mUniformId,
+				.getGL3()
+				.glUniformMatrix4fv(mUniformId,
 						1,
 						pTranspose,
-						FloatBuffer.wrap(matrix.getFloatArray()));
+						pProjectionMatrix,
+						0);
 	}
 
-	public void setFloatVector2(float... pVector2)
-	{
+	public void setFloatMatrix(final FloatBuffer pProjectionMatrix,
+			final boolean pTranspose) {
+		mGlProgram.bind();
+		mGlProgram.getGL()
+				.getGL3()
+				.glUniformMatrix4fv(mUniformId,
+						1,
+						pTranspose,
+						pProjectionMatrix);
+	}
+
+	public void setFloatMatrix(final GLMatrix matrix, final boolean pTranspose) {
+		mGlProgram.bind();
+		mGlProgram.getGL().getGL3().glUniformMatrix4fv(
+				mUniformId,
+				1,
+				pTranspose,
+				FloatBuffer.wrap(matrix.getFloatArray()));
+	}
+
+	public void setFloatVector2(final float... pVector2) {
 		setFloatVector2(FloatBuffer.wrap(pVector2));
 	}
 
-	public void setFloatVector2(FloatBuffer pVector)
-	{
+	public void setFloatVector2(final FloatBuffer pVector) {
 		mGlProgram.bind();
 		mGlProgram.getGL().getGL3().glUniform2fv(mUniformId, 1, pVector);
 	}
 
-	public void setFloatVector3(float... pVector3)
-	{
+	public void setFloatVector3(final float... pVector3) {
 		setFloatVector3(FloatBuffer.wrap(pVector3));
 	}
 
-	public void setFloatVector3(FloatBuffer pVector)
-	{
+	public void setFloatVector3(final FloatBuffer pVector) {
 		mGlProgram.bind();
 		mGlProgram.getGL().getGL3().glUniform3fv(mUniformId, 1, pVector);
 	}
 
-	public void setFloatVector(GLVector pVector) {
+	public void setFloatVector(final GLVector pVector) {
 		mGlProgram.bind();
-		switch(pVector.mDimension) {
+		switch (pVector.mDimension) {
 			case 2:
 				mGlProgram.getGL().getGL3().glUniform2fv(mUniformId, 1, FloatBuffer.wrap(pVector.mElements));
 				break;
@@ -89,54 +80,46 @@ public class GLUniform implements GLInterface
 		}
 	}
 
-	public void setFloatVector4(float... pVector4)
-	{
+	public void setFloatVector4(final float... pVector4) {
 		setFloatVector4(FloatBuffer.wrap(pVector4));
 	}
 
-	public void setFloatVector4(FloatBuffer pVector)
-	{
+	public void setFloatVector4(final FloatBuffer pVector) {
 		mGlProgram.bind();
 		mGlProgram.getGL().getGL3().glUniform4fv(mUniformId, 1, pVector);
 	}
 
-	public void setInt(int pInt)
-	{
+	public void setInt(final int pInt) {
 		mGlProgram.bind();
 		mGlProgram.getGL().getGL3().glUniform1i(mUniformId, pInt);
 	}
 
-	public void setFloat(float pFloat)
-	{
+	public void setFloat(final float pFloat) {
 		mGlProgram.bind();
 		mGlProgram.getGL().getGL3().glUniform1f(mUniformId, pFloat);
 	}
 
-	/*public void set(double pDouble)
-	{
-		mGlProgram.bind();
-		mGlProgram.getGL().getGL4().glUniform1d(mUniformId, pDouble);
-	}/**/
+	/*
+	 * public void set(double pDouble) { mGlProgram.bind();
+	 * mGlProgram.getGL().getGL4().glUniform1d(mUniformId, pDouble); }/
+	 **/
 
 	@Override
-	public GL getGL()
-	{
+	public GL getGL() {
 		return mGlProgram.getGL();
 	}
 
 	@Override
-	public int getId()
-	{
+	public int getId() {
 		return mUniformId;
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return "GLUniform [mGlProgram=" + mGlProgram
-						+ ", mUniformId="
-						+ mUniformId
-						+ "]";
+				+ ", mUniformId="
+				+ mUniformId
+				+ "]";
 	}
 
 }

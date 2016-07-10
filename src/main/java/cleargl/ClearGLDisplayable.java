@@ -1,16 +1,14 @@
 package cleargl;
 
+import java.awt.Component;
+import java.io.PrintStream;
 import com.jogamp.nativewindow.WindowClosingProtocol.WindowClosingMode;
 import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.MouseListener;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.opengl.GLException;
 
-import java.awt.*;
-import java.io.PrintStream;
-
-public interface ClearGLDisplayable extends GLCloseable
-{
+public interface ClearGLDisplayable extends GLCloseable {
 
 	@Override
 	public abstract void close() throws GLException;
@@ -21,30 +19,35 @@ public interface ClearGLDisplayable extends GLCloseable
 
 	public abstract void toggleFullScreen();
 
+	// TODO remove
 	public abstract void setPerspectiveProjectionMatrix(float fov,
-																											float ratio,
-																											float nearP,
-																											float farP);
+			float ratio,
+			float nearP,
+			float farP);
 
+	// TODO remove
 	public abstract void setOrthoProjectionMatrix(float left,
-																								float right,
-																								float bottom,
-																								float top,
-																								float zNear,
-																								float zFar);
+			float right,
+			float bottom,
+			float top,
+			float zNear,
+			float zFar);
 
+	// TODO remove
 	public abstract void lookAt(float pPosX,
-															float pPosY,
-															float pPosZ,
-															float pLookAtX,
-															float pLookAtY,
-															float pLookAtZ,
-															float pUpX,
-															float pUpY,
-															float pUpZ);
+			float pPosY,
+			float pPosZ,
+			float pLookAtX,
+			float pLookAtY,
+			float pLookAtZ,
+			float pUpX,
+			float pUpY,
+			float pUpZ);
 
+	// TODO remove
 	public abstract GLMatrix getProjectionMatrix();
 
+	// TODO remove
 	public abstract GLMatrix getViewMatrix();
 
 	public abstract String getWindowTitle();
@@ -55,6 +58,7 @@ public interface ClearGLDisplayable extends GLCloseable
 
 	public abstract void setFullscreen(boolean pFullScreen);
 
+	// TODO remove
 	public abstract void display();
 
 	public abstract WindowClosingMode setDefaultCloseOperation(WindowClosingMode pWindowClosingMode);
@@ -74,10 +78,11 @@ public interface ClearGLDisplayable extends GLCloseable
 	public abstract void addWindowListener(WindowAdapter pWindowAdapter);
 
 	public abstract void setUpdateFPSFrames(int pFramesPerSecond,
-																					PrintStream pPrintStream);
+			PrintStream pPrintStream);
 
 	public abstract float getLastFPS();
 
+	// TODO remove
 	public abstract float getAspectRatio();
 
 	public abstract Component getComponent();
