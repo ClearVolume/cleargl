@@ -128,9 +128,9 @@ public class GLTexture implements GLInterface, GLCloseable
 		mMipMapLevels = pMipMapLevels;
 
 		mTextureTarget = mTextureDepth == 1	? GL.GL_TEXTURE_2D
-																				: GL2ES2.GL_TEXTURE_3D;
+																				: GL4.GL_TEXTURE_3D;
 		mTextureOpenGLFormat = mNumberOfChannels == 4 ? GL.GL_RGBA// GL_BGRA
-																									: GL2ES2.GL_RED;
+																									: GL4.GL_RED;
 
 		if (mType == NativeTypeEnum.Byte)
 		{
@@ -205,6 +205,7 @@ public class GLTexture implements GLInterface, GLCloseable
 			switch(mNumberOfChannels) {
 				case 1:
 					mTextureOpenGLInternalFormat = GL.GL_R32F;
+					mBytesPerChannel = 4;
 					break;
 				case 3:
 					if(precision == 16) {
@@ -262,7 +263,6 @@ public class GLTexture implements GLInterface, GLCloseable
 																				mTextureOpenGLInternalFormat,
 																				mTextureWidth,
 																				mTextureHeight);
-
 	}
 
 	public GLTexture(	GL4 pGL,
@@ -383,6 +383,7 @@ public class GLTexture implements GLInterface, GLCloseable
 												boolean pAutoGenerateMipMaps)
 	{
 		bind();
+		pBuffer.rewind();
 		mGL.glTexSubImage2D(	mTextureTarget,
 																	pLODLevel,
 																	0,
@@ -480,7 +481,7 @@ public class GLTexture implements GLInterface, GLCloseable
 
   public void dumpToFile(ByteBuffer buf) {
     try {
-      File file = new File("/Users/ulrik/" + this.getId() + ".dump");
+      File file = new File(System.getProperty("user.home") + "/ClearGL-GLTexture-" + System.currentTimeMillis() + "-GLid_" + this.getId() + ".raw");
       FileChannel channel = new FileOutputStream(file, false).getChannel();
       buf.rewind();
       channel.write(buf);
