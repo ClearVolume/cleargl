@@ -141,7 +141,7 @@ public class GLVector {
 			final float lValue = mElements[i];
 			lResult += lValue * lValue;
 		}
-		return lResult;
+		return (float)Math.sqrt(lResult);
 	}
 
 	public GLVector normalize() {
