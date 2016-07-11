@@ -33,6 +33,8 @@ public class GLTexture implements GLInterface, GLCloseable {
 
 	private final int mTextureHeight;
 
+	private final int mTextureDepth;
+
 	private final int mTextureOpenGLDataType;
 
 	private final int mTextureOpenGLFormat;
@@ -40,8 +42,6 @@ public class GLTexture implements GLInterface, GLCloseable {
 	private int mTextureOpenGLInternalFormat;
 
 	private final int mMipMapLevels;
-
-	private final int mTextureDepth;
 
 	private final int mTextureTarget;
 
@@ -389,12 +389,22 @@ public class GLTexture implements GLInterface, GLCloseable {
 		return mTextureHeight;
 	}
 
+	public int getDepth()
+	{
+		return mTextureDepth;
+	}
+
 	public int getType() {
 		return mTextureOpenGLDataType;
 	}
 
 	public GLTypeEnum getNativeType() {
 		return mType;
+	}
+
+	public int getTextureTarget()
+	{
+		return mTextureTarget;
 	}
 
 	public int getChannels() {
