@@ -1,11 +1,10 @@
 package cleargl;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.min;
-import static java.lang.Math.sqrt;
 import com.jogamp.opengl.math.FloatUtil;
 import com.jogamp.opengl.math.Quaternion;
 import com.jogamp.opengl.math.VectorUtil;
+
+import static java.lang.Math.*;
 
 public class GLMatrix {
 
@@ -266,6 +265,10 @@ public class GLMatrix {
 		final float[] lResultVector = new float[4];
 		mulColMat4Vec4(lResultVector, mMatrix, pVector);
 		return lResultVector;
+	}
+
+	public GLVector mult(final GLVector vec) {
+		return new GLVector(mult(vec.toFloatArray()));
 	}
 
 	private static float[] mulColMat4Vec4(final float[] result,

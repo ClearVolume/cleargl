@@ -1,9 +1,10 @@
 package cleargl;
 
-import java.nio.FloatBuffer;
-import java.util.Arrays;
 import com.jogamp.opengl.math.Quaternion;
 import com.jogamp.opengl.math.VectorUtil;
+
+import java.nio.FloatBuffer;
+import java.util.Arrays;
 
 /*
 @author Ulrik Günther, Loïc Royer
@@ -164,6 +165,10 @@ public class GLVector {
 
 	public FloatBuffer toFloatBuffer() {
 		return FloatBuffer.wrap(mElements);
+	}
+
+	public float[] toFloatArray() {
+		return mElements;
 	}
 
 	@Override
