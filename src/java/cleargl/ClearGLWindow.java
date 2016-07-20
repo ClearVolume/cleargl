@@ -416,10 +416,13 @@ public class ClearGLWindow implements ClearGLDisplayable
 		trialSizes[0] = 512;
 		trialSizes[1] = 512;
 
-		pGL.getContext()
-				.getGLDrawable()
-				.getNativeSurface()
-				.convertToPixelUnits(trialSizes);
+		if (pGL != null && pGL.getContext() != null
+				&& pGL.getContext().getGLDrawable() != null
+				&& pGL.getContext().getGLDrawable().getNativeSurface() != null)
+			pGL.getContext()
+					.getGLDrawable()
+					.getNativeSurface()
+					.convertToPixelUnits(trialSizes);
 
 		if (trialSizes[0] == 512 && trialSizes[1] == 512)
 		{
