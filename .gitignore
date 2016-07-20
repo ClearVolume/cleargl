@@ -10,3 +10,4 @@ hs_err_pid*
 old/
 src/clearvolume/demo/databig/
 cleargl.iml
+/target/
