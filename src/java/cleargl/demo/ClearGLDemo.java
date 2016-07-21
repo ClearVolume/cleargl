@@ -107,8 +107,8 @@ public class ClearGLDemo
 					mProjectionMatrixUniform1 = mGLProgram1.getUniform("projMatrix");
 					mViewMatrixUniform1 = mGLProgram1.getUniform("viewMatrix");
 
-					mPosition1 = mGLProgram1.getAtribute("position");
-					mColor1 = mGLProgram1.getAtribute("color");
+					mPosition1 = mGLProgram1.getAttribute("position");
+					mColor1 = mGLProgram1.getAttribute("color");
 
 					mGLVertexArray1 = new GLVertexArray(mGLProgram1);
 					mGLVertexArray1.bind();
@@ -131,8 +131,8 @@ public class ClearGLDemo
 					mProjectionMatrixUniform2 = mGLProgram2.getUniform("projMatrix");
 					mViewMatrixUniform2 = mGLProgram2.getUniform("viewMatrix");
 
-					mPosition2 = mGLProgram2.getAtribute("position");
-					mTexCoord2 = mGLProgram2.getAtribute("texcoord");
+					mPosition2 = mGLProgram2.getAttribute("position");
+					mTexCoord2 = mGLProgram2.getAttribute("texcoord");
 					mTexUnit2 = mGLProgram2.getUniform("texUnit");
 					mTexUnit2.setInt(0);
 
