@@ -145,6 +145,15 @@ public class GLVector {
 		return (float)Math.sqrt(lResult);
 	}
 
+	public float length2() {
+		float lResult = 0;
+		for (int i = 0; i < mDimension; i++) {
+			final float lValue = mElements[i];
+			lResult += lValue * lValue;
+		}
+		return lResult;
+	}
+
 	public GLVector normalize() {
 		final float lFactor = 1f / magnitude();
 		for (int i = 0; i < mDimension; i++)
@@ -195,10 +204,7 @@ public class GLVector {
 
 	@Override
 	public String toString() {
-		return "GLVector [mElements=" + Arrays.toString(mElements)
-				+ ", mDimension="
-				+ mDimension
-				+ "]";
+		return "[" + Arrays.toString(mElements) + "]";
 	}
 
 	public static GLVector getOneVector(final int dimension) {

@@ -231,6 +231,10 @@ public class GLMatrix {
 		FloatUtil.multMatrix(mMatrix, lTranslationMatrix);
 	}
 
+	public void translate(final GLVector v) {
+		this.translate(v.x(), v.y(), v.z());
+	}
+
 	public void scale(final float pScaleX, final float pScaleY, final float pScaleZ) {
 
 		final float[] lScaleMatrix = FloatUtil.makeScale(new float[16],
