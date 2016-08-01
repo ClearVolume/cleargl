@@ -120,7 +120,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 		this(	pWindowTitle,
 					pDefaultWidth,
 					pDefaultHeight,
-					2,
+					1,
 					pClearGLWindowEventListener);
 	}
 
