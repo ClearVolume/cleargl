@@ -4,6 +4,8 @@ import com.jogamp.opengl.math.FloatUtil;
 import com.jogamp.opengl.math.Quaternion;
 import com.jogamp.opengl.math.VectorUtil;
 
+import java.nio.ByteBuffer;
+
 import static java.lang.Math.*;
 
 public class GLMatrix {
@@ -210,7 +212,7 @@ public class GLMatrix {
 
 	}
 
-	public void rotEuler(final double bankX,
+	public GLMatrix rotEuler(final double bankX,
 			final double headingY,
 			final double attitudeZ) {
 		final float[] lRotMatrix = FloatUtil.makeRotationEuler(new float[16],
@@ -219,9 +221,11 @@ public class GLMatrix {
 				(float) headingY,
 				(float) attitudeZ);
 		FloatUtil.multMatrix(mMatrix, lRotMatrix);
+
+		return this;
 	}
 
-	public void translate(final float pDeltaX, final float pDeltaY, final float pDeltaZ) {
+	public GLMatrix translate(final float pDeltaX, final float pDeltaY, final float pDeltaZ) {
 		final float[] lTranslationMatrix = FloatUtil.makeTranslation(new float[16],
 				true,
 				pDeltaX,
@@ -229,13 +233,14 @@ public class GLMatrix {
 				pDeltaZ);
 
 		FloatUtil.multMatrix(mMatrix, lTranslationMatrix);
+		return this;
 	}
 
-	public void translate(final GLVector v) {
-		this.translate(v.x(), v.y(), v.z());
+	public GLMatrix translate(final GLVector v) {
+		return this.translate(v.x(), v.y(), v.z());
 	}
 
-	public void scale(final float pScaleX, final float pScaleY, final float pScaleZ) {
+	public GLMatrix scale(final float pScaleX, final float pScaleY, final float pScaleZ) {
 
 		final float[] lScaleMatrix = FloatUtil.makeScale(new float[16],
 				true,
@@ -244,6 +249,7 @@ public class GLMatrix {
 				pScaleZ);
 
 		FloatUtil.multMatrix(mMatrix, lScaleMatrix);
+		return this;
 	}
 
 	public void invscale(final float pScaleX, final float pScaleY, final float pScaleZ) {
@@ -512,6 +518,13 @@ public class GLMatrix {
 		}
 
 		return true;
+	}
+
+	public ByteBuffer push(ByteBuffer buffer) {
+		final int pos = buffer.position();
+		buffer.asFloatBuffer().put(mMatrix);
+		buffer.position(pos);
+		return buffer;
 	}
 
 }
