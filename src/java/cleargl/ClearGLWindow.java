@@ -231,7 +231,8 @@ public class ClearGLWindow implements ClearGLDisplayable
 	public void setVisible(final boolean pIsVisible)
 	{
 		runOnEDT(false, () -> {
-			mGlWindow.setVisible(pIsVisible);
+			if (mGlWindow != null)
+				mGlWindow.setVisible(pIsVisible);
 		});
 	}
 
