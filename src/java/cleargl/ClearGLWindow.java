@@ -481,6 +481,12 @@ public class ClearGLWindow implements ClearGLDisplayable
 		return mGlWindow.getY();
 	}
 
+
+	public void setWindowPosition(int pX, int pY)
+	{
+		mGlWindow.setPosition(pX, pY);
+	}
+	
 	@Override
 	public void setSize(int pWidth, int pHeight)
 	{
