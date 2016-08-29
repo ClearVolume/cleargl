@@ -460,6 +460,26 @@ public class ClearGLWindow implements ClearGLDisplayable
 		int factor = isRetina(this.mGlWindow.getGL()) ? 2 : 1;
 		return mGlWindow.getWidth() * factor;
 	}
+	
+	/* (non-Javadoc)
+	 * @see cleargl.ClearGLDisplayable#getHeight()
+	 */
+	@Override
+	public int getWindowX()
+	{
+		int factor = isRetina(this.mGlWindow.getGL()) ? 2 : 1;
+		return mGlWindow.getX();
+	}
+
+	/* (non-Javadoc)
+	 * @see cleargl.ClearGLDisplayable#getWidth()
+	 */
+	@Override
+	public int getWindowY()
+	{
+		int factor = isRetina(this.mGlWindow.getGL()) ? 2 : 1;
+		return mGlWindow.getY();
+	}
 
 	@Override
 	public void setSize(int pWidth, int pHeight)

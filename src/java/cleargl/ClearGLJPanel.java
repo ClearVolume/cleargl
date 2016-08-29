@@ -245,4 +245,16 @@ public class ClearGLJPanel implements ClearGLDisplayable
 		return mGLJPanel;
 	}
 
+	@Override
+	public int getWindowX()
+	{
+		return mGLJPanel.getX();
+	}
+
+	@Override
+	public int getWindowY()
+	{
+		return mGLJPanel.getY();
+	}
+
 }

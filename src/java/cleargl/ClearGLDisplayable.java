@@ -65,6 +65,10 @@ public interface ClearGLDisplayable extends GLCloseable
 
 	public abstract int getWidth();
 
+	public abstract int getWindowX();
+
+	public abstract int getWindowY();
+
 	public abstract boolean isVisible();
 
 	public abstract void addMouseListener(MouseListener pMouseListener);
