@@ -61,9 +61,9 @@ public interface ClearGLDisplayable extends GLCloseable
 
 	public abstract void setSize(int pWindowWidth, int pWindowHeight);
 
-	public abstract int getHeight();
+	public abstract int getSurfaceHeight();
 
-	public abstract int getWidth();
+	public abstract int getSurfaceWidth();
 
 	public abstract int getWindowX();
 

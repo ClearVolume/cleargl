@@ -442,25 +442,34 @@ public class ClearGLWindow implements ClearGLDisplayable
 	}
 
 	/* (non-Javadoc)
-	 * @see cleargl.ClearGLDisplayable#getHeight()
-	 */
-	@Override
-	public int getHeight()
-	{
-		int factor = isRetina(this.mGlWindow.getGL()) ? 2 : 1;
-		return mGlWindow.getHeight() * factor;
-	}
-
-	/* (non-Javadoc)
 	 * @see cleargl.ClearGLDisplayable#getWidth()
 	 */
 	@Override
-	public int getWidth()
+	public int getSurfaceWidth()
 	{
-		int factor = isRetina(this.mGlWindow.getGL()) ? 2 : 1;
-		return mGlWindow.getWidth() * factor;
+		return mGlWindow.getSurfaceWidth();
 	}
 	
+	/* (non-Javadoc)
+	 * @see cleargl.ClearGLDisplayable#getHeight()
+	 */
+	@Override
+	public int getSurfaceHeight()
+	{
+		return mGlWindow.getSurfaceHeight();
+	}
+
+	public int getWidth()
+	{
+
+		return mGlWindow.getWidth();
+	}
+
+	public int getHeight()
+	{
+		return mGlWindow.getHeight();
+	}
+
 	/* (non-Javadoc)
 	 * @see cleargl.ClearGLDisplayable#getHeight()
 	 */
@@ -481,12 +490,11 @@ public class ClearGLWindow implements ClearGLDisplayable
 		return mGlWindow.getY();
 	}
 
-
 	public void setWindowPosition(int pX, int pY)
 	{
 		mGlWindow.setPosition(pX, pY);
 	}
-	
+
 	@Override
 	public void setSize(int pWidth, int pHeight)
 	{

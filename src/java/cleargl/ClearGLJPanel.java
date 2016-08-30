@@ -205,13 +205,13 @@ public class ClearGLJPanel implements ClearGLDisplayable
 	}
 
 	@Override
-	public int getHeight()
+	public int getSurfaceHeight()
 	{
 		return getGLJPanel().getHeight();
 	}
 
 	@Override
-	public int getWidth()
+	public int getSurfaceWidth()
 	{
 		return getGLJPanel().getWidth();
 	}
