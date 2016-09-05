@@ -126,13 +126,21 @@ task TestProgFatJar(type:Jar) {
 /*
  * Gets the version name from the latest Git tag
  */
+ 
+ 
 def getVersionName = { ->
+		try
+ 		{
 		def stdout = new ByteArrayOutputStream()
 		exec {
 				commandLine 'git', 'describe', '--tags'
 				standardOutput = stdout
 		}
 		return stdout.toString().trim()
+		}
+		catch(Throwable e) {
+			println e
+		}
 }
 
 group = 'net.clearvolume'
