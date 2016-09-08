@@ -1,5 +1,24 @@
 language: java
+
+env:
+  global:
+    - secure: "xhpbLZhcuxAXKezhw6aKvNoBUsSy4R3wIGSJdb36iD5SayvetHR6nFjly544arxmFqTsVrv0D2KyzpmSUEVDzeh0BED7T8S2LUopMt/n4aykxN+4F4jJAEZuuY00jfdxdrWCB/GsI3taOOTgTiLZIo3B3DMD8DJgZdfWFrvsn4Q="
+    - secure: "dLqjHRNgn3iBDBhXknPOQa9CUfvQai4vMNx5U3mEuGMpORcQNFgaq1HPquOXsmLhfU7b6tsNp9sBZxdCaI9475dvEMrWi8qrh5/DSUdukdLa+uWmRDG8WxFdLNpvjrwFYeqCbPqTpZQAxfg6KhP4WTLlmsAeO5nT6EGeBRg9IWk="
+
 script: "gradle build"
+
 jdk:
   - oraclejdk8
+  
 install: gradle assemble --stacktrace
+
+before_cache:
+  - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
+
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+    
+after_success:
+    - gradle uploadArchives -Plocal=true
