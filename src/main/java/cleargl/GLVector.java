@@ -3,6 +3,7 @@ package cleargl;
 import com.jogamp.opengl.math.Quaternion;
 import com.jogamp.opengl.math.VectorUtil;
 
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 
@@ -200,6 +201,20 @@ public class GLVector {
 		if (mDimension != other.mDimension)
 			return false;
 		return true;
+	}
+
+	public ByteBuffer push(ByteBuffer buffer) {
+		int pos = buffer.position();
+		buffer.asFloatBuffer().put(mElements);
+		buffer.position(pos);
+
+		return buffer;
+	}
+
+	public ByteBuffer put(ByteBuffer buffer) {
+		buffer.asFloatBuffer().put(mElements);
+
+		return buffer;
 	}
 
 	@Override

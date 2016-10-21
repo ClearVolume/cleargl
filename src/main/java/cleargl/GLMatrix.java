@@ -527,4 +527,9 @@ public class GLMatrix {
 		return buffer;
 	}
 
+	public ByteBuffer put(ByteBuffer buffer) {
+		buffer.asFloatBuffer().put(mMatrix);
+		return buffer;
+	}
+
 }
