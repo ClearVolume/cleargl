@@ -530,7 +530,7 @@ public final class TGAReader {
 	private TGAReader() {
 	}
 
-	private static final class Order {
+	public static final class Order {
 		Order(final int redShift, final int greenShift, final int blueShift, final int alphaShift) {
 			this.redShift = redShift;
 			this.greenShift = greenShift;
