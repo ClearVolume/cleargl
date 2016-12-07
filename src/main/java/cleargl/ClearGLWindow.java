@@ -120,6 +120,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 		this(	pWindowTitle,
 					pDefaultWidth,
 					pDefaultHeight,
+					"GL4",
 					1,
 					pClearGLWindowEventListener);
 	}
@@ -127,6 +128,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 	public ClearGLWindow(	final String pWindowTitle,
 												final int pDefaultWidth,
 												final int pDefaultHeight,
+							 					final String pGLVersion,
 												final int pNumberOfSamples,
 												final ClearGLEventListener pClearGLWindowEventListener)
 	{
@@ -137,15 +139,15 @@ public class ClearGLWindow implements ClearGLDisplayable
 		mProjectionMatrix = new GLMatrix();
 		mViewMatrix = new GLMatrix();
 
-		final GLProfile lProfile = GLProfile.getMaxProgrammableCore(true);
+		final GLProfile lProfile = GLProfile.get(pGLVersion);
 		System.out.println(this.getClass().getSimpleName() + ": "
 												+ lProfile);
 		final GLCapabilities lCapabilities = new GLCapabilities(lProfile);
 
 		lCapabilities.setSampleBuffers(pNumberOfSamples > 1);
 		lCapabilities.setNumSamples(pNumberOfSamples);
-		lCapabilities.setDepthBits(32);
-		// lCapabilities.setHardwareAccelerated(true);
+		lCapabilities.setDepthBits(24);
+		lCapabilities.setHardwareAccelerated(true);
 
 		final GLCapabilitiesChooser lMultisampleChooser = new MultisampleChooser();
 
