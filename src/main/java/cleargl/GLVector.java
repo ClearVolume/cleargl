@@ -212,7 +212,9 @@ public class GLVector {
 	}
 
 	public ByteBuffer put(ByteBuffer buffer) {
+		int position = buffer.position();
 		buffer.asFloatBuffer().put(mElements);
+		buffer.position(position + mElements.length*4);
 
 		return buffer;
 	}

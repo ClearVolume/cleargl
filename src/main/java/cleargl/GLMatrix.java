@@ -528,7 +528,9 @@ public class GLMatrix {
 	}
 
 	public ByteBuffer put(ByteBuffer buffer) {
+		int position = buffer.position();
 		buffer.asFloatBuffer().put(mMatrix);
+		buffer.position(position + mMatrix.length*4);
 		return buffer;
 	}
 
