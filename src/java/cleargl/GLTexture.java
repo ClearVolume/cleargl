@@ -10,7 +10,7 @@ import com.jogamp.opengl.GL2ES2;
 import com.jogamp.opengl.GLException;
 
 import coremem.ContiguousMemoryInterface;
-import coremem.types.NativeTypeEnum;
+import coremem.enums.NativeTypeEnum;
 
 public class GLTexture implements GLInterface, GLCloseable
 {

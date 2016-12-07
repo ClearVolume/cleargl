@@ -7,6 +7,11 @@ import java.nio.IntBuffer;
 
 import org.junit.Test;
 
+import com.jogamp.common.nio.Buffers;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GLAutoDrawable;
+import com.jogamp.opengl.GLException;
+
 import cleargl.ClearGLDefaultEventListener;
 import cleargl.ClearGLDisplayable;
 import cleargl.ClearGLWindow;
@@ -16,13 +21,7 @@ import cleargl.GLTexture;
 import cleargl.GLUniform;
 import cleargl.GLVertexArray;
 import cleargl.GLVertexAttributeArray;
-
-import com.jogamp.common.nio.Buffers;
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GLAutoDrawable;
-import com.jogamp.opengl.GLException;
-
-import coremem.types.NativeTypeEnum;
+import coremem.enums.NativeTypeEnum;
 
 public class ClearGLDemo
 {
