@@ -16,6 +16,8 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Hashtable;
 
@@ -195,7 +197,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 				case 3:
 					if (precision == 16) {
 						mTextureOpenGLInternalFormat = GL.GL_RGB16F;
-						mBytesPerChannel = 2;
+						mBytesPerChannel = 4;
 					} else if (precision == 32) {
 						mTextureOpenGLInternalFormat = GL.GL_RGB32F;
 						mBytesPerChannel = 4;
@@ -204,7 +206,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 				case 4:
 					if (precision == 16) {
 						mTextureOpenGLInternalFormat = GL.GL_RGBA16F;
-						mBytesPerChannel = 2;
+						mBytesPerChannel = 4;
 					} else if (precision == 32) {
 						mTextureOpenGLInternalFormat = GL.GL_RGBA32F;
 						mBytesPerChannel = 4;
