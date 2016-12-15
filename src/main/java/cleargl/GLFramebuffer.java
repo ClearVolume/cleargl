@@ -261,6 +261,19 @@ public class GLFramebuffer {
 		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
 	}
 
+	public void destroy(GL4 gl) {
+		gl.glDeleteFramebuffers(1, framebufferId, 0);
+		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
+
+		for(GLTexture bt: backingTextures) {
+		  bt.delete();
+		}
+
+		for(GLTexture dt: depthBuffers) {
+			dt.delete();
+		}
+	}
+
 	@Override
 	public String toString() {
 		String info;

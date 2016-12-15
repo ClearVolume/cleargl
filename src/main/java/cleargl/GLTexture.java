@@ -275,6 +275,10 @@ public class GLTexture implements GLInterface, GLCloseable {
 		mGL.glBindTexture(mTextureTarget, 0);
 	}
 
+	public void delete() {
+		mGL.glDeleteTextures(1, mTextureId, 0);
+	}
+
 	@SafeVarargs
 	public static <T> void bindTextures(final GLProgram pGLProgram,
 			final GLTexture... pTexturesToBind) {
