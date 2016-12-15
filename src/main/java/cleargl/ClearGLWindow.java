@@ -164,6 +164,10 @@ public class ClearGLWindow implements ClearGLDisplayable
 		// lAnimator.add(mClearGLWindow.getGLAutoDrawable());
 	}
 
+	public void setResizable(final boolean resizable) {
+		mGlWindow.setResizable(resizable);
+	}
+
 	public void setFPS(final int pFramesPerSecond)
 	{
 		mFramesPerSecond = pFramesPerSecond;
