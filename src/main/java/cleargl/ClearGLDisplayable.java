@@ -8,85 +8,100 @@ import com.jogamp.newt.event.MouseListener;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.opengl.GLException;
 
-public interface ClearGLDisplayable extends GLCloseable {
+public interface ClearGLDisplayable extends GLCloseable
+{
 
-	@Override
-	public abstract void close() throws GLException;
+  @Override
+  public void close() throws GLException;
 
-	public abstract void setWindowTitle(String pTitleString);
+  public void setWindowTitle(String pTitleString);
 
-	public abstract void setVisible(boolean pIsVisible);
+  public void setVisible(boolean pIsVisible);
 
-	public abstract void toggleFullScreen();
+  public void toggleFullScreen();
 
-	// TODO remove
-	public abstract void setPerspectiveProjectionMatrix(float fov,
-			float ratio,
-			float nearP,
-			float farP);
+  // TODO remove
+  public void setPerspectiveProjectionMatrix(float fov,
+                                             float ratio,
+                                             float nearP,
+                                             float farP);
 
-	// TODO remove
-	public abstract void setOrthoProjectionMatrix(float left,
-			float right,
-			float bottom,
-			float top,
-			float zNear,
-			float zFar);
+  // TODO remove
+  public void setOrthoProjectionMatrix(float left,
+                                       float right,
+                                       float bottom,
+                                       float top,
+                                       float zNear,
+                                       float zFar);
 
-	// TODO remove
-	public abstract void lookAt(float pPosX,
-			float pPosY,
-			float pPosZ,
-			float pLookAtX,
-			float pLookAtY,
-			float pLookAtZ,
-			float pUpX,
-			float pUpY,
-			float pUpZ);
+  // TODO remove
+  public void lookAt(float pPosX,
+                     float pPosY,
+                     float pPosZ,
+                     float pLookAtX,
+                     float pLookAtY,
+                     float pLookAtZ,
+                     float pUpX,
+                     float pUpY,
+                     float pUpZ);
 
-	// TODO remove
-	public abstract GLMatrix getProjectionMatrix();
+  // TODO remove
+  public GLMatrix getProjectionMatrix();
 
-	// TODO remove
-	public abstract GLMatrix getViewMatrix();
+  // TODO remove
+  public GLMatrix getViewMatrix();
 
-	public abstract String getWindowTitle();
+  public String getWindowTitle();
 
-	public abstract void disableClose();
+  public void disableClose();
 
-	public abstract boolean isFullscreen();
+  public boolean isFullscreen();
 
-	public abstract void setFullscreen(boolean pFullScreen);
+  public void setFullscreen(boolean pFullScreen);
 
-	// TODO remove
-	public abstract void display();
+  // TODO remove
+  public void display();
 
-	public abstract WindowClosingMode setDefaultCloseOperation(WindowClosingMode pWindowClosingMode);
+  public WindowClosingMode setDefaultCloseOperation(WindowClosingMode pWindowClosingMode);
 
-	public abstract void setSize(int pWindowWidth, int pWindowHeight);
+  public void setWindowPosition(int pX, int pY);
+  
+  public void setSize(int pWindowWidth, int pWindowHeight);
 
-	public abstract int getHeight();
+  public int getWindowX();
 
-	public abstract int getWidth();
+  public int getWindowY();
+  
+  public int getWindowHeight();
 
-	public abstract boolean isVisible();
+  public int getWindowWidth();
 
-	public abstract void addMouseListener(MouseListener pMouseListener);
+  public int getSurfaceHeight();
 
-	public abstract void addKeyListener(KeyListener pKeyListener);
+  public int getSurfaceWidth();
 
-	public abstract void addWindowListener(WindowAdapter pWindowAdapter);
+  public boolean isVisible();
 
-	public abstract void setUpdateFPSFrames(int pFramesPerSecond,
-			PrintStream pPrintStream);
+  public void addMouseListener(MouseListener pMouseListener);
 
-	public abstract float getLastFPS();
+  public void addKeyListener(KeyListener pKeyListener);
 
-	// TODO remove
-	public abstract float getAspectRatio();
+  public void addWindowListener(WindowAdapter pWindowAdapter);
 
-	public abstract Component getComponent();
+  public void setUpdateFPSFrames(int pFramesPerSecond,
+                                 PrintStream pPrintStream);
 
-	public abstract float[] getBounds();
+  public float getLastFPS();
+
+  // TODO remove
+  public float getAspectRatio();
+
+  public Component getComponent();
+
+  public float[] getBounds();
+
+
+
+
 
 }
