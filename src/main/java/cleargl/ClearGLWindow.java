@@ -704,4 +704,10 @@ public class ClearGLWindow implements ClearGLDisplayable
 			bounds.getHeight() };
 	}
 
+    public int getSurfaceHeight() {
+        return mGlWindow.getSurfaceHeight();
+    }
+    public int getSurfaceWidth() {
+        return mGlWindow.getSurfaceWidth();
+    }
 }

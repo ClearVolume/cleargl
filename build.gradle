@@ -129,6 +129,7 @@ def getVersionName = { ->
 
 group = 'net.clearvolume'
 archivesBaseName = 'cleargl'
+//version = '2.0.1-SNAPSHOT'
 
 if(project.hasProperty('releasebuild')) {
     version = getVersionName()
