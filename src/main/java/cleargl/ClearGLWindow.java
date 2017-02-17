@@ -723,6 +723,14 @@ public class ClearGLWindow implements ClearGLDisplayable
         mGlWindow.setPosition(x,y);
     }
 
+    public int getSurfaceWidth(){
+        return mGlWindow.getSurfaceWidth();
+    }
+
+    public int getSurfaceHeight(){
+        return mGlWindow.getSurfaceHeight();
+    }
+
 
 
 }
