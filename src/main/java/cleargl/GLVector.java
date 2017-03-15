@@ -1,11 +1,10 @@
 package cleargl;
 
-import com.jogamp.opengl.math.Quaternion;
-import com.jogamp.opengl.math.VectorUtil;
-
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
+import com.jogamp.opengl.math.Quaternion;
+import com.jogamp.opengl.math.VectorUtil;
 
 /*
 @author Ulrik Günther, Loïc Royer
@@ -143,7 +142,7 @@ public class GLVector {
 			final float lValue = mElements[i];
 			lResult += lValue * lValue;
 		}
-		return (float)Math.sqrt(lResult);
+		return (float) Math.sqrt(lResult);
 	}
 
 	public float length2() {
@@ -214,7 +213,7 @@ public class GLVector {
 	public ByteBuffer put(ByteBuffer buffer) {
 		int position = buffer.position();
 		buffer.asFloatBuffer().put(mElements);
-		buffer.position(position + mElements.length*4);
+		buffer.position(position + mElements.length * 4);
 
 		return buffer;
 	}

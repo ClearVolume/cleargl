@@ -1,11 +1,9 @@
 package cleargl.util.arcball;
 
 import cleargl.GLMatrix;
-
 import com.jogamp.opengl.math.Quaternion;
 
-public class ArcBall
-{
+public class ArcBall {
 	private static final float Epsilon = 1.0e-5f;
 
 	float[] mStartVector;
@@ -17,22 +15,19 @@ public class ArcBall
 	Quaternion mRotationQuaternion = new Quaternion();
 	Quaternion mResultQuaternion = new Quaternion();
 
-	public ArcBall()
-	{
+	public ArcBall() {
 		mStartVector = new float[3];
 		mEndVector = new float[3];
 		mRotationQuaternion.setIdentity();
 	}
 
-	public void setCurrent(Quaternion pQuaternion)
-	{
+	public void setCurrent(Quaternion pQuaternion) {
 		mCurrentQuaternion.set(pQuaternion);
 	}
 
 	public void mapToSphere(float p2DPointX,
-													float p2DPointY,
-													float[] p3DVector)
-	{
+			float p2DPointY,
+			float[] p3DVector) {
 		// Copy parameter into temp point
 
 		// Adjust point coords and scale down to range of [-1 ... 1]
@@ -43,9 +38,9 @@ public class ArcBall
 		// center
 		final double length = (p2DPointX * p2DPointX) + (p2DPointY * p2DPointY);
 
-		// If the point is mapped outside of the sphere... (length > radius squared)
-		if (length > 1.0f)
-		{
+		// If the point is mapped outside of the sphere... (length > radius
+		// squared)
+		if (length > 1.0f) {
 			// Compute a normalizing factor (radius / sqrt(length))
 			final float norm = (float) (1.0 / Math.sqrt(length));
 
@@ -53,11 +48,11 @@ public class ArcBall
 			p3DVector[0] = p2DPointX * norm;
 			p3DVector[1] = p2DPointY * norm;
 			p3DVector[2] = 0.0f;
-		}
-		else
+		} else
 		// Else it's on the inside
 		{
-			// Return a vector to a point mapped inside the sphere sqrt(radius squared
+			// Return a vector to a point mapped inside the sphere sqrt(radius
+			// squared
 			// - length)
 			p3DVector[0] = p2DPointX;
 			p3DVector[1] = p2DPointY;
@@ -67,8 +62,7 @@ public class ArcBall
 	}
 
 	public void setBounds(float pMouseBoundsWidth,
-												float pMouseBoundsHeight)
-	{
+			float pMouseBoundsHeight) {
 		assert ((pMouseBoundsWidth > 1.0f) && (pMouseBoundsHeight > 1.0f));
 
 		// Set adjustment factor for width/height
@@ -77,14 +71,12 @@ public class ArcBall
 	}
 
 	// Mouse down
-	public void click(float p2DPointX, float p2DPointsY)
-	{
+	public void click(float p2DPointX, float p2DPointsY) {
 		mapToSphere(p2DPointX, p2DPointsY, this.mStartVector);
 	}
 
 	// Mouse drag, calculate rotation
-	public Quaternion drag(float p2DPointX, float p2DPointY)
-	{
+	public Quaternion drag(float p2DPointX, float p2DPointY) {
 		// Map the point to the sphere
 		this.mapToSphere(p2DPointX, p2DPointY, mEndVector);
 
@@ -98,7 +90,8 @@ public class ArcBall
 		// Compute the length of the perpendicular vector
 		if (lLength > Epsilon) // if its non-zero
 		{
-			// We're ok, so return the perpendicular vector as the transform after
+			// We're ok, so return the perpendicular vector as the transform
+			// after
 			// all
 			mRotationQuaternion.setX(lPerp[0]);
 			mRotationQuaternion.setY(lPerp[1]);
@@ -106,11 +99,11 @@ public class ArcBall
 			// In the quaternion values, w is cosine (theta / 2), where theta is
 			// rotation angle
 			mRotationQuaternion.setW(GLMatrix.dot(mStartVector, mEndVector));
-		}
-		else
+		} else
 		// if its zero
 		{
-			// The begin and end vectors coincide, so return an identity transform
+			// The begin and end vectors coincide, so return an identity
+			// transform
 			mRotationQuaternion.setIdentity();
 		}
 

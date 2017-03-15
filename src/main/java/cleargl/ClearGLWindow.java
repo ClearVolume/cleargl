@@ -4,7 +4,6 @@ import java.awt.Component;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.jogamp.nativewindow.CapabilitiesImmutable;
 import com.jogamp.nativewindow.WindowClosingProtocol.WindowClosingMode;
 import com.jogamp.newt.Display;
@@ -27,8 +26,7 @@ import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.util.FPSAnimator;
 
-public class ClearGLWindow implements ClearGLDisplayable
-{
+public class ClearGLWindow implements ClearGLDisplayable {
 
 	private final GLWindow mGlWindow;
 	private final Window mWindow;
@@ -43,95 +41,79 @@ public class ClearGLWindow implements ClearGLDisplayable
 	private FPSAnimator mAnimator;
 	private int mFramesPerSecond = 60;
 
-	static
-	{
+	static {
 		System.setProperty("sun.awt.noerasebackground", "true");
 	}
 
-	static class MultisampleChooser	extends
-																	DefaultGLCapabilitiesChooser
-	{
+	static class MultisampleChooser extends DefaultGLCapabilitiesChooser {
 		public int chooseCapabilities(final GLCapabilities desired,
-																	final List<? extends CapabilitiesImmutable> available,
-																	final int windowSystemRecommendedChoice)
-		{
+				final List<? extends CapabilitiesImmutable> available,
+				final int windowSystemRecommendedChoice) {
 			boolean anyHaveSampleBuffers = false;
-			for (int i = 0; i < available.size(); i++)
-			{
+			for (int i = 0; i < available.size(); i++) {
 				final GLCapabilitiesImmutable caps = (GLCapabilitiesImmutable) available.get(i);
-				if (caps != null && caps.getSampleBuffers())
-				{
+				if (caps != null && caps.getSampleBuffers()) {
 					anyHaveSampleBuffers = true;
 					break;
 				}
 			}
-			final int selection = super.chooseCapabilities(	desired,
-																											available,
-																											windowSystemRecommendedChoice);
-			if (!anyHaveSampleBuffers)
-			{
-				System.err.println("WARNING: antialiasing will be disabled because none of the available pixel formats had it to offer");
-			}
-			else if (selection >= 0)
-			{
+			final int selection = super.chooseCapabilities(desired,
+					available,
+					windowSystemRecommendedChoice);
+			if (!anyHaveSampleBuffers) {
+				System.err.println(
+						"WARNING: antialiasing will be disabled because none of the available pixel formats had it to offer");
+			} else if (selection >= 0) {
 				final GLCapabilitiesImmutable caps = (GLCapabilitiesImmutable) available.get(selection);
-				if (!caps.getSampleBuffers())
-				{
-					System.err.println("WARNING: antialiasing will be disabled because the DefaultGLCapabilitiesChooser didn't supply it");
+				if (!caps.getSampleBuffers()) {
+					System.err.println(
+							"WARNING: antialiasing will be disabled because the DefaultGLCapabilitiesChooser didn't supply it");
 				}
 			}
 			return selection;
 		}
 	}
 
-	public static final void setWindowIconsDefault()
-	{
-		setWindowIcons(	"cleargl/icon/ClearGLIcon16.png",
-										"cleargl/icon/ClearGLIcon32.png");
+	public static final void setWindowIconsDefault() {
+		setWindowIcons("cleargl/icon/ClearGLIcon16.png",
+				"cleargl/icon/ClearGLIcon32.png");
 	}
 
-	public static final void setWindowIcons(final String... pIconsLowToHighRessourcePaths)
-	{
-		try
-		{
+	public static final void setWindowIcons(final String... pIconsLowToHighRessourcePaths) {
+		try {
 
 			final StringBuilder lStringBuilder = new StringBuilder();
 
-			for (final String lIconRessourcePath : pIconsLowToHighRessourcePaths)
-			{
+			for (final String lIconRessourcePath : pIconsLowToHighRessourcePaths) {
 				lStringBuilder.append(lIconRessourcePath);
 				lStringBuilder.append(' ');
 			}
 
-			System.setProperty(	"newt.window.icons",
-													lStringBuilder.toString());
-		}
-		catch (final Throwable e)
-		{
+			System.setProperty("newt.window.icons",
+					lStringBuilder.toString());
+		} catch (final Throwable e) {
 			e.printStackTrace();
 		}
 	}
 
-	public ClearGLWindow(	final String pWindowTitle,
-												final int pDefaultWidth,
-												final int pDefaultHeight,
-												final ClearGLEventListener pClearGLWindowEventListener)
-	{
-		this(	pWindowTitle,
-					pDefaultWidth,
-					pDefaultHeight,
-					"GL4",
-					1,
-					pClearGLWindowEventListener);
+	public ClearGLWindow(final String pWindowTitle,
+			final int pDefaultWidth,
+			final int pDefaultHeight,
+			final ClearGLEventListener pClearGLWindowEventListener) {
+		this(pWindowTitle,
+				pDefaultWidth,
+				pDefaultHeight,
+				"GL4",
+				1,
+				pClearGLWindowEventListener);
 	}
 
-	public ClearGLWindow(	final String pWindowTitle,
-												final int pDefaultWidth,
-												final int pDefaultHeight,
-							 					final String pGLVersion,
-												final int pNumberOfSamples,
-												final ClearGLEventListener pClearGLWindowEventListener)
-	{
+	public ClearGLWindow(final String pWindowTitle,
+			final int pDefaultWidth,
+			final int pDefaultHeight,
+			final String pGLVersion,
+			final int pNumberOfSamples,
+			final ClearGLEventListener pClearGLWindowEventListener) {
 		mWindowTitle = pWindowTitle;
 		mWindowDefaultWidth = pDefaultWidth;
 		mWindowDefaultHeight = pDefaultHeight;
@@ -141,7 +123,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 
 		final GLProfile lProfile = GLProfile.get(pGLVersion);
 		System.out.println(this.getClass().getSimpleName() + ": "
-												+ lProfile);
+				+ lProfile);
 		final GLCapabilities lCapabilities = new GLCapabilities(lProfile);
 
 		lCapabilities.setSampleBuffers(pNumberOfSamples > 1);
@@ -168,20 +150,17 @@ public class ClearGLWindow implements ClearGLDisplayable
 		mGlWindow.setResizable(resizable);
 	}
 
-	public void setFPS(final int pFramesPerSecond)
-	{
+	public void setFPS(final int pFramesPerSecond) {
 		mFramesPerSecond = pFramesPerSecond;
 
-		if (mAnimator != null)
-		{
+		if (mAnimator != null) {
 			// mAnimator.setRunAsFastAsPossible(true);
 		}
 	}
 
-	public void start()
-	{
+	public void start() {
 		mAnimator = new FPSAnimator(this.getGLAutoDrawable(),
-																mFramesPerSecond);
+				mFramesPerSecond);
 		mAnimator.setUpdateFPSFrames(60, null);
 
 		mAnimator.start();
@@ -189,18 +168,15 @@ public class ClearGLWindow implements ClearGLDisplayable
 			Thread.yield();
 	}
 
-	public void pause()
-	{
+	public void pause() {
 		mAnimator.pause();
 	}
 
-	public void resume()
-	{
+	public void resume() {
 		mAnimator.resume();
 	}
 
-	public void stop()
-	{
+	public void stop() {
 		mAnimator.setIgnoreExceptions(true);
 		mAnimator.pause();
 		mAnimator.stop();
@@ -214,23 +190,16 @@ public class ClearGLWindow implements ClearGLDisplayable
 	 * @see cleargl.ClearGLDisplayable#close()
 	 */
 	@Override
-	public void close() throws GLException
-	{
-		try
-		{
-			try
-			{
+	public void close() throws GLException {
+		try {
+			try {
 				mGlWindow.setVisible(false);
-			}
-			catch (final Throwable e)
-			{
+			} catch (final Throwable e) {
 				System.err.println(e.getLocalizedMessage());
 			}
 			if (mGlWindow.isRealized())
 				mGlWindow.destroy();
-		}
-		catch (final Throwable e)
-		{
+		} catch (final Throwable e) {
 			System.err.println(e.getLocalizedMessage());
 		}
 	}
@@ -241,8 +210,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 	 * @see cleargl.ClearGLDisplayable#setWindowTitle(java.lang.String)
 	 */
 	@Override
-	public void setWindowTitle(final String pTitleString)
-	{
+	public void setWindowTitle(final String pTitleString) {
 		mGlWindow.setTitle(pTitleString);
 	}
 
@@ -252,8 +220,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 	 * @see cleargl.ClearGLDisplayable#setVisible(boolean)
 	 */
 	@Override
-	public void setVisible(final boolean pIsVisible)
-	{
+	public void setVisible(final boolean pIsVisible) {
 		mGlWindow.setVisible(pIsVisible);
 	}
 
@@ -263,29 +230,21 @@ public class ClearGLWindow implements ClearGLDisplayable
 	 * @see cleargl.ClearGLDisplayable#toggleFullScreen()
 	 */
 	@Override
-	public void toggleFullScreen()
-	{
-		runOnEDT(	false,
-							() -> {
-								try
-								{
-									if (mGlWindow.isFullscreen())
-									{
-										mGlWindow.setFullscreen(false);
-									}
-									else
-									{
-										mGlWindow.setSize(mWindowDefaultWidth,
-																			mWindowDefaultHeight);
-										mGlWindow.setFullscreen(true);
-									}
-									mGlWindow.display();
-								}
-								catch (final Exception e)
-								{
-									e.printStackTrace();
-								}
-							});
+	public void toggleFullScreen() {
+		runOnEDT(false, () -> {
+			try {
+				if (mGlWindow.isFullscreen()) {
+					mGlWindow.setFullscreen(false);
+				} else {
+					mGlWindow.setSize(mWindowDefaultWidth,
+							mWindowDefaultHeight);
+					mGlWindow.setFullscreen(true);
+				}
+				mGlWindow.display();
+			} catch (final Exception e) {
+				e.printStackTrace();
+			}
+		});
 
 	}
 
@@ -296,31 +255,29 @@ public class ClearGLWindow implements ClearGLDisplayable
 	 * float, float, float)
 	 */
 	@Override
-	public void setPerspectiveProjectionMatrix(	final float fov,
-																							final float ratio,
-																							final float nearP,
-																							final float farP)
-	{
+	public void setPerspectiveProjectionMatrix(final float fov,
+			final float ratio,
+			final float nearP,
+			final float farP) {
 		if (mProjectionMatrix != null)
-			mProjectionMatrix.setPerspectiveProjectionMatrix(	fov,
-																												ratio,
-																												nearP,
-																												farP);
+			mProjectionMatrix.setPerspectiveProjectionMatrix(fov,
+					ratio,
+					nearP,
+					farP);
 	}
 
-	public void setPerspectiveAnaglyphProjectionMatrix(	final float fov,
-																											final float convergenceDist,
-																											final float aspectRatio,
-																											final float eyeSeparation,
-																											final float near,
-																											final float far)
-	{
-		mProjectionMatrix.setPerspectiveAnaglyphProjectionMatrix(	fov,
-																															convergenceDist,
-																															aspectRatio,
-																															eyeSeparation,
-																															near,
-																															far);
+	public void setPerspectiveAnaglyphProjectionMatrix(final float fov,
+			final float convergenceDist,
+			final float aspectRatio,
+			final float eyeSeparation,
+			final float near,
+			final float far) {
+		mProjectionMatrix.setPerspectiveAnaglyphProjectionMatrix(fov,
+				convergenceDist,
+				aspectRatio,
+				eyeSeparation,
+				near,
+				far);
 	}
 
 	/*
@@ -330,20 +287,19 @@ public class ClearGLWindow implements ClearGLDisplayable
 	 * float, float, float, float)
 	 */
 	@Override
-	public void setOrthoProjectionMatrix(	final float left,
-																				final float right,
-																				final float bottom,
-																				final float top,
-																				final float zNear,
-																				final float zFar)
-	{
+	public void setOrthoProjectionMatrix(final float left,
+			final float right,
+			final float bottom,
+			final float top,
+			final float zNear,
+			final float zFar) {
 		if (mProjectionMatrix != null)
-			mProjectionMatrix.setOrthoProjectionMatrix(	left,
-																									right,
-																									bottom,
-																									top,
-																									zNear,
-																									zFar);
+			mProjectionMatrix.setOrthoProjectionMatrix(left,
+					right,
+					bottom,
+					top,
+					zNear,
+					zFar);
 	}
 
 	/*
@@ -353,25 +309,24 @@ public class ClearGLWindow implements ClearGLDisplayable
 	 * float, float, float, float)
 	 */
 	@Override
-	public void lookAt(	final float pPosX,
-											final float pPosY,
-											final float pPosZ,
-											final float pLookAtX,
-											final float pLookAtY,
-											final float pLookAtZ,
-											final float pUpX,
-											final float pUpY,
-											final float pUpZ)
-	{
+	public void lookAt(final float pPosX,
+			final float pPosY,
+			final float pPosZ,
+			final float pLookAtX,
+			final float pLookAtY,
+			final float pLookAtZ,
+			final float pUpX,
+			final float pUpY,
+			final float pUpZ) {
 		mViewMatrix.setCamera(pPosX,
-													pPosY,
-													pPosZ,
-													pLookAtX,
-													pLookAtY,
-													pLookAtZ,
-													pUpX,
-													pUpY,
-													pUpZ);
+				pPosY,
+				pPosZ,
+				pLookAtX,
+				pLookAtY,
+				pLookAtZ,
+				pUpX,
+				pUpY,
+				pUpZ);
 	}
 
 	/*
@@ -380,8 +335,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 	 * @see cleargl.ClearGLDisplayable#getProjectionMatrix()
 	 */
 	@Override
-	public GLMatrix getProjectionMatrix()
-	{
+	public GLMatrix getProjectionMatrix() {
 		return mProjectionMatrix;
 	}
 
@@ -391,8 +345,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 	 * @see cleargl.ClearGLDisplayable#getViewMatrix()
 	 */
 	@Override
-	public GLMatrix getViewMatrix()
-	{
+	public GLMatrix getViewMatrix() {
 		return mViewMatrix;
 	}
 
@@ -402,8 +355,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 	 * @see cleargl.ClearGLDisplayable#getWindowTitle()
 	 */
 	@Override
-	public String getWindowTitle()
-	{
+	public String getWindowTitle() {
 		return mWindowTitle;
 	}
 
@@ -413,22 +365,20 @@ public class ClearGLWindow implements ClearGLDisplayable
 	 * @see cleargl.ClearGLDisplayable#disableClose()
 	 */
 	@Override
-	public void disableClose()
-	{
+	public void disableClose() {
 		mGlWindow.setDefaultCloseOperation(WindowClosingMode.DO_NOTHING_ON_CLOSE);
 	}
 
 	@Override
-	public String toString()
-	{
+	public String toString() {
 		return "ClearGLWindow [mGlWindow=" + mGlWindow
-						+ ", mWindow="
-						+ mWindow
-						+ ", mWindowDefaultWidth="
-						+ mWindowDefaultWidth
-						+ ", mWindowDefaultHeight="
-						+ mWindowDefaultHeight
-						+ "]";
+				+ ", mWindow="
+				+ mWindow
+				+ ", mWindowDefaultWidth="
+				+ mWindowDefaultWidth
+				+ ", mWindowDefaultHeight="
+				+ mWindowDefaultHeight
+				+ "]";
 	}
 
 	/*
@@ -437,8 +387,7 @@ public class ClearGLWindow implements ClearGLDisplayable
 	 * @see cleargl.ClearGLDisplayable#isFullscreen()
 	 */
 	@Override
-	public boolean isFullscreen()
-	{
+	public boolean isFullscreen() {
 		return mGlWindow.isFullscreen();
 	}
 
@@ -448,10 +397,8 @@ public class ClearGLWindow implements ClearGLDisplayable
 	 * @see cleargl.ClearGLDisplayable#setFullscreen(boolean)
 	 */
 	@Override
-	public void setFullscreen(final boolean pFullScreen)
-	{
-		if (pFullScreen)
-		{
+	public void setFullscreen(final boolean pFullScreen) {
+		if (pFullScreen) {
 			final Display display = NewtFactory.createDisplay(null); // local
 			// display
 			final Screen screen = NewtFactory.createScreen(display, 0); // screen
@@ -460,57 +407,48 @@ public class ClearGLWindow implements ClearGLDisplayable
 			int lFullscreen;
 
 			int index = 0;
-			for (final MonitorDevice m : screen.getMonitorDevices())
-			{
+			for (final MonitorDevice m : screen.getMonitorDevices()) {
 				System.out.println(index + ": " + m.toString());
 				index++;
 			}
 
-			try
-			{
+			try {
 				lFullscreen = Integer.parseInt(System.getProperty("ClearGL.FullscreenDevice"));
 				System.out.println("Fullscreen ID set to " + lFullscreen
-														+ " by property.");
-			}
-			catch (final java.lang.NumberFormatException e)
-			{
+						+ " by property.");
+			} catch (final java.lang.NumberFormatException e) {
 				lFullscreen = 0;
 			}
 
 			System.out.println(screen.getMonitorDevices()
-																.get(lFullscreen)
-																.toString());
+					.get(lFullscreen)
+					.toString());
 			System.out.println(screen.getMonitorDevices()
-																.get(lFullscreen)
-																.getScreen()
-																.getFQName());
+					.get(lFullscreen)
+					.getScreen()
+					.getFQName());
 
 			screen.addReference(); // trigger creation
 
-			if (pFullScreen)
-			{
+			if (pFullScreen) {
 				monitors.add(screen.getMonitorDevices().get(lFullscreen)); // Q1
-			}
-			else
-			{
+			} else {
 				// monitor array stays empty
 			}
-			mGlWindow.setSurfaceSize(	screen.getMonitorDevices()
-																			.get(lFullscreen)
-																			.getCurrentMode()
-																			.getSurfaceSize()
-																			.getResolution()
-																			.getWidth(),
-																screen.getMonitorDevices()
-																			.get(lFullscreen)
-																			.getCurrentMode()
-																			.getSurfaceSize()
-																			.getResolution()
-																			.getHeight());
+			mGlWindow.setSurfaceSize(screen.getMonitorDevices()
+					.get(lFullscreen)
+					.getCurrentMode()
+					.getSurfaceSize()
+					.getResolution()
+					.getWidth(),
+					screen.getMonitorDevices()
+							.get(lFullscreen)
+							.getCurrentMode()
+							.getSurfaceSize()
+							.getResolution()
+							.getHeight());
 			mGlWindow.setFullscreen(monitors);
-		}
-		else
-		{
+		} else {
 			mGlWindow.setFullscreen(false);
 		}
 	}
@@ -521,13 +459,11 @@ public class ClearGLWindow implements ClearGLDisplayable
 	 * @see cleargl.ClearGLDisplayable#requestDisplay()
 	 */
 	@Override
-	public void display()
-	{
+	public void display() {
 		mGlWindow.display();
 	}
 
-	public static boolean isRetina(final GL pGL)
-	{
+	public static boolean isRetina(final GL pGL) {
 		final int[] trialSizes = new int[2];
 
 		trialSizes[0] = 512;
@@ -538,12 +474,9 @@ public class ClearGLWindow implements ClearGLDisplayable
 				.getNativeSurface()
 				.convertToPixelUnits(trialSizes);
 
-		if (trialSizes[0] == 512 && trialSizes[1] == 512)
-		{
+		if (trialSizes[0] == 512 && trialSizes[1] == 512) {
 			return false;
-		}
-		else
-		{
+		} else {
 			return true;
 		}
 	}
@@ -555,117 +488,93 @@ public class ClearGLWindow implements ClearGLDisplayable
 	 * nativewindow.WindowClosingProtocol.WindowClosingMode)
 	 */
 	@Override
-	public WindowClosingMode setDefaultCloseOperation(final WindowClosingMode pWindowClosingMode)
-	{
+	public WindowClosingMode setDefaultCloseOperation(final WindowClosingMode pWindowClosingMode) {
 		return mGlWindow.setDefaultCloseOperation(pWindowClosingMode);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cleargl.ClearGLDisplayable#getHeight()
-	 */
 	@Override
-	public int getHeight()
-	{
-		final int factor = isRetina(this.mGlWindow.getGL()) ? 2 : 1;
-		return mGlWindow.getHeight() * factor;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cleargl.ClearGLDisplayable#getWidth()
-	 */
-	@Override
-	public int getWidth()
-	{
-		final int factor = isRetina(this.mGlWindow.getGL()) ? 2 : 1;
-		return mGlWindow.getWidth() * factor;
+	public int getWindowHeight() {
+		return mGlWindow.getHeight();
 	}
 
 	@Override
-	public void setSize(final int pWidth, final int pHeight)
-	{
+	public int getWindowWidth() {
+		return mGlWindow.getWidth();
+	}
+
+	@Override
+	public int getSurfaceWidth() {
+		return mGlWindow.getSurfaceHeight();
+	}
+
+	@Override
+	public int getSurfaceHeight() {
+		return mGlWindow.getSurfaceHeight();
+	}
+
+	@Override
+	public int getWindowX() {
+		return mGlWindow.getX();
+	}
+
+	@Override
+	public int getWindowY() {
+		return mGlWindow.getY();
+	}
+
+	@Override
+	public void setWindowPosition(int pX, int pY) {
+		mGlWindow.setPosition(pX, pY);
+	}
+
+	@Override
+	public void setSize(final int pWidth, final int pHeight) {
 		mGlWindow.setSize(pWidth, pHeight);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cleargl.ClearGLDisplayable#isVisible()
-	 */
 	@Override
-	public boolean isVisible()
-	{
+	public boolean isVisible() {
 		return mGlWindow.isVisible();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cleargl.ClearGLDisplayable#addMouseListener(com.jogamp.newt.event.
-	 * MouseListener)
-	 */
 	@Override
-	public void addMouseListener(final MouseListener pMouseListener)
-	{
+	public void addMouseListener(final MouseListener pMouseListener) {
 		mGlWindow.addMouseListener(pMouseListener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cleargl.ClearGLDisplayable#addKeyListener(com.jogamp.newt.event.
-	 * KeyListener)
-	 */
 	@Override
-	public void addKeyListener(final KeyListener pKeyListener)
-	{
+	public void addKeyListener(final KeyListener pKeyListener) {
 		mGlWindow.addKeyListener(pKeyListener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cleargl.ClearGLDisplayable#addWindowListener(com.jogamp.newt.event.
-	 * WindowAdapter)
-	 */
 	@Override
-	public void addWindowListener(final WindowAdapter pWindowAdapter)
-	{
+	public void addWindowListener(final WindowAdapter pWindowAdapter) {
 		mGlWindow.addWindowListener(pWindowAdapter);
 	}
 
 	@Override
-	public void setUpdateFPSFrames(	final int pFramesPerSecond,
-																	final PrintStream pPrintStream)
-	{
+	public void setUpdateFPSFrames(final int pFramesPerSecond,
+			final PrintStream pPrintStream) {
 		mGlWindow.setUpdateFPSFrames(pFramesPerSecond, pPrintStream);
 	}
 
 	@Override
-	public float getLastFPS()
-	{
+	public float getLastFPS() {
 		return mGlWindow.getLastFPS();
 	}
 
 	@Override
-	public float getAspectRatio()
-	{
+	public float getAspectRatio() {
 		return mGlWindow.getSurfaceWidth() / mGlWindow.getSurfaceHeight();
 	}
 
 	@Override
-	public Component getComponent()
-	{
+	public Component getComponent() {
 		return getNewtCanvasAWT();
 	}
 
-	public NewtCanvasAWT getNewtCanvasAWT()
-	{
-		if (mNewtCanvasAWT == null)
-		{
+	public NewtCanvasAWT getNewtCanvasAWT() {
+		if (mNewtCanvasAWT == null) {
 			mNewtCanvasAWT = new NewtCanvasAWT(mGlWindow);
 			mNewtCanvasAWT.setShallUseOffscreenLayer(false);
 		}
@@ -673,64 +582,29 @@ public class ClearGLWindow implements ClearGLDisplayable
 		return mNewtCanvasAWT;
 	}
 
-	public void requestFocus()
-	{
+	public void requestFocus() {
 		mGlWindow.requestFocus();
 	}
 
-	public GLAutoDrawable getGLAutoDrawable()
-	{
+	public GLAutoDrawable getGLAutoDrawable() {
 		return mGlWindow;
 	}
 
-	public GL getGL()
-	{
+	public GL getGL() {
 		return mGlWindow.getGL();
 	}
 
-	public void runOnEDT(final boolean pWait, final Runnable pRunnable)
-	{
+	public void runOnEDT(final boolean pWait, final Runnable pRunnable) {
 		mGlWindow.runOnEDTIfAvail(pWait, pRunnable);
 	}
 
 	@Override
-	public float[] getBounds()
-	{
+	public float[] getBounds() {
 		final com.jogamp.nativewindow.util.Rectangle bounds = mGlWindow.getBounds();
-		return new float[]
-		{ bounds.getX(),
-			bounds.getY(),
-			bounds.getWidth(),
-			bounds.getHeight() };
+		return new float[]{bounds.getX(),
+				bounds.getY(),
+				bounds.getWidth(),
+				bounds.getHeight()};
 	}
-
-	public int getWindowWidth(){
-	    return mGlWindow.getWidth();
-    }
-
-    public int getWindowHeight(){
-        return mGlWindow.getHeight();
-    }
-
-    public int getWindowX(){
-        return mGlWindow.getX();
-    }
-
-    public int getWindowY(){
-        return mGlWindow.getY();
-    }
-    public void setWindowPosition(int x, int y){
-        mGlWindow.setPosition(x,y);
-    }
-
-    public int getSurfaceWidth(){
-        return mGlWindow.getSurfaceWidth();
-    }
-
-    public int getSurfaceHeight(){
-        return mGlWindow.getSurfaceHeight();
-    }
-
-
 
 }

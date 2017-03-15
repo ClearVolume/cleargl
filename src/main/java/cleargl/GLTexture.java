@@ -1,11 +1,5 @@
 package cleargl;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2ES2;
-import com.jogamp.opengl.GL4;
-import com.jogamp.opengl.GLException;
-
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
@@ -16,10 +10,13 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.Hashtable;
+import javax.imageio.ImageIO;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL2ES2;
+import com.jogamp.opengl.GL4;
+import com.jogamp.opengl.GLException;
 
 public class GLTexture implements GLInterface, GLCloseable {
 
@@ -395,8 +392,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 		return mTextureHeight;
 	}
 
-	public int getDepth()
-	{
+	public int getDepth() {
 		return mTextureDepth;
 	}
 
@@ -408,8 +404,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 		return mType;
 	}
 
-	public int getTextureTarget()
-	{
+	public int getTextureTarget() {
 		return mTextureTarget;
 	}
 

@@ -11,22 +11,22 @@ import com.jogamp.opengl.GLException;
 public interface ClearGLDisplayable extends GLCloseable {
 
 	@Override
-	public abstract void close() throws GLException;
+	public void close() throws GLException;
 
-	public abstract void setWindowTitle(String pTitleString);
+	public void setWindowTitle(String pTitleString);
 
-	public abstract void setVisible(boolean pIsVisible);
+	public void setVisible(boolean pIsVisible);
 
-	public abstract void toggleFullScreen();
+	public void toggleFullScreen();
 
 	// TODO remove
-	public abstract void setPerspectiveProjectionMatrix(float fov,
+	public void setPerspectiveProjectionMatrix(float fov,
 			float ratio,
 			float nearP,
 			float farP);
 
 	// TODO remove
-	public abstract void setOrthoProjectionMatrix(float left,
+	public void setOrthoProjectionMatrix(float left,
 			float right,
 			float bottom,
 			float top,
@@ -34,7 +34,7 @@ public interface ClearGLDisplayable extends GLCloseable {
 			float zFar);
 
 	// TODO remove
-	public abstract void lookAt(float pPosX,
+	public void lookAt(float pPosX,
 			float pPosY,
 			float pPosZ,
 			float pLookAtX,
@@ -45,48 +45,60 @@ public interface ClearGLDisplayable extends GLCloseable {
 			float pUpZ);
 
 	// TODO remove
-	public abstract GLMatrix getProjectionMatrix();
+	public GLMatrix getProjectionMatrix();
 
 	// TODO remove
-	public abstract GLMatrix getViewMatrix();
+	public GLMatrix getViewMatrix();
 
-	public abstract String getWindowTitle();
+	public String getWindowTitle();
 
-	public abstract void disableClose();
+	public void disableClose();
 
-	public abstract boolean isFullscreen();
+	public boolean isFullscreen();
 
-	public abstract void setFullscreen(boolean pFullScreen);
+	public void setFullscreen(boolean pFullScreen);
 
 	// TODO remove
-	public abstract void display();
+	public void display();
 
-	public abstract WindowClosingMode setDefaultCloseOperation(WindowClosingMode pWindowClosingMode);
+	public WindowClosingMode setDefaultCloseOperation(WindowClosingMode pWindowClosingMode);
 
-	public abstract void setSize(int pWindowWidth, int pWindowHeight);
+	public void setWindowPosition(int pX, int pY);
 
-	public abstract int getHeight();
+	public void setSize(int pWindowWidth, int pWindowHeight);
 
-	public abstract int getWidth();
+	public int getWindowX();
 
-	public abstract boolean isVisible();
+	public int getWindowY();
 
-	public abstract void addMouseListener(MouseListener pMouseListener);
+	public int getWindowHeight();
 
-	public abstract void addKeyListener(KeyListener pKeyListener);
+	public int getWindowWidth();
 
-	public abstract void addWindowListener(WindowAdapter pWindowAdapter);
+	public int getSurfaceHeight();
 
-	public abstract void setUpdateFPSFrames(int pFramesPerSecond,
+	public int getSurfaceWidth();
+
+	public boolean isVisible();
+
+	public void addMouseListener(MouseListener pMouseListener);
+
+	public void addKeyListener(KeyListener pKeyListener);
+
+	public void addWindowListener(WindowAdapter pWindowAdapter);
+
+	public void setUpdateFPSFrames(int pFramesPerSecond,
 			PrintStream pPrintStream);
 
-	public abstract float getLastFPS();
+	public float getLastFPS();
 
 	// TODO remove
-	public abstract float getAspectRatio();
+	public float getAspectRatio();
 
-	public abstract Component getComponent();
+	public Component getComponent();
 
-	public abstract float[] getBounds();
+	public float[] getBounds();
+
+
 
 }

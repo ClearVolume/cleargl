@@ -1,7 +1,6 @@
 package cleargl.util.recorder;
 
 import static java.lang.Math.abs;
-
 import java.awt.BorderLayout;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -13,7 +12,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
-
 import javax.imageio.ImageIO;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -21,7 +19,6 @@ import javax.swing.JLabel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
-
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GLAutoDrawable;
 
@@ -48,8 +45,7 @@ import com.jogamp.opengl.GLAutoDrawable;
  * 
  * @author royer
  */
-public class GLVideoRecorder
-{
+public class GLVideoRecorder {
 
 	private ExecutorService mExecutorService;
 
@@ -74,51 +70,41 @@ public class GLVideoRecorder
 	 * files.
 	 * 
 	 * @param pRootFolder
-	 *          folder in which video files will be saved.
+	 *            folder in which video files will be saved.
 	 */
-	public GLVideoRecorder(File pRootFolder)
-	{
+	public GLVideoRecorder(File pRootFolder) {
 		super();
 		setRootFolder(pRootFolder);
 	}
 
 	/**
-	 * If display requests need to be issued to force display update, a thread can
-	 * be started here for that purpose.
+	 * If display requests need to be issued to force display update, a thread
+	 * can be started here for that purpose.
 	 * 
 	 * @param pDisplayRequestRunnable
-	 *          Runnable describing how to request a display update.
+	 *            Runnable describing how to request a display update.
 	 */
-	public void startDisplayRequestDeamonThread(final Runnable pDisplayRequestRunnable)
-	{
-		if (pDisplayRequestRunnable != null)
-		{
-			final Runnable lDisplayRequestRunnable = new Runnable()
-			{
+	public void startDisplayRequestDeamonThread(final Runnable pDisplayRequestRunnable) {
+		if (pDisplayRequestRunnable != null) {
+			final Runnable lDisplayRequestRunnable = new Runnable() {
 
 				@Override
-				public void run()
-				{
-					while (true)
-					{
-						if (mActive)
-						{
+				public void run() {
+					while (true) {
+						if (mActive) {
 							System.out.println("Recorder requests display now!");
 							pDisplayRequestRunnable.run();
 						}
 						final int lTargetPeriodInMilliSeconds = (int) (1000 / getTargetFrameRate());
-						try
-						{
+						try {
 							Thread.sleep(lTargetPeriodInMilliSeconds);
-						}
-						catch (final InterruptedException e)
-						{
+						} catch (final InterruptedException e) {
 						}
 					}
 				}
 			};
 			final Thread lDisplayRequestDeamonThread = new Thread(lDisplayRequestRunnable,
-																														GLVideoRecorder.class.getSimpleName() + ".DisplayRequestThread");
+					GLVideoRecorder.class.getSimpleName() + ".DisplayRequestThread");
 			lDisplayRequestDeamonThread.setDaemon(true);
 			lDisplayRequestDeamonThread.setPriority(Thread.MIN_PRIORITY);
 			lDisplayRequestDeamonThread.start();
@@ -130,8 +116,7 @@ public class GLVideoRecorder
 	 * 
 	 * @return target frame rate in FPS.
 	 */
-	public double getTargetFrameRate()
-	{
+	public double getTargetFrameRate() {
 		return mTargetFrameRate;
 	}
 
@@ -139,10 +124,9 @@ public class GLVideoRecorder
 	 * Sets target frame rate in FPS.
 	 * 
 	 * @param pTargetFrameRate
-	 *          target framerate in FPS.
+	 *            target framerate in FPS.
 	 */
-	public void setTargetFrameRate(double pTargetFrameRate)
-	{
+	public void setTargetFrameRate(double pTargetFrameRate) {
 		mTargetFrameRate = pTargetFrameRate;
 	}
 
@@ -151,8 +135,7 @@ public class GLVideoRecorder
 	 * 
 	 * @return root folder file.
 	 */
-	public File getRootFolder()
-	{
+	public File getRootFolder() {
 		return mRootFolder;
 	}
 
@@ -160,10 +143,9 @@ public class GLVideoRecorder
 	 * Sets root folder.
 	 * 
 	 * @param pFolder
-	 *          root folder file.
+	 *            root folder file.
 	 */
-	public void setRootFolder(File pFolder)
-	{
+	public void setRootFolder(File pFolder) {
 		mRootFolder = pFolder;
 		mRootFolder.mkdirs();
 	}
@@ -171,17 +153,15 @@ public class GLVideoRecorder
 	/**
 	 * Toggles the recorder between active (recording) and inactive
 	 * (not-recording). By default the recorder starts in inactive mode. When
-	 * toggling to inactive, the recorder will block until recording is finished.
+	 * toggling to inactive, the recorder will block until recording is
+	 * finished.
 	 */
-	public void toggleActive()
-	{
-		if (!mActive)
-		{
-			if (mFirstTime)
-			{
+	public void toggleActive() {
+		if (!mActive) {
+			if (mFirstTime) {
 				mRootFolder = FolderChooser.openFolderChooser(null,
-																											"Choose root folder to save videos",
-																											mRootFolder);
+						"Choose root folder to save videos",
+						mRootFolder);
 				mFirstTime = false;
 			}
 
@@ -190,30 +170,26 @@ public class GLVideoRecorder
 			mVideoFolder.mkdirs();
 
 			mExecutorService = Executors.newFixedThreadPool(Runtime.getRuntime()
-																															.availableProcessors());
+					.availableProcessors());
 
 			mActive = true;
-		}
-		else
-		{
+		} else {
 			mActive = false;
 			mExecutorService.shutdown();
 
-			final JDialog lJDialog = new JDialog(	(JFrame) null,
-																						"Saving video",
-																						true);
+			final JDialog lJDialog = new JDialog((JFrame) null,
+					"Saving video",
+					true);
 
-			SwingUtilities.invokeLater(new Runnable()
-			{
+			SwingUtilities.invokeLater(new Runnable() {
 
 				@Override
-				public void run()
-				{
+				public void run() {
 					final JProgressBar lJProgressBar = new JProgressBar(0, 500);
 					lJProgressBar.setValue(499);
 					lJDialog.add(BorderLayout.CENTER, lJProgressBar);
-					lJDialog.add(	BorderLayout.NORTH,
-												new JLabel("Saving images, please wait!"));
+					lJDialog.add(BorderLayout.NORTH,
+							new JLabel("Saving images, please wait!"));
 					lJDialog.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 					lJDialog.setSize(300, 75);
 					lJDialog.validate();
@@ -221,23 +197,18 @@ public class GLVideoRecorder
 				}
 			});
 
-			try
-			{
+			try {
 				mExecutorService.awaitTermination(30, TimeUnit.SECONDS);
-			}
-			catch (final InterruptedException e)
-			{
+			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
 			mExecutorService.shutdownNow();
 			mExecutorService = null;
 
 			lJDialog.setVisible(false);
-			SwingUtilities.invokeLater(new Runnable()
-			{
+			SwingUtilities.invokeLater(new Runnable() {
 				@Override
-				public void run()
-				{
+				public void run() {
 
 					lJDialog.setModal(false);
 					lJDialog.dispose();
@@ -247,10 +218,9 @@ public class GLVideoRecorder
 		}
 	}
 
-	private boolean getNewVideoFolder()
-	{
+	private boolean getNewVideoFolder() {
 		final String lVideoFolderName = String.format("Video.%d",
-																									mVideoCounter);
+				mVideoCounter);
 		mVideoFolder = new File(mRootFolder, lVideoFolderName);
 		return mVideoFolder.exists();
 	}
@@ -260,30 +230,27 @@ public class GLVideoRecorder
 	 * rendering that needs to be recorded has been done.
 	 * 
 	 * @param pGLAutoDrawable
-	 *          JOGL GLAutoDrawable to be used to get pixel data from.
+	 *            JOGL GLAutoDrawable to be used to get pixel data from.
 	 * @param pAsynchronous
-	 *          true if call should be asynchronous
+	 *            true if call should be asynchronous
 	 */
-	public void screenshot(	GLAutoDrawable pGLAutoDrawable,
-													boolean pAsynchronous)
-	{
+	public void screenshot(GLAutoDrawable pGLAutoDrawable,
+			boolean pAsynchronous) {
 		if (!mActive || tooSoon())
 			return;
 
-		final String lFileName = String.format(	"image%d.png",
-																						mImageCounter);
+		final String lFileName = String.format("image%d.png",
+				mImageCounter);
 		final File lNewFile = new File(mVideoFolder, lFileName);
 		writeDrawableToFile(pGLAutoDrawable, lNewFile, pAsynchronous);
 
 	}
 
-	private boolean tooSoon()
-	{
+	private boolean tooSoon() {
 		final long lCurrentTimePoint = System.nanoTime();
 		final double lElpasedTimeInSeconds = 0.001 * 0.001 * 0.001 * (abs(lCurrentTimePoint - mLastImageTimePoint));
 		final double lTargetPeriodInSeconds = 1 / getTargetFrameRate();
-		if (lElpasedTimeInSeconds < lTargetPeriodInSeconds)
-		{
+		if (lElpasedTimeInSeconds < lTargetPeriodInSeconds) {
 			// System.out.println("too soon!");
 			return true;
 		}
@@ -297,85 +264,68 @@ public class GLVideoRecorder
 	 * Code adapted from: http://www.java-gaming.org/index.php/topic,5386.
 	 * 
 	 * @param pDrawable
-	 *          JOGL drawable
+	 *            JOGL drawable
 	 * @param pOutputFile
-	 *          output file
+	 *            output file
 	 * @param pAsynchronous
 	 */
-	private void writeDrawableToFile(	GLAutoDrawable pDrawable,
-																		final File pOutputFile,
-																		final boolean pAsynchronous)
-	{
+	private void writeDrawableToFile(GLAutoDrawable pDrawable,
+			final File pOutputFile,
+			final boolean pAsynchronous) {
 		final int lTargetPeriodInMiliSeconds = (int) (1000 / getTargetFrameRate());
-		try
-		{
+		try {
 			final boolean lIsLocked = mReadPixelsLock.tryLock(lTargetPeriodInMiliSeconds / 2,
-																												TimeUnit.MILLISECONDS);
+					TimeUnit.MILLISECONDS);
 
-			if (lIsLocked)
-			{
+			if (lIsLocked) {
 				final int lWidth = pDrawable.getSurfaceWidth();
 				final int lHeight = pDrawable.getSurfaceHeight();
 
 				ByteBuffer lByteBuffer = mPixelRGBBufferQueue.poll();
 				if (lByteBuffer == null || lByteBuffer.capacity() != lWidth * lHeight
-																															* 3)
-				{
+						* 3) {
 					lByteBuffer = ByteBuffer.allocateDirect(lWidth * lHeight
-																									* 3)
-																	.order(ByteOrder.nativeOrder());
+							* 3)
+							.order(ByteOrder.nativeOrder());
 				}
 
 				final GL lGL = pDrawable.getGL();
 
 				lGL.glPixelStorei(GL.GL_PACK_ALIGNMENT, 1);
 				lGL.glReadPixels(0, // GLint x
-													0, // GLint y
-													lWidth, // GLsizei width
-													lHeight, // GLsizei height
-													GL.GL_RGB, // GLenum format
-													GL.GL_UNSIGNED_BYTE, // GLenum type
-													lByteBuffer); // GLvoid *pixels
+						0, // GLint y
+						lWidth, // GLsizei width
+						lHeight, // GLsizei height
+						GL.GL_RGB, // GLenum format
+						GL.GL_UNSIGNED_BYTE, // GLenum type
+						lByteBuffer); // GLvoid *pixels
 				mLastImageTimePoint = System.nanoTime();
 
 				final ByteBuffer lFinalByteBuffer = lByteBuffer;
-				if (pAsynchronous)
-				{
+				if (pAsynchronous) {
 					writeBufferToFile(pOutputFile,
-														lWidth,
-														lHeight,
-														lFinalByteBuffer);
-				}
-				else if (mExecutorService != null)
-				{
-					mExecutorService.execute(new Runnable()
-					{
+							lWidth,
+							lHeight,
+							lFinalByteBuffer);
+				} else if (mExecutorService != null) {
+					mExecutorService.execute(new Runnable() {
 						@Override
-						public void run()
-						{
+						public void run() {
 							writeBufferToFile(pOutputFile,
-																lWidth,
-																lHeight,
-																lFinalByteBuffer);
+									lWidth,
+									lHeight,
+									lFinalByteBuffer);
 
 						}
 					});
 				}
 			}
 
-		}
-		catch (final InterruptedException e)
-		{
-		}
-		catch (final RejectedExecutionException e)
-		{
-		}
-		catch (final Throwable e)
-		{
+		} catch (final InterruptedException e) {
+		} catch (final RejectedExecutionException e) {
+		} catch (final Throwable e) {
 			e.printStackTrace();
-		}
-		finally
-		{
+		} finally {
 			if (mReadPixelsLock.isHeldByCurrentThread())
 				mReadPixelsLock.unlock();
 		}
@@ -392,44 +342,41 @@ public class GLVideoRecorder
 	 * @param pHeight
 	 * @param pByteBuffer
 	 */
-	private void writeBufferToFile(	File pOutputFile,
-																	int pWidth,
-																	int pHeight,
-																	ByteBuffer pByteBuffer)
-	{
-		try
-		{
+	private void writeBufferToFile(File pOutputFile,
+			int pWidth,
+			int pHeight,
+			ByteBuffer pByteBuffer) {
+		try {
 			int[] lPixelInts = mPixelRGBIntsThreadLocal.get();
-			if (lPixelInts == null || lPixelInts.length != pWidth * pHeight)
-			{
+			if (lPixelInts == null || lPixelInts.length != pWidth * pHeight) {
 				lPixelInts = new int[pWidth * pHeight];
 				mPixelRGBIntsThreadLocal.set(lPixelInts);
 			}
 
 			// Convert RGB bytes to ARGB ints with no transparency. Flip image
 			// vertically by reading the
-			// rows of pixels in the byte buffer in reverse - (0,0) is at bottom left
+			// rows of pixels in the byte buffer in reverse - (0,0) is at bottom
+			// left
 			// in
 			// OpenGL.
 
-			int p = pWidth * pHeight * 3; // Points to first byte (red) in each row.
+			int p = pWidth * pHeight * 3; // Points to first byte (red) in each
+											// row.
 			int q; // Index into ByteBuffer
 			int i = 0; // Index into target int[]
 			final int w3 = pWidth * 3; // Number of bytes in each row
 
-			for (int row = 0; row < pHeight; row++)
-			{
+			for (int row = 0; row < pHeight; row++) {
 				p -= w3;
 				q = p;
-				for (int col = 0; col < pWidth; col++)
-				{
+				for (int col = 0; col < pWidth; col++) {
 					final int iR = pByteBuffer.get(q++);
 					final int iG = pByteBuffer.get(q++);
 					final int iB = pByteBuffer.get(q++);
 
 					lPixelInts[i++] = 0xFF000000 | ((iR & 0x000000FF) << 16)
-														| ((iG & 0x000000FF) << 8)
-														| (iB & 0x000000FF);
+							| ((iG & 0x000000FF) << 8)
+							| (iB & 0x000000FF);
 				}
 
 			}
@@ -439,27 +386,24 @@ public class GLVideoRecorder
 			BufferedImage lBufferedImage = mPixelRGBBufferedImageThreadLocal.get();
 
 			if (lBufferedImage == null || lBufferedImage.getWidth() != pWidth
-					|| lBufferedImage.getHeight() != pHeight)
-			{
-				lBufferedImage = new BufferedImage(	pWidth,
-																						pHeight,
-																						BufferedImage.TYPE_INT_ARGB);
+					|| lBufferedImage.getHeight() != pHeight) {
+				lBufferedImage = new BufferedImage(pWidth,
+						pHeight,
+						BufferedImage.TYPE_INT_ARGB);
 				mPixelRGBBufferedImageThreadLocal.set(lBufferedImage);
 			}
 
 			lBufferedImage.setRGB(0,
-														0,
-														pWidth,
-														pHeight,
-														lPixelInts,
-														0,
-														pWidth);
+					0,
+					pWidth,
+					pHeight,
+					lPixelInts,
+					0,
+					pWidth);
 
 			ImageIO.write(lBufferedImage, "PNG", pOutputFile);
 			mImageCounter++;
-		}
-		catch (final Throwable e)
-		{
+		} catch (final Throwable e) {
 			e.printStackTrace();
 		}
 	}

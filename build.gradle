@@ -5,14 +5,17 @@ buildscript {
 }
 
 plugins {
-	id "com.jfrog.bintray" version "1.2"
+    id "com.jfrog.bintray" version "1.2"
+    id "us.kirchmeier.capsule" version "1.0.2"
+    id "com.diffplug.gradle.spotless" version "3.1.0"
 }
 
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'idea'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
-apply plugin: 'idea'
+apply plugin: 'com.diffplug.gradle.spotless'
 
 
 //***********************************************************************************
@@ -129,6 +132,7 @@ def getVersionName = { ->
 
 group = 'net.clearvolume'
 archivesBaseName = 'cleargl'
+//version = '2.0.1-SNAPSHOT'
 
 if(project.hasProperty('releasebuild')) {
     version = getVersionName()
@@ -151,67 +155,31 @@ publishing {
 	}
 }
 
-if(hasProperty('bintray_user') && hasProperty('bintray_key') )
-{
-	bintray {
+apply from: 'gradle/bintrayUpload.gradle'
 
-		// property must be set in ~/.gradle/gradle.properties
-		user = bintray_user
-		key =  bintray_key
+//***********************************************************************************
+// GIT HOOKS:
 
-		configurations = [
-			'default'] //When uploading configuration files
-		// - OR -
-		//publications = ['mavenStuff'] //When uploading Maven-based publication files
-		// - AND/OR -
-		/*filesSpec { //When uploading any arbitrary files ('filesSpec' is a standard Gradle CopySpec)
-		 from 'arbitrary-files'
-		 into 'standalone_files/level1'
-		 rename '(.+)\\.(.+)', '$1-suffix.$2'
-		 }/**/
+apply from: 'gradle/install-git-hooks.gradle'
 
 
-		dryRun = false //Whether to run this as dry-run, without deploying
-		publish = true //If version should be auto published after an upload
-		pkg {
-			repo = 'ClearVolume'
-			userOrg = 'clearvolume' //An optional organization name when the repo belongs to one of the user's orgs
-			name = 'ClearGL'
-			desc = 'ClearGL'
-			websiteUrl = 'https://clearvolume.github.io/ClearVolume/'
-			issueTrackerUrl = 'https://github.com/ClearVolume/ClearGL/issues'
-			vcsUrl = 'https://github.com/ClearVolume/ClearGL.git'
-			licenses = ['Apache-2.0']
-			labels = [
-				'ClearGL',
-				'Visualization',
-				'3D',
-				'OpenGL'
-			]
-			publicDownloadNumbers = true
-			//attributes= ['a': ['ay1', 'ay2'], 'b': ['bee'], c: 'cee'] //Optional package-level attributes
-			//Optional version descriptor
-			version {
-				name = project.version //Bintray logical version name
-				desc = '.'
-				released  = new java.util.Date()
-				vcsTag = project.version
-				/*attributes = ['gradle-plugin': 'com.use.less:com.use.less.gradle:gradle-useless-plugin'] //Optional version-level attributes
-				 gpg {
-				 sign = false //Determines whether to GPG sign the files. The default is false
-				 passphrase = 'passphrase' //Optional. The passphrase for GPG signing'
-				 }
-				 mavenCentralSync {
-				 sync = false //Optional (true by default). Determines whether to sync the version to Maven Central.
-				 user = 'userToken' //OSS user token
-				 password = 'paasword' //OSS user password
-				 close = '1' //Optional property. By default the staging repository is closed and artifacts are released to Maven Central. You can optionally turn this behaviour off (by puting 0 as value) and release the version manually.
-				 }  /**/          
-			}
-		}
-		/**/
-	}
+//***********************************************************************************
+// SPOTLESS:
+
+spotless {
+    java {
+        //licenseHeader '/* Licensed under Apache-2.0 */' // License header
+ 
+        importOrder(['java', 'javax', 'com', 'org'])
+
+        removeUnusedImports() // removes any unused imports
+
+        eclipseFormatFile 'cleargl-eclipse-formatter.xml'  
+    }
 }
+
+//***********************************************************************************
+// UPLOAD TO FIJI REPO:
 
 uploadArchives {
     repositories {
@@ -225,3 +193,4 @@ uploadArchives {
         }
     }
 }
+

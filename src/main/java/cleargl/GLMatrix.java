@@ -1,12 +1,10 @@
 package cleargl;
 
+import static java.lang.Math.*;
+import java.nio.ByteBuffer;
 import com.jogamp.opengl.math.FloatUtil;
 import com.jogamp.opengl.math.Quaternion;
 import com.jogamp.opengl.math.VectorUtil;
-
-import java.nio.ByteBuffer;
-
-import static java.lang.Math.*;
 
 public class GLMatrix {
 
@@ -530,7 +528,7 @@ public class GLMatrix {
 	public ByteBuffer put(ByteBuffer buffer) {
 		int position = buffer.position();
 		buffer.asFloatBuffer().put(mMatrix);
-		buffer.position(position + mMatrix.length*4);
+		buffer.position(position + mMatrix.length * 4);
 		return buffer;
 	}
 

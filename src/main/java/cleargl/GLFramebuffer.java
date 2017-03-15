@@ -1,11 +1,10 @@
 package cleargl;
 
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL4;
-
 import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
+import com.jogamp.opengl.GL;
+import com.jogamp.opengl.GL4;
 
 /**
  * <Description>
@@ -87,15 +86,15 @@ public class GLFramebuffer {
 		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, getId());
 
 		backingTextures.add(new GLTexture(
-						gl,
-						GLTypeEnum.Float,
-						4,
-						width, height, 1, true, 1, channelDepth));
+				gl,
+				GLTypeEnum.Float,
+				4,
+				width, height, 1, true, 1, channelDepth));
 
 		gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
-						getCurrentFramebufferColorAttachment(),
-						backingTextures.get(backingTextures.size() - 1).getId(),
-						0);
+				getCurrentFramebufferColorAttachment(),
+				backingTextures.get(backingTextures.size() - 1).getId(),
+				0);
 
 		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
 	}
@@ -265,11 +264,11 @@ public class GLFramebuffer {
 		gl.glDeleteFramebuffers(1, framebufferId, 0);
 		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
 
-		for(GLTexture bt: backingTextures) {
-		  bt.delete();
+		for (GLTexture bt : backingTextures) {
+			bt.delete();
 		}
 
-		for(GLTexture dt: depthBuffers) {
+		for (GLTexture dt : depthBuffers) {
 			dt.delete();
 		}
 	}
