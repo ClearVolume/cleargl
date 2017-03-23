@@ -211,7 +211,7 @@ public class ClearGLWindow implements ClearGLDisplayable {
 	 */
 	@Override
 	public void setWindowTitle(final String pTitleString) {
-		mGlWindow.setTitle(pTitleString);
+		runOnEDT(false, () -> mGlWindow.setTitle(pTitleString));
 	}
 
 	/*
@@ -221,7 +221,10 @@ public class ClearGLWindow implements ClearGLDisplayable {
 	 */
 	@Override
 	public void setVisible(final boolean pIsVisible) {
-		mGlWindow.setVisible(pIsVisible);
+
+
+
+		runOnEDT(false, () -> mGlWindow.setVisible(pIsVisible));
 	}
 
 	/*
