@@ -41,7 +41,8 @@ public class ClearGLWindow implements ClearGLDisplayable {
 	private FPSAnimator mAnimator;
 	private int mFramesPerSecond = 60;
 
-	static {
+	static 
+	{
 		System.setProperty("sun.awt.noerasebackground", "true");
 	}
 
