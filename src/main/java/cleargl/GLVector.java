@@ -1,5 +1,6 @@
 package cleargl;
 
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
@@ -10,7 +11,7 @@ import com.jogamp.opengl.math.VectorUtil;
 @author Ulrik Günther, Loïc Royer
  */
 
-public class GLVector {
+public class GLVector implements Serializable {
 	protected float[] mElements;
 	protected int mDimension;
 

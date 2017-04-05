@@ -3,9 +3,13 @@ package cleargl;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.*;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.stream.Collectors;
 import com.jogamp.opengl.GL;
@@ -19,7 +23,7 @@ public class GLShader implements GLInterface, GLCloseable {
 	private final GLShaderType mShaderType;
 	private final String mShaderSource;
 	private final String mShaderSourcePath;
-	private String mShaderBasePath;
+	private Path mShaderBasePath;
 	private final Class<?> mShaderSourceRootClass;
 	private HashMap<String, String> mParameters;
 
@@ -39,6 +43,25 @@ public class GLShader implements GLInterface, GLCloseable {
 				GL2ES2.GL_FRAGMENT_SHADER);
 	}
 
+	private Path getPath(URL p) {
+		try {
+			return Paths.get(p.toURI());
+		} catch (URISyntaxException | FileSystemNotFoundException e) {
+			try {
+				final URI uri = p.toURI();
+				Map<String, String> env = new HashMap<>();
+				FileSystem fs = FileSystems.newFileSystem(uri, Collections.EMPTY_MAP);
+
+				return Paths.get(p.toURI());
+			} catch (URISyntaxException | FileSystemAlreadyExistsException | IOException ee) {
+
+			}
+
+		}
+
+		return null;
+	}
+
 	public GLShader(final GL pGL,
 			final Class<?> pRootClass,
 			final String pResourceName,
@@ -51,8 +74,8 @@ public class GLShader implements GLInterface, GLCloseable {
 		mShaderSourcePath = pResourceName;
 		mShaderSourceRootClass = pRootClass;
 		mParameters = new HashMap<>();
-		mShaderBasePath = pRootClass.getResource(pResourceName).getPath().substring(0,
-				pRootClass.getResource(pResourceName).getPath().lastIndexOf("/"));
+		Path p = getPath(pRootClass.getResource(pResourceName));
+		mShaderBasePath = p.getParent();
 
 		// preprocess shader
 		final String shaderSourceProcessed = preprocessShader(mShaderSource);
@@ -76,8 +99,9 @@ public class GLShader implements GLInterface, GLCloseable {
 		mShaderSourcePath = pResourceName;
 		mShaderSourceRootClass = pRootClass;
 		mParameters = params;
-		mShaderBasePath = pRootClass.getResource(pResourceName).getPath().substring(0,
-				pRootClass.getResource(pResourceName).getPath().lastIndexOf(File.separator));
+
+		Path p = getPath(pRootClass.getResource(pResourceName));
+		mShaderBasePath = p.getParent();
 
 		// preprocess shader
 		final String shaderSourceProcessed = preprocessShader(mShaderSource);
@@ -98,7 +122,7 @@ public class GLShader implements GLInterface, GLCloseable {
 		mShaderSourceRootClass = null;
 		mShaderSourcePath = null;
 		mParameters = new HashMap<>();
-		mShaderBasePath = "";
+		mShaderBasePath = null;
 
 		// preprocess shader
 		final String shaderSourceProcessed = preprocessShader(mShaderSource);
@@ -114,7 +138,7 @@ public class GLShader implements GLInterface, GLCloseable {
 		mGL.getGL3().glDeleteShader(mShaderId);
 	}
 
-	public void setShaderBasePath(final String path) {
+	public void setShaderBasePath(final Path path) {
 		mShaderBasePath = path;
 	}
 
@@ -160,7 +184,7 @@ public class GLShader implements GLInterface, GLCloseable {
 			String includeSource = "";
 
 			try {
-				includeSource = Files.lines(Paths.get(mShaderBasePath + File.separator + includeFileName))
+				includeSource = Files.lines(mShaderBasePath.resolve(includeFileName))
 						.parallel()
 						.filter(line -> !line.startsWith("//"))
 						.map(String::trim)

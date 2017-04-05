@@ -1,12 +1,14 @@
 package cleargl;
 
 import static java.lang.Math.*;
+
+import java.io.Serializable;
 import java.nio.ByteBuffer;
 import com.jogamp.opengl.math.FloatUtil;
 import com.jogamp.opengl.math.Quaternion;
 import com.jogamp.opengl.math.VectorUtil;
 
-public class GLMatrix {
+public class GLMatrix implements Serializable {
 
 	private final float[] mMatrix;
 
