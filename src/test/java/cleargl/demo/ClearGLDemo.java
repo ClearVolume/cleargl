@@ -21,31 +21,30 @@ import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.GLProfile;
-import org.junit.Test;
+
 
 public class ClearGLDemo {
 
 	private final static float s = 1f;
 
-	private final static float vertices1[] = {
-			0, 0, 0, 1,
-			0, s, 0, 1,
-			s, 0, 0, 1};
+	private final static float vertices1[] = {0, 0, 0, 1, 0, s, 0, 1, s, 0, 0, 1};
 
-	private final static float colors1[] = {
-			0.0f, 0.0f, 1.0f, 1.0f,
-			1.0f, 0.0f, 0.0f, 1.0f,
-			0.0f, 0.0f, 1.0f, 1.0f};
+	private final static float colors1[] = {0.0f,
+			0.0f,
+			1.0f,
+			1.0f,
+			1.0f,
+			0.0f,
+			0.0f,
+			1.0f,
+			0.0f,
+			0.0f,
+			1.0f,
+			1.0f};
 
-	private final static float vertices2[] = {
-			0, 0, 0, 1,
-			0, -s, 0, 1,
-			-s, 0, 0, 1};
+	private final static float vertices2[] = {0, 0, 0, 1, 0, -s, 0, 1, -s, 0, 0, 1};
 
-	private final static float texcoord2[] = {
-			0, 0,
-			1, 0,
-			0, 1};
+	private final static float texcoord2[] = {0, 0, 1, 0, 0, 1};
 
 	private Buffer getTextureBuffer2() {
 		final int[] lIntArray = new int[128 * 128];
@@ -61,23 +60,28 @@ public class ClearGLDemo {
 		return FloatBuffer.wrap(lFloatArray);
 	}
 
-	@Test
 	public void demo() throws InterruptedException {
 		final ClearGLDefaultEventListener lClearGLWindowEventListener = new ClearGLDefaultEventListener() {
-			private GLProgram mGLProgram1, mGLProgram2;
+			private GLProgram mGLProgram1,
+					mGLProgram2;
 
-			private GLAttribute mPosition1, mColor1, mPosition2,
+			private GLAttribute mPosition1,
+					mColor1,
+					mPosition2,
 					mTexCoord2;
 
 			private GLUniform mProjectionMatrixUniform1,
-					mViewMatrixUniform1, mProjectionMatrixUniform2,
+					mViewMatrixUniform1,
+					mProjectionMatrixUniform2,
 					mViewMatrixUniform2;
 
 			private GLVertexAttributeArray mPositionAttributeArray1,
-					mColorAttributeArray1, mPositionAttributeArray2,
+					mColorAttributeArray1,
+					mPositionAttributeArray2,
 					mTexCoordAttributeArray2;
 
-			private GLVertexArray mGLVertexArray1, mGLVertexArray2;
+			private GLVertexArray mGLVertexArray1,
+					mGLVertexArray2;
 
 			private GLTexture mTexture2;
 
@@ -108,8 +112,10 @@ public class ClearGLDemo {
 
 					mGLVertexArray1 = new GLVertexArray(mGLProgram1);
 					mGLVertexArray1.bind();
-					mPositionAttributeArray1 = new GLVertexAttributeArray(mPosition1, 4);
-					mColorAttributeArray1 = new GLVertexAttributeArray(mColor1, 4);
+					mPositionAttributeArray1 = new GLVertexAttributeArray(mPosition1,
+							4);
+					mColorAttributeArray1 = new GLVertexAttributeArray(mColor1,
+							4);
 
 					mGLVertexArray1.addVertexAttributeArray(mPositionAttributeArray1,
 							Buffers.newDirectFloatBuffer(vertices1));
@@ -132,19 +138,22 @@ public class ClearGLDemo {
 
 					mGLVertexArray2 = new GLVertexArray(mGLProgram2);
 					mGLVertexArray2.bind();
-					mPositionAttributeArray2 = new GLVertexAttributeArray(mPosition2, 4);
-					mTexCoordAttributeArray2 = new GLVertexAttributeArray(mTexCoord2, 2);
+					mPositionAttributeArray2 = new GLVertexAttributeArray(mPosition2,
+							4);
+					mTexCoordAttributeArray2 = new GLVertexAttributeArray(mTexCoord2,
+							2);
 
 					mGLVertexArray2.addVertexAttributeArray(mPositionAttributeArray2,
 							Buffers.newDirectFloatBuffer(vertices2));
 					mGLVertexArray2.addVertexAttributeArray(mTexCoordAttributeArray2,
 							Buffers.newDirectFloatBuffer(texcoord2));
 
-					mTexture2 = new GLTexture(
-							mGLProgram2,
+					mTexture2 = new GLTexture(mGLProgram2,
 							GLTypeEnum.UnsignedByte,
 							4,
-							128, 128, 1,
+							128,
+							128,
+							1,
 							true,
 							2);
 					mTexture2.copyFrom(getTextureBuffer2());
@@ -152,12 +161,16 @@ public class ClearGLDemo {
 					mTexture3 = new GLTexture(mGLProgram2,
 							GLTypeEnum.Float,
 							1,
-							1280, 1280, 1,
+							1280,
+							1280,
+							1,
 							true,
 							4);
 					mTexture3.copyFrom(getTextureBuffer3());
 
-				} catch (GLException | IOException e) {
+				} catch (
+						GLException
+						| IOException e) {
 					e.printStackTrace();
 				}
 
@@ -169,16 +182,27 @@ public class ClearGLDemo {
 					final int pY,
 					final int pWidth,
 					int pHeight) {
-				super.reshape(pDrawable, pX, pY, pWidth, pHeight);
+				super.reshape(pDrawable,
+						pX,
+						pY,
+						pWidth,
+						pHeight);
 
 				if (pHeight == 0)
 					pHeight = 1;
-				final float ratio = (1.0f * pWidth) / pHeight;
-				// setPerspectiveProjectionMatrix(53.13f, ratio, 1.0f, 30.0f);
-				getClearGLWindow().setOrthoProjectionMatrix(
-						-2, 2,
-						-2, 2,
-						10, -10);
+				final float ratio = (1.0f
+						* pWidth)
+						/ pHeight;
+				// setPerspectiveProjectionMatrix(53.13f,
+				// ratio,
+				// 1.0f,
+				// 30.0f);
+				getClearGLWindow().setOrthoProjectionMatrix(-2,
+						2,
+						-2,
+						2,
+						10,
+						-10);
 			}
 
 			@Override
@@ -187,12 +211,18 @@ public class ClearGLDemo {
 
 				final GL lGL = pDrawable.getGL();
 
-				lGL.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
+				lGL.glClear(GL.GL_COLOR_BUFFER_BIT
+						| GL.GL_DEPTH_BUFFER_BIT);
 
-				getClearGLWindow().lookAt(
-						0, 0, 1,
-						0, 0, -1,
-						0, 1, 0);
+				getClearGLWindow().lookAt(0,
+						0,
+						1,
+						0,
+						0,
+						-1,
+						0,
+						1,
+						0);
 
 				mGLProgram1.use(lGL);
 
@@ -218,16 +248,22 @@ public class ClearGLDemo {
 				mGLVertexArray2.draw(GL.GL_TRIANGLES);
 
 				mTexture3.bind(mGLProgram2);
-				getClearGLWindow().getViewMatrix().translate(0.5f, 0.5f, 0);
+				getClearGLWindow().getViewMatrix()
+						.translate(0.5f,
+								0.5f,
+								0);
 				mViewMatrixUniform2.setFloatMatrix(getClearGLWindow().getViewMatrix()
 						.getFloatArray(),
 						false);
 				mGLVertexArray2.draw(GL.GL_TRIANGLES);
 
-				// Check out error
+				// Check
+				// out
+				// error
 				final int error = lGL.glGetError();
 				if (error != 0) {
-					System.err.println("ERROR on render : " + error);
+					System.err.println("ERROR on render : "
+							+ error);
 				}
 			}
 
@@ -260,10 +296,11 @@ public class ClearGLDemo {
 
 		lClearGLWindowEventListener.setDebugMode(true);
 
-		try (ClearGLDisplayable lClearGLWindow = new ClearGLWindow("demo: ClearGLWindow",
-				512,
-				512,
-				lClearGLWindowEventListener)) {
+		try (
+				ClearGLDisplayable lClearGLWindow = new ClearGLWindow("demo: ClearGLWindow",
+						512,
+						512,
+						lClearGLWindowEventListener)) {
 			// lClearGLWindow.disableClose();
 			lClearGLWindow.setVisible(true);
 
@@ -274,20 +311,16 @@ public class ClearGLDemo {
 	}
 
 	public static void main(final String[] args) throws InterruptedException {
-		try {
-			final AbstractGraphicsDevice lDefaultDevice = GLProfile.getDefaultDevice();
-			final GLProfile lProfile = GLProfile.getMaxProgrammable(true);
-			final GLCapabilities lCapabilities = new GLCapabilities(lProfile);
+		final AbstractGraphicsDevice lDefaultDevice = GLProfile.getDefaultDevice();
+		final GLProfile lProfile = GLProfile.getMaxProgrammable(true);
+		final GLCapabilities lCapabilities = new GLCapabilities(lProfile);
 
-			System.out.println("Device: " + lDefaultDevice);
-			System.out.println("Capabilities: " + lCapabilities);
-			System.out.println("Profile: " + lProfile);
+		System.out.println("Device: " + lDefaultDevice);
+		System.out.println("Capabilities: " + lCapabilities);
+		System.out.println("Profile: " + lProfile);
 
-			final ClearGLDemo lClearGLDemo = new ClearGLDemo();
-			lClearGLDemo.demo();
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-
+		final ClearGLDemo lClearGLDemo = new ClearGLDemo();
+		lClearGLDemo.demo();
 	}
+
 }
