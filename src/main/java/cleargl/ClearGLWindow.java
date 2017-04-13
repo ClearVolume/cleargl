@@ -222,9 +222,13 @@ public class ClearGLWindow implements ClearGLDisplayable {
 	@Override
 	public void setVisible(final boolean pIsVisible) {
 
-
-
 		runOnEDT(false, () -> mGlWindow.setVisible(pIsVisible));
+		while (!isVisible())
+			try {
+				Thread.sleep(1);
+			} catch (InterruptedException e) {
+			}
+
 	}
 
 	/*

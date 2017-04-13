@@ -274,15 +274,20 @@ public class ClearGLDemo {
 	}
 
 	public static void main(final String[] args) throws InterruptedException {
-		final AbstractGraphicsDevice lDefaultDevice = GLProfile.getDefaultDevice();
-		final GLProfile lProfile = GLProfile.getMaxProgrammable(true);
-		final GLCapabilities lCapabilities = new GLCapabilities(lProfile);
+		try {
+			final AbstractGraphicsDevice lDefaultDevice = GLProfile.getDefaultDevice();
+			final GLProfile lProfile = GLProfile.getMaxProgrammable(true);
+			final GLCapabilities lCapabilities = new GLCapabilities(lProfile);
 
-		System.out.println("Device: " + lDefaultDevice);
-		System.out.println("Capabilities: " + lCapabilities);
-		System.out.println("Profile: " + lProfile);
+			System.out.println("Device: " + lDefaultDevice);
+			System.out.println("Capabilities: " + lCapabilities);
+			System.out.println("Profile: " + lProfile);
 
-		final ClearGLDemo lClearGLDemo = new ClearGLDemo();
-		lClearGLDemo.demo();
+			final ClearGLDemo lClearGLDemo = new ClearGLDemo();
+			lClearGLDemo.demo();
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+
 	}
 }

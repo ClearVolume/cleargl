@@ -1,7 +1,6 @@
 package cleargl;
 
 import static java.lang.Math.*;
-
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import com.jogamp.opengl.math.FloatUtil;
