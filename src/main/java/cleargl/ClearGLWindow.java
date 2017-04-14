@@ -194,13 +194,26 @@ public class ClearGLWindow implements ClearGLDisplayable {
 	@Override
 	public void close() throws GLException {
 		try {
+
+			try {
+				mAnimator.stop();
+			} catch (final Throwable e) {
+				System.err.println(e.getLocalizedMessage());
+			}
+
 			try {
 				setVisible(false);
 			} catch (final Throwable e) {
 				System.err.println(e.getLocalizedMessage());
 			}
+
 			if (mGlWindow.isRealized())
-				runOnEDT(false, () -> mGlWindow.destroy());
+				runOnEDT(false, () -> {
+					try {
+						mGlWindow.destroy();
+					} catch (Throwable e) {
+					}
+				});
 
 		} catch (final Throwable e) {
 			System.err.println(e.getLocalizedMessage());
