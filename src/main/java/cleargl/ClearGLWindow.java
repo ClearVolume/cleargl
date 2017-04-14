@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import com.jogamp.nativewindow.CapabilitiesImmutable;
 import com.jogamp.nativewindow.WindowClosingProtocol.WindowClosingMode;
 import com.jogamp.newt.Display;
@@ -219,7 +220,7 @@ public class ClearGLWindow implements ClearGLDisplayable {
 			lLatch.countDown();
 		});
 		try {
-			lLatch.await();
+			lLatch.await(100, TimeUnit.MILLISECONDS);
 		} catch (InterruptedException e) {
 		}
 	}
