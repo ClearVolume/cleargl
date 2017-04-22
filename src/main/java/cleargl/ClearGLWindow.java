@@ -4,6 +4,8 @@ import java.awt.Component;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import com.jogamp.nativewindow.CapabilitiesImmutable;
 import com.jogamp.nativewindow.WindowClosingProtocol.WindowClosingMode;
 import com.jogamp.newt.Display;
@@ -192,46 +194,64 @@ public class ClearGLWindow implements ClearGLDisplayable {
 	@Override
 	public void close() throws GLException {
 		try {
+
 			try {
-				mGlWindow.setVisible(false);
+				mAnimator.stop();
 			} catch (final Throwable e) {
 				System.err.println(e.getLocalizedMessage());
 			}
+
+			try {
+				setVisible(false);
+			} catch (final Throwable e) {
+				System.err.println(e.getLocalizedMessage());
+			}
+
 			if (mGlWindow.isRealized())
-				mGlWindow.destroy();
+				runOnEDT(false, () -> {
+					try {
+						mGlWindow.destroy();
+					} catch (Throwable e) {
+					}
+				});
+
 		} catch (final Throwable e) {
 			System.err.println(e.getLocalizedMessage());
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cleargl.ClearGLDisplayable#setWindowTitle(java.lang.String)
-	 */
 	@Override
 	public void setWindowTitle(final String pTitleString) {
 		runOnEDT(false, () -> mGlWindow.setTitle(pTitleString));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cleargl.ClearGLDisplayable#setVisible(boolean)
-	 */
 	@Override
 	public void setVisible(final boolean pIsVisible) {
-
-
-
-		runOnEDT(false, () -> mGlWindow.setVisible(pIsVisible));
+		CountDownLatch lLatch = new CountDownLatch(1);
+		runOnEDT(false, () -> {
+			mGlWindow.setVisible(pIsVisible);
+			lLatch.countDown();
+		});
+		try {
+			lLatch.await(100, TimeUnit.MILLISECONDS);
+		} catch (InterruptedException e) {
+		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cleargl.ClearGLDisplayable#toggleFullScreen()
-	 */
+	@Override
+	public void setWindowPosition(int pX, int pY) {
+		runOnEDT(false, () -> mGlWindow.setPosition(pX, pY));
+	}
+
+	@Override
+	public void setSize(final int pWidth, final int pHeight) {
+		runOnEDT(false, () -> mGlWindow.setSize(pWidth, pHeight));
+	}
+
+	public void requestFocus() {
+		runOnEDT(false, () -> mGlWindow.requestFocus());
+	}
+
 	@Override
 	public void toggleFullScreen() {
 		runOnEDT(false, () -> {
@@ -369,7 +389,8 @@ public class ClearGLWindow implements ClearGLDisplayable {
 	 */
 	@Override
 	public void disableClose() {
-		mGlWindow.setDefaultCloseOperation(WindowClosingMode.DO_NOTHING_ON_CLOSE);
+		runOnEDT(false,
+				() -> mGlWindow.setDefaultCloseOperation(WindowClosingMode.DO_NOTHING_ON_CLOSE));
 	}
 
 	@Override
@@ -401,66 +422,64 @@ public class ClearGLWindow implements ClearGLDisplayable {
 	 */
 	@Override
 	public void setFullscreen(final boolean pFullScreen) {
-		if (pFullScreen) {
-			final Display display = NewtFactory.createDisplay(null); // local
-			// display
-			final Screen screen = NewtFactory.createScreen(display, 0); // screen
-			// 0
-			final ArrayList<MonitorDevice> monitors = new ArrayList<MonitorDevice>();
-			int lFullscreen;
 
-			int index = 0;
-			for (final MonitorDevice m : screen.getMonitorDevices()) {
-				System.out.println(index + ": " + m.toString());
-				index++;
-			}
-
-			try {
-				lFullscreen = Integer.parseInt(System.getProperty("ClearGL.FullscreenDevice"));
-				System.out.println("Fullscreen ID set to " + lFullscreen
-						+ " by property.");
-			} catch (final java.lang.NumberFormatException e) {
-				lFullscreen = 0;
-			}
-
-			System.out.println(screen.getMonitorDevices()
-					.get(lFullscreen)
-					.toString());
-			System.out.println(screen.getMonitorDevices()
-					.get(lFullscreen)
-					.getScreen()
-					.getFQName());
-
-			screen.addReference(); // trigger creation
-
+		runOnEDT(false, () -> {
 			if (pFullScreen) {
-				monitors.add(screen.getMonitorDevices().get(lFullscreen)); // Q1
+				final Display display = NewtFactory.createDisplay(null); // local
+				// display
+				final Screen screen = NewtFactory.createScreen(display, 0); // screen
+				// 0
+				final ArrayList<MonitorDevice> monitors = new ArrayList<MonitorDevice>();
+				int lFullscreen;
+
+				int index = 0;
+				for (final MonitorDevice m : screen.getMonitorDevices()) {
+					System.out.println(index + ": " + m.toString());
+					index++;
+				}
+
+				try {
+					lFullscreen = Integer.parseInt(System.getProperty("ClearGL.FullscreenDevice"));
+					System.out.println("Fullscreen ID set to " + lFullscreen
+							+ " by property.");
+				} catch (final java.lang.NumberFormatException e) {
+					lFullscreen = 0;
+				}
+
+				System.out.println(screen.getMonitorDevices()
+						.get(lFullscreen)
+						.toString());
+				System.out.println(screen.getMonitorDevices()
+						.get(lFullscreen)
+						.getScreen()
+						.getFQName());
+
+				screen.addReference(); // trigger creation
+
+				if (pFullScreen) {
+					monitors.add(screen.getMonitorDevices().get(lFullscreen)); // Q1
+				} else {
+					// monitor array stays empty
+				}
+				mGlWindow.setSurfaceSize(screen.getMonitorDevices()
+						.get(lFullscreen)
+						.getCurrentMode()
+						.getSurfaceSize()
+						.getResolution()
+						.getWidth(),
+						screen.getMonitorDevices()
+								.get(lFullscreen)
+								.getCurrentMode()
+								.getSurfaceSize()
+								.getResolution()
+								.getHeight());
+				mGlWindow.setFullscreen(monitors);
 			} else {
-				// monitor array stays empty
+				mGlWindow.setFullscreen(false);
 			}
-			mGlWindow.setSurfaceSize(screen.getMonitorDevices()
-					.get(lFullscreen)
-					.getCurrentMode()
-					.getSurfaceSize()
-					.getResolution()
-					.getWidth(),
-					screen.getMonitorDevices()
-							.get(lFullscreen)
-							.getCurrentMode()
-							.getSurfaceSize()
-							.getResolution()
-							.getHeight());
-			mGlWindow.setFullscreen(monitors);
-		} else {
-			mGlWindow.setFullscreen(false);
-		}
+		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cleargl.ClearGLDisplayable#requestDisplay()
-	 */
 	@Override
 	public void display() {
 		mGlWindow.display();
@@ -484,12 +503,6 @@ public class ClearGLWindow implements ClearGLDisplayable {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see cleargl.ClearGLDisplayable#setDefaultCloseOperation(javax.media.
-	 * nativewindow.WindowClosingProtocol.WindowClosingMode)
-	 */
 	@Override
 	public WindowClosingMode setDefaultCloseOperation(final WindowClosingMode pWindowClosingMode) {
 		return mGlWindow.setDefaultCloseOperation(pWindowClosingMode);
@@ -523,16 +536,6 @@ public class ClearGLWindow implements ClearGLDisplayable {
 	@Override
 	public int getWindowY() {
 		return mGlWindow.getY();
-	}
-
-	@Override
-	public void setWindowPosition(int pX, int pY) {
-		mGlWindow.setPosition(pX, pY);
-	}
-
-	@Override
-	public void setSize(final int pWidth, final int pHeight) {
-		mGlWindow.setSize(pWidth, pHeight);
 	}
 
 	@Override
@@ -583,10 +586,6 @@ public class ClearGLWindow implements ClearGLDisplayable {
 		}
 
 		return mNewtCanvasAWT;
-	}
-
-	public void requestFocus() {
-		mGlWindow.requestFocus();
 	}
 
 	public GLAutoDrawable getGLAutoDrawable() {

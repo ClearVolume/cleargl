@@ -349,8 +349,8 @@ public class GLProgram implements GLInterface, GLCloseable {
 	@Override
 	public String toString() {
 		String code = "";
-		for(GLShader shader: mShaders.values()) {
-		    code += shader.getSourcePath() + ":\n" + shader.toString();
+		for (GLShader shader : mShaders.values()) {
+			code += shader.getSourcePath() + ":\n" + shader.toString();
 		}
 
 		return "GLProgram [mGL=" + mGL
