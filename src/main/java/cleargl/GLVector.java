@@ -75,6 +75,10 @@ public class GLVector implements Serializable {
 		mElements[pIndex] = pValue;
 	}
 
+	public int getDimension() {
+		return mDimension;
+	}
+
 	public void plusAssign(final GLVector pGLVector) {
 		final float[] lElements = pGLVector.mElements;
 		for (int i = 0; i < mDimension; i++)
