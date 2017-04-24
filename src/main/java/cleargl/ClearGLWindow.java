@@ -229,7 +229,10 @@ public class ClearGLWindow implements ClearGLDisplayable {
 	public void setVisible(final boolean pIsVisible) {
 		CountDownLatch lLatch = new CountDownLatch(1);
 		runOnEDT(false, () -> {
-			mGlWindow.setVisible(pIsVisible);
+			try {
+				mGlWindow.setVisible(pIsVisible);
+			} catch (java.lang.InternalError e) {
+			}
 			lLatch.countDown();
 		});
 		try {

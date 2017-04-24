@@ -133,9 +133,9 @@ public class GLMatrix implements Serializable {
 	}
 
 	public GLMatrix setGeneralizedPerspectiveProjectionMatrix(final GLVector lowerLeft, final GLVector lowerRight,
-															  final GLVector upperLeft,
-															  final GLVector viewpoint,
-															  final float near, final float far) {
+			final GLVector upperLeft,
+			final GLVector viewpoint,
+			final float near, final float far) {
 
 		final GLVector vr = lowerRight.minus(lowerLeft).normalize();
 		final GLVector vu = upperLeft.minus(lowerLeft).normalize();
@@ -147,18 +147,17 @@ public class GLMatrix implements Serializable {
 
 		float distance = -1.0f * vn.times(va);
 
-		float left = vr.times(va)*near/distance;
-		float right = vr.times(vb)*near/distance;
-		float bottom = vu.times(va)*near/distance;
-		float top = vu.times(vc)*near/distance;
+		float left = vr.times(va) * near / distance;
+		float right = vr.times(vb) * near / distance;
+		float bottom = vu.times(va) * near / distance;
+		float top = vu.times(vc) * near / distance;
 
 		setFrustumProjectionMatrix(top, bottom, left, right, near, far);
 
-		final GLMatrix mt = new GLMatrix(new float[]
-				{vr.x(), vr.y(), vr.z(), 0.0f,
-				 vu.x(), vu.y(), vu.z(), 0.0f,
-				 vn.x(), vn.y(), vn.z(), 0.0f,
-				 0.0f, 0.0f, 0.0f, 1.0f});
+		final GLMatrix mt = new GLMatrix(new float[]{vr.x(), vr.y(), vr.z(), 0.0f,
+				vu.x(), vu.y(), vu.z(), 0.0f,
+				vn.x(), vn.y(), vn.z(), 0.0f,
+				0.0f, 0.0f, 0.0f, 1.0f});
 
 		this.mult(mt);
 		this.translate(viewpoint);
@@ -167,7 +166,7 @@ public class GLMatrix implements Serializable {
 	}
 
 	public GLMatrix setFrustumProjectionMatrix(final float top, final float bottom,
-		final float left, final float right, final float near, final float far) {
+			final float left, final float right, final float near, final float far) {
 
 		FloatUtil.makeFrustum(mMatrix, 0, true,
 				left, right, bottom, top, near, far);
