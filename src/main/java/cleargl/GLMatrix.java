@@ -145,16 +145,17 @@ public class GLMatrix implements Serializable {
 		final GLVector vb = lowerRight.minus(viewpoint);
 		final GLVector vc = upperLeft.minus(viewpoint);
 
-		float distance = -1.0f * vn.times(va);
+		float distance = -1.0f * va.times(vn);
 
 		float left = vr.times(va) * near / distance;
 		float right = vr.times(vb) * near / distance;
 		float bottom = vu.times(va) * near / distance;
 		float top = vu.times(vc) * near / distance;
 
-		setFrustumProjectionMatrix(top, bottom, left, right, near, far);
+		FloatUtil.makeFrustum(mMatrix, 0, true, left, right, bottom, top, near, far);
 
-		final GLMatrix mt = new GLMatrix(new float[]{vr.x(), vr.y(), vr.z(), 0.0f,
+		final GLMatrix mt = new GLMatrix(new float[]{
+				vr.x(), vr.y(), vr.z(), 0.0f,
 				vu.x(), vu.y(), vu.z(), 0.0f,
 				vn.x(), vn.y(), vn.z(), 0.0f,
 				0.0f, 0.0f, 0.0f, 1.0f});
