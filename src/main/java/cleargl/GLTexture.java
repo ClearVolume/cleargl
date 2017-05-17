@@ -204,7 +204,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 					if (precision == 16) {
 						mTextureOpenGLInternalFormat = GL.GL_RGBA16F;
 						mBytesPerChannel = 4;
-					} else if (precision == 32) {
+					} else {
 						mTextureOpenGLInternalFormat = GL.GL_RGBA32F;
 						mBytesPerChannel = 4;
 					}
