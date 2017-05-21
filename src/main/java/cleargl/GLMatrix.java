@@ -147,7 +147,7 @@ public class GLMatrix implements Serializable {
 		final GLVector vb = lowerRight.minus(eye);
 		final GLVector vc = upperLeft.minus(eye);
 
-		float distance = 1.0f * va.times(vn);
+		float distance = -1.0f * va.times(vn);
 
 		float left = vr.times(va) * near / distance;
 		float right = vr.times(vb) * near / distance;
