@@ -190,8 +190,7 @@ public class GLMatrix implements Serializable {
 				0.0f, 1.0f, 1.0f, 1.0f});
 
 
-		this.mult(mt.transpose());
-		this.translate(eye.times(-1.0f));
+		this.mult(mt);
 
 		this.mult(flip);
 		return this;
