@@ -151,7 +151,6 @@ public class GLMatrix implements Serializable {
 		GLVector vc = upperLeft.minus(eye);
 
 		if (va.cross(vc).times(vb) < 0.0f) {
-		    System.err.println("Mirroring points");
 //			 mirror points along the z axis (most users
 //			 probably expect the x axis to stay fixed)
 			vu = vu.times(-1.0f);
@@ -176,7 +175,7 @@ public class GLMatrix implements Serializable {
 		float top = vu.times(vc) * nd;
 
 		FloatUtil.makeFrustum(mMatrix, 0, true, left, right, bottom, top, near, far);
-		System.err.println(distance + " -> " + left + "/" + right + "/"+bottom+"/"+top);
+//		System.err.println(distance + " -> " + left + "/" + right + "/"+bottom+"/"+top);
 
 		final GLMatrix mt = new GLMatrix(new float[]{
 				vr.x(), vr.y(), vr.z(), 0.0f,
@@ -190,11 +189,11 @@ public class GLMatrix implements Serializable {
 				0.0f, 0.0f, -1.0f, 0.0f,
 				0.0f, 1.0f, 1.0f, 1.0f});
 
-		this.mult(flip);
 
 		this.mult(mt.transpose());
 		this.translate(eye.times(-1.0f));
 
+		this.mult(flip);
 		return this;
 	}
 
