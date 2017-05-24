@@ -139,22 +139,44 @@ public class GLMatrix implements Serializable {
 			final GLVector eye,
 			final float near, final float far) {
 
-		final GLVector vr = lowerRight.minus(lowerLeft).normalize();
-		final GLVector vu = upperLeft.minus(lowerLeft).normalize();
-		final GLVector vn = vr.cross(vu).normalize();
+		GLVector pa = lowerLeft;
+		GLVector pb = lowerRight;
+		GLVector pc = upperLeft;
 
-		final GLVector va = lowerLeft.minus(eye);
-		final GLVector vb = lowerRight.minus(eye);
-		final GLVector vc = upperLeft.minus(eye);
+		GLVector vr = lowerRight.minus(lowerLeft);
+		GLVector vu = upperLeft.minus(lowerLeft);
+
+		GLVector va = lowerLeft.minus(eye);
+		GLVector vb = lowerRight.minus(eye);
+		GLVector vc = upperLeft.minus(eye);
+
+		if (va.cross(vc).times(vb) < 0.0f) {
+		    System.err.println("Mirroring points");
+//			 mirror points along the z axis (most users
+//			 probably expect the x axis to stay fixed)
+			vu = vu.times(-1.0f);
+			pa = pc;
+			pb = pa.plus(vr);
+			pc = pa.plus(vu);
+			va = pa.minus(eye);
+			vb = pb.minus(eye);
+			vc = pc.minus(eye);
+		}
+
+		vr.normalize();
+		vu.normalize();
+		GLVector vn = vr.cross(vu).normalize();
 
 		float distance = -1.0f * va.times(vn);
 
-		float left = vr.times(va) * near / distance;
-		float right = vr.times(vb) * near / distance;
-		float bottom = vu.times(va) * near / distance;
-		float top = vu.times(vc) * near / distance;
+		float nd = near / distance;
+		float left = vr.times(va) * nd;
+		float right = vr.times(vb) * nd;
+		float bottom = vu.times(va) * nd;
+		float top = vu.times(vc) * nd;
 
 		FloatUtil.makeFrustum(mMatrix, 0, true, left, right, bottom, top, near, far);
+		System.err.println(distance + " -> " + left + "/" + right + "/"+bottom+"/"+top);
 
 		final GLMatrix mt = new GLMatrix(new float[]{
 				vr.x(), vr.y(), vr.z(), 0.0f,
@@ -162,7 +184,15 @@ public class GLMatrix implements Serializable {
 				vn.x(), vn.y(), vn.z(), 0.0f,
 				0.0f, 0.0f, 0.0f, 1.0f});
 
-		this.mult(mt);
+		final GLMatrix flip = new GLMatrix(new float[] {
+				1.0f, 0.0f, 0.0f, 0.0f,
+				0.0f, -1.0f, 0.0f, 0.0f,
+				0.0f, 0.0f, -1.0f, 0.0f,
+				0.0f, 1.0f, 1.0f, 1.0f});
+
+		this.mult(flip);
+
+		this.mult(mt.transpose());
 		this.translate(eye.times(-1.0f));
 
 		return this;
