@@ -150,50 +150,52 @@ public class GLMatrix implements Serializable {
 		GLVector vb = lowerRight.minus(eye);
 		GLVector vc = upperLeft.minus(eye);
 
-		if (va.cross(vc).times(vb) < 0.0f) {
+//		if (va.cross(vc).times(vb) < 0.0f) {
 //			 mirror points along the z axis (most users
 //			 probably expect the x axis to stay fixed)
-			vu = vu.times(-1.0f);
-			pa = pc;
-			pb = pa.plus(vr);
-			pc = pa.plus(vu);
-			va = pa.minus(eye);
-			vb = pb.minus(eye);
-			vc = pc.minus(eye);
-		}
+//			vu = vu.times(-1.0f);
+//			pa = pc;
+//			pb = pa.plus(vr);
+//			pc = pa.plus(vu);
+//			va = pa.minus(eye);
+//			vb = pb.minus(eye);
+//			vc = pc.minus(eye);
+//		}
 
 		vr.normalize();
 		vu.normalize();
 		GLVector vn = vr.cross(vu).normalize();
 
 		float distance = -1.0f * va.times(vn);
-
-		float nd = near / distance;
-		float left = vr.times(va) * nd;
-		float right = vr.times(vb) * nd;
-		float bottom = vu.times(va) * nd;
-		float top = vu.times(vc) * nd;
-
-		FloatUtil.makeFrustum(mMatrix, 0, true, left, right, bottom, top, near, far);
-		System.err.println(eye + " => " + distance + "/" + near + " -> " + left + "/" + right + "/"+bottom+"/"+top);
+		GLVector ep = new GLVector(eye.x(), eye.y(), eye.z(), 1.0f);
 
 		final GLMatrix mt = new GLMatrix(new float[]{
 				vr.x(), vr.y(), vr.z(), 0.0f,
 				vu.x(), vu.y(), vu.z(), 0.0f,
 				vn.x(), vn.y(), vn.z(), 0.0f,
-				0.0f, 0.0f, 0.0f, 1.0f});
+				lowerLeft.x(), lowerLeft.y(), lowerLeft.z(), 1.0f});
+		mt.invert();
+
+		GLVector res = mt.mult(ep);
+		float nd = near / distance;
+		float left = -res.x();
+		float right = Math.abs(lowerLeft.minus(lowerRight).x()) - res.x();
+		float bottom = -res.y();
+		float top = Math.abs(lowerLeft.minus(upperLeft).y()) - res.y();
+		float n = -res.z();
+
+		float s = 0.1f/n;
+
+		System.err.println(eye + " => " + distance + "/" + n + " -> " + left + "/" + right + "/"+bottom+"/"+top + ", s=" + s);
+		FloatUtil.makeFrustum(mMatrix, 0, true, left*s, right*s, bottom*s, top*s, n*s, far);
 
 		final GLMatrix flip = new GLMatrix(new float[] {
 				1.0f, 0.0f, 0.0f, 0.0f,
-				0.0f, -1.0f, 0.0f, 0.0f,
+				0.0f, 1.0f, 0.0f, 0.0f,
 				0.0f, 0.0f, -1.0f, 0.0f,
-				0.0f, 1.0f, 1.0f, 1.0f});
+				0.0f, 0.0f, 1.0f, 1.0f});
 
-
-		this.mult(mt);
-		this.translate(eye.times(-1.0f));
-
-		this.mult(flip);
+//		this.mult(flip);
 		return this;
 	}
 
