@@ -175,7 +175,7 @@ public class GLMatrix implements Serializable {
 		float top = vu.times(vc) * nd;
 
 		FloatUtil.makeFrustum(mMatrix, 0, true, left, right, bottom, top, near, far);
-//		System.err.println(distance + " -> " + left + "/" + right + "/"+bottom+"/"+top);
+		System.err.println(eye + " => " + distance + "/" + near + " -> " + left + "/" + right + "/"+bottom+"/"+top);
 
 		final GLMatrix mt = new GLMatrix(new float[]{
 				vr.x(), vr.y(), vr.z(), 0.0f,
@@ -191,6 +191,7 @@ public class GLMatrix implements Serializable {
 
 
 		this.mult(mt);
+		this.translate(eye.times(-1.0f));
 
 		this.mult(flip);
 		return this;
