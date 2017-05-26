@@ -96,6 +96,12 @@ public class GLMatrix implements Serializable {
 		mult(pGLMatrix);
 	}
 
+	public GLMatrix setFrustumMatrix(final float left, final float right, final float bottom, final float top, final float near, final float far) {
+		FloatUtil.makeFrustum(mMatrix, 0, true, left, right, bottom, top, near, far);
+
+		return this;
+	}
+
 	public GLMatrix setPerspectiveProjectionMatrix(final float pFOV,
 			final float pAspectRatio,
 			final float pNearPlane,
@@ -186,7 +192,7 @@ public class GLMatrix implements Serializable {
 
 		float s = 0.1f/n;
 
-		System.err.println(eye + " => " + distance + "/" + n + " -> " + left + "/" + right + "/"+bottom+"/"+top + ", s=" + s);
+		System.err.println(eye + ", " + (right + res.x()) + "/" + (top + res.y()) + " => " + distance + "/" + n + " -> " + left + "/" + right + "/"+bottom+"/"+top + ", s=" + s);
 		FloatUtil.makeFrustum(mMatrix, 0, true, left*s, right*s, bottom*s, top*s, n*s, far);
 
 		final GLMatrix flip = new GLMatrix(new float[] {
