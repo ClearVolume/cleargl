@@ -156,18 +156,6 @@ public class GLMatrix implements Serializable {
 		GLVector vb = lowerRight.minus(eye);
 		GLVector vc = upperLeft.minus(eye);
 
-//		if (va.cross(vc).times(vb) < 0.0f) {
-//			 mirror points along the z axis (most users
-//			 probably expect the x axis to stay fixed)
-//			vu = vu.times(-1.0f);
-//			pa = pc;
-//			pb = pa.plus(vr);
-//			pc = pa.plus(vu);
-//			va = pa.minus(eye);
-//			vb = pb.minus(eye);
-//			vc = pc.minus(eye);
-//		}
-
 		vr.normalize();
 		vu.normalize();
 		GLVector vn = vr.cross(vu).normalize();
@@ -202,114 +190,6 @@ public class GLMatrix implements Serializable {
 				0.0f, 0.0f, 1.0f, 1.0f});
 
 //		this.mult(flip);
-		return this;
-	}
-
-	public GLMatrix setGeneralizedPerspectiveProjectionMatrixUnity(final GLVector lowerLeft, final GLVector lowerRight,
-																														final GLVector upperLeft,
-																														final GLVector eye,
-																														final float near, final float far) {
-
-		GLVector pa = lowerLeft;
-		GLVector pb = lowerRight;
-		GLVector pc = upperLeft;
-
-		GLVector vr = pb.minus(pa);
-		GLVector vu = pc.minus(pa);
-
-		GLVector va = pa.minus(eye);
-		GLVector vb = pb.minus(eye);
-		GLVector vc = pc.minus(eye);
-
-		if (va.cross(vc).times(vb) < 0.0f) {
-			// mirror points along the z axis (most users
-			// probably expect the x axis to stay fixed)
-			vu = vu.times(-1.0f);
-			pa = pc;
-			pb = pa.plus(vr);
-			pc = pa.plus(vu);
-			va = pa.minus(eye);
-			vb = pb.minus(eye);
-			vc = pc.minus(eye);
-		}
-
-		vr.normalize();
-		vu.normalize();
-		GLVector vn = vr.cross(vu).normalize();
-
-		float distance = -1.0f * va.times(vn);
-
-		float left = vr.times(va) * near / distance;
-		float right = vr.times(vb) * near / distance;
-		float bottom = vu.times(va) * near / distance;
-		float top = vu.times(vc) * near / distance;
-
-		FloatUtil.makeFrustum(mMatrix, 0, true, left, right, bottom, top, near, far);
-
-		final GLMatrix mt = new GLMatrix(new float[]{
-						vr.x(), vr.y(), vr.z(), 0.0f,
-						vu.x(), vu.y(), vu.z(), 0.0f,
-						vn.x(), vn.y(), vn.z(), 0.0f,
-						0.0f, 0.0f, 0.0f, 1.0f}).transpose();
-
-		this.mult(mt);
-		this.translate(eye.times(-1.0f));
-
-		return this;
-	}
-
-	private GLMatrix setFrustumLH(float left, float right, float bottom, float top, float near, float far) {
-		float x = (2.0f*near) / (right-left);
-		float y = (2.0f*near) / (top-bottom);
-		float a = (right+left) / (right-left);
-		float b = (top+bottom) / (top-bottom);
-		float c = -(far+near) / ( far-near);
-		float d = -(2.0f*far*far) / (far-near);
-
-		float[] m = new float[]{
-						-x,      0.0f,   a,      0.0f,
-						0.0f,   -y,      b,       0.0f,
-						0.0f,   0.0f,   -c,       -d,
-						0.0f,   0.0f,   1.0f,   0.0f,
-		};
-
-		System.arraycopy(m, 0, mMatrix, 0, mMatrix.length);
-
-		return this;
-	}
-
-
-	public GLMatrix setGeneralizedPerspectiveProjectionMatrix2(final GLVector lowerLeft, final GLVector lowerRight,
-																														final GLVector upperLeft,
-																														final GLVector eye,
-																														final float near, final float far) {
-
-		final GLVector Xs = lowerRight.minus(lowerLeft);
-		final GLVector Ys = upperLeft.minus(lowerLeft);
-		final GLVector Zs = Xs.cross(Ys);
-
-		final GLVector Es = eye.minus(lowerLeft);
-
-		float distance = Es.times(Zs);
-		float width = lowerLeft.minus(lowerRight).magnitude();
-		float height = upperLeft.minus(lowerLeft).magnitude();
-
-		float left = -Es.times(Xs) * near / distance;
-		float right = (width - Es.times(Xs)) * near / distance;
-		float bottom = Es.times(Ys) * near / distance;
-		float top = (height - Es.times(Ys)) * near / distance;
-
-		FloatUtil.makeFrustum(mMatrix, 0, true, left, right, bottom, top, near, far);
-
-		final GLMatrix mt = new GLMatrix(new float[]{
-						Xs.x(), Xs.y(), Xs.z(), 0.0f,
-						Ys.x(), Ys.y(), Ys.z(), 0.0f,
-						Zs.x(), Zs.y(), Zs.z(), 0.0f,
-						0.0f, 0.0f, 0.0f, 1.0f}).transpose();
-
-		this.mult(mt);
-		this.translate(eye.times(1.0f));
-
 		return this;
 	}
 
