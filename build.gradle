@@ -7,7 +7,7 @@ buildscript {
 plugins {
     id "com.jfrog.bintray" version "1.2"
     id "us.kirchmeier.capsule" version "1.0.2"
-//    id "com.diffplug.gradle.spotless" version "3.1.0"
+    id "com.diffplug.gradle.spotless" version "3.1.0"
 }
 
 apply plugin: 'java'
@@ -15,7 +15,7 @@ apply plugin: 'eclipse'
 apply plugin: 'idea'
 apply plugin: 'maven'
 apply plugin: 'maven-publish'
-//apply plugin: 'com.diffplug.gradle.spotless'
+apply plugin: 'com.diffplug.gradle.spotless'
 
 
 //***********************************************************************************
@@ -165,19 +165,18 @@ apply from: 'gradle/install-git-hooks.gradle'
 
 //***********************************************************************************
 // SPOTLESS:
-// TODO: Fix code style so it doesn't want to rewrite all of ClearGL
-// spotless {
-//    java {
-//        //licenseHeader '/* Licensed under Apache-2.0 */' // License header
-// 
-//        importOrder(['java', 'javax', 'com', 'org'])
-//
-//        removeUnusedImports() // removes any unused imports
-//
-//        eclipseFormatFile 'cleargl-eclipse-formatter.xml'  
-//    }
-//}
 
+spotless {
+    java {
+        //licenseHeader '/* Licensed under Apache-2.0 */' // License header
+ 
+        importOrder(['java', 'javax', 'com', 'org'])
+
+        removeUnusedImports() // removes any unused imports
+
+        eclipseFormatFile 'cleargl-eclipse-formatter.xml'  
+    }
+}
 
 //***********************************************************************************
 // UPLOAD TO FIJI REPO:
