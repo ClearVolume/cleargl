@@ -36,6 +36,10 @@ public class GLFramebuffer {
 		initialized = true;
 	}
 
+	public boolean hasDepthAttachment(final GL4 gl) {
+		return depthBuffers.size() > 0;
+	}
+
 	public void addFloatBuffer(final GL4 gl, final int channelDepth) {
 		if (!initialized) {
 			return;
@@ -47,6 +51,27 @@ public class GLFramebuffer {
 				gl,
 				GLTypeEnum.Float,
 				3,
+				width, height, 1, true, 1, channelDepth));
+
+		gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
+				getCurrentFramebufferColorAttachment(),
+				backingTextures.get(backingTextures.size() - 1).getId(),
+				0);
+
+		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
+	}
+
+	public void addFloatRGBuffer(final GL4 gl, final int channelDepth) {
+		if (!initialized) {
+			return;
+		}
+
+		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, getId());
+
+		backingTextures.add(new GLTexture(
+				gl,
+				GLTypeEnum.Float,
+				2,
 				width, height, 1, true, 1, channelDepth));
 
 		gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
