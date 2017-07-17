@@ -1,13 +1,11 @@
 package cleargl;
 
+import static java.lang.Math.*;
+import java.io.Serializable;
+import java.nio.ByteBuffer;
 import com.jogamp.opengl.math.FloatUtil;
 import com.jogamp.opengl.math.Quaternion;
 import com.jogamp.opengl.math.VectorUtil;
-
-import java.io.Serializable;
-import java.nio.ByteBuffer;
-
-import static java.lang.Math.*;
 
 public class GLMatrix implements Serializable {
 
@@ -96,7 +94,8 @@ public class GLMatrix implements Serializable {
 		mult(pGLMatrix);
 	}
 
-	public GLMatrix setFrustumMatrix(final float left, final float right, final float bottom, final float top, final float near, final float far) {
+	public GLMatrix setFrustumMatrix(final float left, final float right, final float bottom, final float top,
+			final float near, final float far) {
 		FloatUtil.makeFrustum(mMatrix, 0, true, left, right, bottom, top, near, far);
 
 		return this;
@@ -178,18 +177,19 @@ public class GLMatrix implements Serializable {
 		float top = Math.abs(lowerLeft.minus(upperLeft).y()) - res.y();
 		float n = -res.z();
 
-		float s = 0.1f/n;
+		float s = 0.1f / n;
 
-		System.err.println(eye + ", " + (right + res.x()) + "/" + (top + res.y()) + " => " + distance + "/" + n + " -> " + left + "/" + right + "/"+bottom+"/"+top + ", s=" + s);
-		FloatUtil.makeFrustum(mMatrix, 0, true, left*s, right*s, bottom*s, top*s, n*s, far);
+		System.err.println(eye + ", " + (right + res.x()) + "/" + (top + res.y()) + " => " + distance + "/" + n + " -> "
+				+ left + "/" + right + "/" + bottom + "/" + top + ", s=" + s);
+		FloatUtil.makeFrustum(mMatrix, 0, true, left * s, right * s, bottom * s, top * s, n * s, far);
 
-		final GLMatrix flip = new GLMatrix(new float[] {
+		final GLMatrix flip = new GLMatrix(new float[]{
 				1.0f, 0.0f, 0.0f, 0.0f,
 				0.0f, 1.0f, 0.0f, 0.0f,
 				0.0f, 0.0f, -1.0f, 0.0f,
 				0.0f, 0.0f, 1.0f, 1.0f});
 
-//		this.mult(flip);
+		// this.mult(flip);
 		return this;
 	}
 
@@ -604,12 +604,12 @@ public class GLMatrix implements Serializable {
 	}
 
 	public ByteBuffer toBuffer() {
-	  ByteBuffer b = ByteBuffer.allocateDirect(16*4);
-	  b.asFloatBuffer().put(mMatrix);
-	  b.position(0);
-	  b.limit(16*4);
+		ByteBuffer b = ByteBuffer.allocateDirect(16 * 4);
+		b.asFloatBuffer().put(mMatrix);
+		b.position(0);
+		b.limit(16 * 4);
 
-	  return b;
+		return b;
 	}
 
 }
