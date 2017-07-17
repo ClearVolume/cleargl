@@ -88,7 +88,7 @@ public class GLProgram implements GLInterface, GLCloseable {
 	}
 
 	public static GLProgram buildProgram(final GL pGL,
-										 final HashMap<GLShaderType, String> shaders) throws IOException {
+			final HashMap<GLShaderType, String> shaders) throws IOException {
 		final GLProgram lGLProgram = new GLProgram(pGL,
 				shaderPipelineFromStrings(pGL, shaders));
 
@@ -202,11 +202,11 @@ public class GLProgram implements GLInterface, GLCloseable {
 	}
 
 	private static HashMap<GLShaderType, GLShader> shaderPipelineFromStrings(final GL pGL,
-		final HashMap<GLShaderType, String> shaders) throws IOException {
+			final HashMap<GLShaderType, String> shaders) throws IOException {
 
 		final HashMap<GLShaderType, GLShader> pipeline = new HashMap<>();
 
-		for(final GLShaderType type: shaders.keySet()) {
+		for (final GLShaderType type : shaders.keySet()) {
 			final GLShader shader = new GLShader(pGL,
 					shaders.get(type),
 					type);
@@ -216,7 +216,7 @@ public class GLProgram implements GLInterface, GLCloseable {
 		}
 
 		return pipeline;
-    }
+	}
 
 	public GLProgram(final GLShader pVerteShader, final GLShader pFragmentShader) {
 		super();
