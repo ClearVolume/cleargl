@@ -197,20 +197,25 @@ public class GLFramebuffer {
 		gl.getGL().getGL4().glDrawBuffers(backingTextures.size(), IntBuffer.wrap(attachments));
 	}
 
-	public void bindTexturesToUnitsWithOffset(final GL4 gl, final int offset) {
+	public int bindTexturesToUnitsWithOffset(final GL4 gl, final int offset) {
 		int colorUnits = 0;
+		int totalUnits = 0;
 		for (int i = 0; i < backingTextures.size(); i++) {
 			gl.glActiveTexture(GL.GL_TEXTURE0 + offset + i);
 			gl.glBindTexture(GL.GL_TEXTURE_2D, backingTextures.get(i).getId());
 			colorUnits = i;
+			totalUnits++;
 		}
 
 		if (depthBuffers.size() > 0) {
 			for (int i = 0; i < depthBuffers.size(); i++) {
 				gl.glActiveTexture(GL.GL_TEXTURE0 + offset + i + colorUnits + 1);
 				gl.glBindTexture(GL.GL_TEXTURE_2D, depthBuffers.get(i).getId());
+				totalUnits++;
 			}
 		}
+
+		return totalUnits;
 	}
 
 	public List<Integer> getTextureIds(final GL4 gl) {
