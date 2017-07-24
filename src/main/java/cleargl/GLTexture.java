@@ -18,6 +18,7 @@ import com.jogamp.opengl.GL2ES2;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLException;
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class GLTexture implements GLInterface, GLCloseable {
 
 	private final GL4 mGL;
@@ -468,7 +469,12 @@ public class GLTexture implements GLInterface, GLCloseable {
 	}
 
 	public static GLTexture loadFromFile(final GL4 gl, final String filename, final boolean linearInterpolation,
-			final int mipmapLevels) {
+										 final int mipmapLevels) {
+		return loadFromFile(gl, filename, linearInterpolation, true, mipmapLevels);
+	}
+
+	public static GLTexture loadFromFile(final GL4 gl, final String filename, final boolean linearInterpolation,
+			final boolean generateMipmaps, final int maxMipmapLevels) {
 		BufferedImage bi;
 		BufferedImage flippedImage;
 		final ByteBuffer imageData;
@@ -528,12 +534,18 @@ public class GLTexture implements GLInterface, GLCloseable {
 			texHeight *= 2;
 		}
 
+		int levels = Math.min(maxMipmapLevels, 1 + (int)Math.floor(Math.log(Math.max(texWidth, texHeight)/Math.log(2.0))));
+
+		if(!generateMipmaps) {
+			levels = 1;
+		}
+
 		tex = new GLTexture(gl,
 				nativeTypeEnumFromBufferedImage(bi),
 				bi.getColorModel().getNumComponents(),
 				texWidth, texHeight, 1,
 				linearInterpolation,
-				mipmapLevels);
+				levels);
 
 		tex.clear();
 		tex.copyFrom(imageData);
