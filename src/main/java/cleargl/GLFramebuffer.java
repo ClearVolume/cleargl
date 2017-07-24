@@ -2,21 +2,25 @@ package cleargl;
 
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 
 /**
- * <Description>
+ * Convenience class for handling OpenGL Framebuffers
  *
  * @author Ulrik Günther <hello@ulrik.is>
  */
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class GLFramebuffer {
 	protected int framebufferId[];
 
-	protected List<GLTexture> backingTextures;
+	protected LinkedHashMap<String, GLTexture> backingTextures;
 
-	protected List<GLTexture> depthBuffers;
+	protected LinkedHashMap<String, GLTexture> depthBuffers;
 
 	protected int width;
 
@@ -26,8 +30,8 @@ public class GLFramebuffer {
 
 	public GLFramebuffer(final GL4 gl, final int width, final int height) {
 		framebufferId = new int[1];
-		backingTextures = new ArrayList<>();
-		depthBuffers = new ArrayList<>();
+		backingTextures = new LinkedHashMap<>();
+		depthBuffers = new LinkedHashMap<>();
 		this.width = width;
 		this.height = height;
 
@@ -36,127 +40,101 @@ public class GLFramebuffer {
 		initialized = true;
 	}
 
-	public boolean hasDepthAttachment(final GL4 gl) {
+	public boolean hasDepthAttachment() {
 		return depthBuffers.size() > 0;
 	}
 
-	public void addFloatBuffer(final GL4 gl, final int channelDepth) {
+	public boolean hasColorAttachment() {
+		return backingTextures.size() > 0;
+	}
+
+	private void addFloatBufferInternal(final GL4 gl, final String name, final int channelCount, final int channelDepth) {
 		if (!initialized) {
 			return;
 		}
 
 		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, getId());
 
-		backingTextures.add(new GLTexture(
+		backingTextures.put(name, new GLTexture(
 				gl,
 				GLTypeEnum.Float,
-				3,
+				channelCount,
 				width, height, 1, true, 1, channelDepth));
 
 		gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
 				getCurrentFramebufferColorAttachment(),
-				backingTextures.get(backingTextures.size() - 1).getId(),
+				backingTextures.get(name).getId(),
 				0);
 
 		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
 	}
 
-	public void addFloatRGBuffer(final GL4 gl, final int channelDepth) {
-		if (!initialized) {
-			return;
-		}
-
-		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, getId());
-
-		backingTextures.add(new GLTexture(
-				gl,
-				GLTypeEnum.Float,
-				2,
-				width, height, 1, true, 1, channelDepth));
-
-		gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
-				getCurrentFramebufferColorAttachment(),
-				backingTextures.get(backingTextures.size() - 1).getId(),
-				0);
-
-		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
+	public void addFloatRBuffer(final GL4 gl, final String name, final int channelDepth) {
+		addFloatBufferInternal(gl, name, 1, channelDepth);
 	}
 
-	public void addFloatRGBBuffer(final GL4 gl, final int channelDepth) {
-		if (!initialized) {
-			return;
-		}
-
-		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, getId());
-
-		backingTextures.add(new GLTexture(
-				gl,
-				GLTypeEnum.Float,
-				3,
-				width, height, 1, true, 1, channelDepth));
-
-		gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
-				getCurrentFramebufferColorAttachment(),
-				backingTextures.get(backingTextures.size() - 1).getId(),
-				0);
-
-		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
+	public void addFloatRGBuffer(final GL4 gl, final String name, final int channelDepth) {
+		addFloatBufferInternal(gl, name, 2, channelDepth);
 	}
 
-	public void addFloatRGBABuffer(final GL4 gl, final int channelDepth) {
-		if (!initialized) {
-			return;
-		}
-
-		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, getId());
-
-		backingTextures.add(new GLTexture(
-				gl,
-				GLTypeEnum.Float,
-				4,
-				width, height, 1, true, 1, channelDepth));
-
-		gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
-				getCurrentFramebufferColorAttachment(),
-				backingTextures.get(backingTextures.size() - 1).getId(),
-				0);
-
-		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
+	public void addFloatRGBBuffer(final GL4 gl, final String name, final int channelDepth) {
+	    addFloatBufferInternal(gl, name, 3, channelDepth);
 	}
 
-	public void addUnsignedByteRGBABuffer(final GL4 gl, final int channelDepth) {
+	public void addFloatRGBABuffer(final GL4 gl, final String name, final int channelDepth) {
+	    addFloatBufferInternal(gl, name, 4, channelDepth);
+	}
+
+	private void addUnsignedByteBufferInternal(final GL4 gl, final String name, final int channelCount, final int channelDepth) {
 		if (!initialized) {
 			return;
 		}
 
 		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, getId());
 
-		backingTextures.add(new GLTexture(
+		backingTextures.put(name, new GLTexture(
 				gl,
 				GLTypeEnum.UnsignedByte,
-				4,
+				channelCount,
 				width, height, 1, true, 1, channelDepth));
 
 		gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
 				getCurrentFramebufferColorAttachment(),
-				backingTextures.get(backingTextures.size() - 1).getId(),
+				backingTextures.get(name).getId(),
 				0);
 
 		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
 	}
 
-	public void addDepthBuffer(final GL4 gl, final int depth) {
-		addDepthBuffer(gl, depth, 1);
+
+    public void addUnsignedByteRBuffer(final GL4 gl, final String name, final int channelDepth) {
+        addUnsignedByteBufferInternal(gl, name, 1, channelDepth);
+    }
+
+	public void addUnsignedByteRGBuffer(final GL4 gl, final String name, final int channelDepth) {
+		addUnsignedByteBufferInternal(gl, name, 2, channelDepth);
 	}
 
-	public void addDepthBuffer(final GL4 gl, final int depth, final int scale) {
+	public void addUnsignedByteRGBBuffer(final GL4 gl, final String name, final int channelDepth) {
+		addUnsignedByteBufferInternal(gl, name, 3, channelDepth);
+	}
+
+	public void addUnsignedByteRGBABuffer(final GL4 gl, final String name, final int channelDepth) {
+	    addUnsignedByteBufferInternal(gl, name, 4, channelDepth);
+	}
+
+	public void addDepthBuffer(final GL4 gl, final String name, final int depth) {
+		addDepthBuffer(gl, name, depth, 1);
+	}
+
+	public void addDepthBuffer(final GL4 gl, final String name, final int depth, final int scale) {
 		if (!initialized) {
 			return;
 		}
 
 		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, getId());
 
-		depthBuffers.add(new GLTexture(
+		depthBuffers.put(name, new GLTexture(
 				gl,
 				GLTypeEnum.Float,
 				-1,
@@ -164,7 +142,7 @@ public class GLFramebuffer {
 
 		gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
 				GL.GL_DEPTH_ATTACHMENT,
-				depthBuffers.get(depthBuffers.size() - 1).getId(),
+				depthBuffers.get(name).getId(),
 				0);
 
 		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
@@ -187,32 +165,32 @@ public class GLFramebuffer {
 	}
 
 	public void setDrawBuffers(final GL4 gl) {
-
 		final int attachments[] = new int[backingTextures.size()];
 		for (int i = 0; i < backingTextures.size(); i++) {
 			attachments[i] = GL.GL_COLOR_ATTACHMENT0 + i;
 		}
 
-		gl.getGL().getGL4().glBindFramebuffer(GL.GL_FRAMEBUFFER, getId());
+		gl.getGL().getGL4().glBindFramebuffer(GL.GL_DRAW_FRAMEBUFFER, getId());
 		gl.getGL().getGL4().glDrawBuffers(backingTextures.size(), IntBuffer.wrap(attachments));
 	}
 
+	public void setReadBuffers(final GL4 gl) {
+		gl.getGL().getGL4().glBindFramebuffer(GL.GL_READ_FRAMEBUFFER, getId());
+	}
+
 	public int bindTexturesToUnitsWithOffset(final GL4 gl, final int offset) {
-		int colorUnits = 0;
 		int totalUnits = 0;
-		for (int i = 0; i < backingTextures.size(); i++) {
-			gl.glActiveTexture(GL.GL_TEXTURE0 + offset + i);
-			gl.glBindTexture(GL.GL_TEXTURE_2D, backingTextures.get(i).getId());
-			colorUnits = i;
+
+		for(Map.Entry<String, GLTexture> entry: backingTextures.entrySet()) {
+			gl.glActiveTexture(GL.GL_TEXTURE0 + offset + totalUnits);
+			gl.glBindTexture(GL.GL_TEXTURE_2D, entry.getValue().getId());
 			totalUnits++;
 		}
 
-		if (depthBuffers.size() > 0) {
-			for (int i = 0; i < depthBuffers.size(); i++) {
-				gl.glActiveTexture(GL.GL_TEXTURE0 + offset + i + colorUnits + 1);
-				gl.glBindTexture(GL.GL_TEXTURE_2D, depthBuffers.get(i).getId());
-				totalUnits++;
-			}
+		for(Map.Entry<String, GLTexture> entry: depthBuffers.entrySet()) {
+			gl.glActiveTexture(GL.GL_TEXTURE0 + offset + totalUnits);
+			gl.glBindTexture(GL.GL_TEXTURE_2D, entry.getValue().getId());
+			totalUnits++;
 		}
 
 		return totalUnits;
@@ -221,8 +199,8 @@ public class GLFramebuffer {
 	public List<Integer> getTextureIds(final GL4 gl) {
 		final ArrayList<Integer> list = new ArrayList<>();
 
-		for (int i = 0; i < backingTextures.size(); i++) {
-			list.add(backingTextures.get(i).getId());
+		for (Map.Entry<String, GLTexture> entry: backingTextures.entrySet()) {
+			list.add(entry.getValue().getId());
 		}
 
 		return list;
@@ -239,49 +217,47 @@ public class GLFramebuffer {
 		gl.glGenFramebuffers(1, framebufferId, 0);
 		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, getId());
 
-		final List<GLTexture> newBackingTextures = new ArrayList<>();
-		final List<GLTexture> newDepthBuffers = new ArrayList<>();
+		final LinkedHashMap<String, GLTexture> newBackingTextures = new LinkedHashMap<>();
+		final LinkedHashMap<String, GLTexture> newDepthBuffers = new LinkedHashMap<>();
 
-		for (int i = 0; i < backingTextures.size(); i++) {
-			final GLTexture t = backingTextures.get(i);
+		for (Map.Entry<String, GLTexture> entry: backingTextures.entrySet()) {
 			final GLTexture newT = new GLTexture(gl,
-					t.getNativeType(),
-					t.getChannels(),
+					entry.getValue().getNativeType(),
+					entry.getValue().getChannels(),
 					newWidth, newHeight,
-					1, true, 1, t.getBitsPerChannel());
+					1, true, 1, entry.getValue().getBitsPerChannel());
 
 			newT.clear();
-			newBackingTextures.add(newT);
-			t.close();
+			newBackingTextures.put(entry.getKey(), newT);
+			entry.getValue().close();
 
 			gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
-					getCurrentFramebufferColorAttachment(newBackingTextures),
-					newBackingTextures.get(newBackingTextures.size() - 1).getId(),
+					getCurrentFramebufferColorAttachment(newBackingTextures.size()),
+					newBackingTextures.get(entry.getKey()).getId(),
 					0);
 		}
 
-		for (int i = 0; i < depthBuffers.size(); i++) {
-			final GLTexture t = depthBuffers.get(i);
+		for (Map.Entry<String, GLTexture> entry: depthBuffers.entrySet()) {
 			final GLTexture newT = new GLTexture(gl,
-					t.getNativeType(),
+					entry.getValue().getNativeType(),
 					-1,
 					newWidth, newHeight,
-					1, true, 1, t.getBitsPerChannel());
+					1, true, 1, entry.getValue().getBitsPerChannel());
 
-			newDepthBuffers.add(newT);
-			t.close();
+			newDepthBuffers.put(entry.getKey(), newT);
+			entry.getValue().close();
 
 			gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
 					GL.GL_DEPTH_ATTACHMENT,
-					newDepthBuffers.get(newDepthBuffers.size() - 1).getId(),
+					newDepthBuffers.get(entry.getKey()).getId(),
 					0);
 		}
 
 		backingTextures.clear();
 		depthBuffers.clear();
 
-		backingTextures.addAll(newBackingTextures);
-		depthBuffers.addAll(newDepthBuffers);
+		backingTextures.putAll(newBackingTextures);
+		depthBuffers.putAll(newDepthBuffers);
 
 		width = newWidth;
 		height = newHeight;
@@ -294,38 +270,41 @@ public class GLFramebuffer {
 		gl.glDeleteFramebuffers(1, framebufferId, 0);
 		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
 
-		for (GLTexture bt : backingTextures) {
+		for (GLTexture bt : backingTextures.values()) {
 			bt.delete();
 		}
 
-		for (GLTexture dt : depthBuffers) {
+		for (GLTexture dt : depthBuffers.values()) {
 			dt.delete();
 		}
+
+		backingTextures.clear();
+		depthBuffers.clear();
 	}
 
 	@Override
 	public String toString() {
-		String info;
+		StringBuilder info;
 		if (!initialized) {
-			info = "GLFramebuffer (not initialized)\n";
+			info = new StringBuilder("GLFramebuffer (not initialized)\n");
 		} else {
-			info = "GLFramebuffer " + framebufferId[0] + "\n|\n";
+			info = new StringBuilder("GLFramebuffer " + framebufferId[0] + "\n|\n");
 
-			for (final GLTexture att : backingTextures) {
-				info += String.format("+-\tColor Attachment %s, %dx%d/%d*%d, 0x%s\n", Integer.toHexString(att.getId()),
+			for (final GLTexture att : backingTextures.values()) {
+				info.append(String.format("+-\tColor Attachment %s, %dx%d/%d*%d, 0x%s\n", Integer.toHexString(att.getId()),
 						att.getWidth(), att.getHeight(), att.getChannels(), att.getBitsPerChannel(),
-						Integer.toHexString(att.getInternalFormat()));
+						Integer.toHexString(att.getInternalFormat())));
 			}
 
-			info += "|\n";
+			info.append("|\n");
 
-			for (final GLTexture att : depthBuffers) {
-				info += String.format("+-\tDepth Attachment %s, %dx%d/%d*%d, 0x%s\n", Integer.toHexString(att.getId()),
+			for (final GLTexture att : depthBuffers.values()) {
+				info.append(String.format("+-\tDepth Attachment %s, %dx%d/%d*%d, 0x%s\n", Integer.toHexString(att.getId()),
 						att.getWidth(), att.getHeight(), att.getChannels(), att.getBitsPerChannel(),
-						Integer.toHexString(att.getInternalFormat()));
+						Integer.toHexString(att.getInternalFormat())));
 			}
 		}
-		return info;
+		return info.toString();
 	}
 
 	public int getId() {
@@ -352,7 +331,7 @@ public class GLFramebuffer {
 		return GL.GL_COLOR_ATTACHMENT0 + backingTextures.size() - 1;
 	}
 
-	private int getCurrentFramebufferColorAttachment(final List<GLTexture> base) {
-		return GL.GL_COLOR_ATTACHMENT0 + base.size() - 1;
+	private int getCurrentFramebufferColorAttachment(final int base) {
+		return GL.GL_COLOR_ATTACHMENT0 + base - 1;
 	}
 }

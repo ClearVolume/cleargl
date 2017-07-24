@@ -159,6 +159,8 @@ public class GLTexture implements GLInterface, GLCloseable {
 				case 1:
 					mTextureOpenGLInternalFormat = GL.GL_R8;
 					break;
+				case 2:
+					mTextureOpenGLInternalFormat = GL.GL_RG8;
 				case 3:
 					mTextureOpenGLInternalFormat = GL.GL_RGB8;
 					break;
