@@ -1,12 +1,10 @@
 package cleargl;
 
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 
 /**
@@ -53,7 +51,7 @@ public class GLFramebuffer {
 			return;
 		}
 
-		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, getId());
+		gl.getGL().glBindFramebuffer(GL4.GL_FRAMEBUFFER, getId());
 
 		backingTextures.put(name, new GLTexture(
 				gl,
@@ -61,12 +59,12 @@ public class GLFramebuffer {
 				channelCount,
 				width, height, 1, true, 1, channelDepth));
 
-		gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
+		gl.glFramebufferTexture(GL4.GL_FRAMEBUFFER,
 				getCurrentFramebufferColorAttachment(),
 				backingTextures.get(name).getId(),
 				0);
 
-		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
+		gl.getGL().glBindFramebuffer(GL4.GL_FRAMEBUFFER, 0);
 	}
 
 	public void addFloatRBuffer(final GL4 gl, final String name, final int channelDepth) {
@@ -90,7 +88,7 @@ public class GLFramebuffer {
 			return;
 		}
 
-		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, getId());
+		gl.getGL().glBindFramebuffer(GL4.GL_FRAMEBUFFER, getId());
 
 		backingTextures.put(name, new GLTexture(
 				gl,
@@ -98,12 +96,12 @@ public class GLFramebuffer {
 				channelCount,
 				width, height, 1, true, 1, channelDepth));
 
-		gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
+		gl.glFramebufferTexture(GL4.GL_FRAMEBUFFER,
 				getCurrentFramebufferColorAttachment(),
 				backingTextures.get(name).getId(),
 				0);
 
-		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
+		gl.getGL().glBindFramebuffer(GL4.GL_FRAMEBUFFER, 0);
 	}
 
 
@@ -132,7 +130,7 @@ public class GLFramebuffer {
 			return;
 		}
 
-		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, getId());
+		gl.getGL().glBindFramebuffer(GL4.GL_FRAMEBUFFER, getId());
 
 		depthBuffers.put(name, new GLTexture(
 				gl,
@@ -140,12 +138,12 @@ public class GLFramebuffer {
 				-1,
 				width / scale, height / scale, 1, true, 1, depth));
 
-		gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
-				GL.GL_DEPTH_ATTACHMENT,
+		gl.glFramebufferTexture(GL4.GL_FRAMEBUFFER,
+				GL4.GL_DEPTH_ATTACHMENT,
 				depthBuffers.get(name).getId(),
 				0);
 
-		gl.getGL().glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
+		gl.getGL().glBindFramebuffer(GL4.GL_FRAMEBUFFER, 0);
 	}
 
 	public boolean checkDrawBuffers(final GL4 gl) {
@@ -153,10 +151,10 @@ public class GLFramebuffer {
 			return false;
 		}
 
-		gl.getGL4().glBindFramebuffer(GL.GL_FRAMEBUFFER, getId());
-		final int status = gl.getGL().getGL4().glCheckFramebufferStatus(GL.GL_FRAMEBUFFER);
+		gl.getGL4().glBindFramebuffer(GL4.GL_FRAMEBUFFER, getId());
+		final int status = gl.glCheckFramebufferStatus(GL4.GL_FRAMEBUFFER);
 
-		if (status != GL.GL_FRAMEBUFFER_COMPLETE) {
+		if (status != GL4.GL_FRAMEBUFFER_COMPLETE) {
 			System.err.println("Framebuffer " + framebufferId[0] + " is incomplete, " + Integer.toHexString(status));
 			return false;
 		}
@@ -167,29 +165,29 @@ public class GLFramebuffer {
 	public void setDrawBuffers(final GL4 gl) {
 		final int attachments[] = new int[backingTextures.size()];
 		for (int i = 0; i < backingTextures.size(); i++) {
-			attachments[i] = GL.GL_COLOR_ATTACHMENT0 + i;
+			attachments[i] = GL4.GL_COLOR_ATTACHMENT0 + i;
 		}
 
-		gl.getGL().getGL4().glBindFramebuffer(GL.GL_DRAW_FRAMEBUFFER, getId());
-		gl.getGL().getGL4().glDrawBuffers(backingTextures.size(), IntBuffer.wrap(attachments));
+		gl.glBindFramebuffer(GL4.GL_DRAW_FRAMEBUFFER, getId());
+		gl.glDrawBuffers(backingTextures.size(), attachments, 0);
 	}
 
 	public void setReadBuffers(final GL4 gl) {
-		gl.getGL().getGL4().glBindFramebuffer(GL.GL_READ_FRAMEBUFFER, getId());
+		gl.glBindFramebuffer(GL4.GL_READ_FRAMEBUFFER, getId());
 	}
 
 	public int bindTexturesToUnitsWithOffset(final GL4 gl, final int offset) {
 		int totalUnits = 0;
 
 		for(Map.Entry<String, GLTexture> entry: backingTextures.entrySet()) {
-			gl.glActiveTexture(GL.GL_TEXTURE0 + offset + totalUnits);
-			gl.glBindTexture(GL.GL_TEXTURE_2D, entry.getValue().getId());
+			gl.glActiveTexture(GL4.GL_TEXTURE0 + offset + totalUnits);
+			gl.glBindTexture(GL4.GL_TEXTURE_2D, entry.getValue().getId());
 			totalUnits++;
 		}
 
 		for(Map.Entry<String, GLTexture> entry: depthBuffers.entrySet()) {
-			gl.glActiveTexture(GL.GL_TEXTURE0 + offset + totalUnits);
-			gl.glBindTexture(GL.GL_TEXTURE_2D, entry.getValue().getId());
+			gl.glActiveTexture(GL4.GL_TEXTURE0 + offset + totalUnits);
+			gl.glBindTexture(GL4.GL_TEXTURE_2D, entry.getValue().getId());
 			totalUnits++;
 		}
 
@@ -207,15 +205,15 @@ public class GLFramebuffer {
 	}
 
 	public void revertToDefaultFramebuffer(final GL4 gl) {
-		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
+		gl.glBindFramebuffer(GL4.GL_FRAMEBUFFER, 0);
 	}
 
 	public void resize(final GL4 gl, final int newWidth, final int newHeight) {
 		final int oldIds[] = framebufferId.clone();
 
-		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
+		gl.glBindFramebuffer(GL4.GL_FRAMEBUFFER, 0);
 		gl.glGenFramebuffers(1, framebufferId, 0);
-		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, getId());
+		gl.glBindFramebuffer(GL4.GL_FRAMEBUFFER, getId());
 
 		final LinkedHashMap<String, GLTexture> newBackingTextures = new LinkedHashMap<>();
 		final LinkedHashMap<String, GLTexture> newDepthBuffers = new LinkedHashMap<>();
@@ -231,7 +229,7 @@ public class GLFramebuffer {
 			newBackingTextures.put(entry.getKey(), newT);
 			entry.getValue().close();
 
-			gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
+			gl.glFramebufferTexture(GL4.GL_FRAMEBUFFER,
 					getCurrentFramebufferColorAttachment(newBackingTextures.size()),
 					newBackingTextures.get(entry.getKey()).getId(),
 					0);
@@ -247,8 +245,8 @@ public class GLFramebuffer {
 			newDepthBuffers.put(entry.getKey(), newT);
 			entry.getValue().close();
 
-			gl.getGL().getGL4().glFramebufferTexture(GL.GL_FRAMEBUFFER,
-					GL.GL_DEPTH_ATTACHMENT,
+			gl.glFramebufferTexture(GL4.GL_FRAMEBUFFER,
+					GL4.GL_DEPTH_ATTACHMENT,
 					newDepthBuffers.get(entry.getKey()).getId(),
 					0);
 		}
@@ -263,12 +261,12 @@ public class GLFramebuffer {
 		height = newHeight;
 
 		gl.glDeleteFramebuffers(1, oldIds, 0);
-		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
+		gl.glBindFramebuffer(GL4.GL_FRAMEBUFFER, 0);
 	}
 
 	public void destroy(GL4 gl) {
 		gl.glDeleteFramebuffers(1, framebufferId, 0);
-		gl.glBindFramebuffer(GL.GL_FRAMEBUFFER, 0);
+		gl.glBindFramebuffer(GL4.GL_FRAMEBUFFER, 0);
 
 		for (GLTexture bt : backingTextures.values()) {
 			bt.delete();
@@ -328,10 +326,10 @@ public class GLFramebuffer {
 	}
 
 	private int getCurrentFramebufferColorAttachment() {
-		return GL.GL_COLOR_ATTACHMENT0 + backingTextures.size() - 1;
+		return GL4.GL_COLOR_ATTACHMENT0 + backingTextures.size() - 1;
 	}
 
 	private int getCurrentFramebufferColorAttachment(final int base) {
-		return GL.GL_COLOR_ATTACHMENT0 + base - 1;
+		return GL4.GL_COLOR_ATTACHMENT0 + base - 1;
 	}
 }
