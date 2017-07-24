@@ -145,6 +145,9 @@ public class GLTexture implements GLInterface, GLCloseable {
 				case 1:
 					mTextureOpenGLInternalFormat = GL.GL_R8;
 					break;
+				case 2:
+					mTextureOpenGLInternalFormat = GL.GL_RG8;
+					break;
 				case 3:
 					mTextureOpenGLInternalFormat = GL.GL_RGB8;
 					break;
@@ -162,6 +165,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 					break;
 				case 2:
 					mTextureOpenGLInternalFormat = GL.GL_RG8;
+					break;
 				case 3:
 					mTextureOpenGLInternalFormat = GL.GL_RGB8;
 					break;
@@ -185,9 +189,22 @@ public class GLTexture implements GLInterface, GLCloseable {
 					: GL.GL_R32F;
 			mBytesPerChannel = 4;
 		} else if (mType == GLTypeEnum.UnsignedInt) {
-			mTextureOpenGLInternalFormat = mNumberOfChannels == 4 ? GL.GL_RGBA32F
-					: GL.GL_R32F;
-			mBytesPerChannel = 4;
+			switch(mNumberOfChannels) {
+				case 1:
+					mTextureOpenGLInternalFormat = GL4.GL_R16UI;
+					break;
+				case 2:
+					mTextureOpenGLInternalFormat = GL4.GL_RG16UI;
+					break;
+				case 3:
+					mTextureOpenGLInternalFormat = GL4.GL_RGB16UI;
+					break;
+				case 4:
+				default:
+					mTextureOpenGLInternalFormat = GL4.GL_RGBA16UI;
+			}
+
+			mBytesPerChannel = 2;
 		} else if (mType == GLTypeEnum.Float) {
 			switch (mNumberOfChannels) {
 				case 1:
@@ -252,11 +269,20 @@ public class GLTexture implements GLInterface, GLCloseable {
 				GL.GL_TEXTURE_WRAP_T,
 				GL.GL_REPEAT);
 
-		mGL.glTexStorage2D(mTextureTarget,
-				mMipMapLevels,
-				mTextureOpenGLInternalFormat,
-				mTextureWidth,
-				mTextureHeight);
+		if (mTextureDepth == 1) {
+			mGL.glTexStorage2D(mTextureTarget,
+					mMipMapLevels,
+					mTextureOpenGLInternalFormat,
+					mTextureWidth,
+					mTextureHeight);
+		} else {
+			mGL.glTexStorage3D(mTextureTarget,
+					1,
+					mTextureOpenGLInternalFormat,
+					mTextureWidth,
+					mTextureHeight,
+					mTextureDepth);
+		}
 	}
 
 	public GLTexture(final GL4 pGL,
@@ -373,15 +399,30 @@ public class GLTexture implements GLInterface, GLCloseable {
 		bind();
 		pBuffer.rewind();
 
-		mGL.glTexSubImage2D(mTextureTarget,
-				pLODLevel,
-				0,
-				0,
-				mTextureWidth >> pLODLevel,
-				mTextureHeight >> pLODLevel,
-				mTextureOpenGLFormat,
-				mTextureOpenGLDataType,
-				pBuffer);
+		if(mTextureDepth == 1) {
+			mGL.glTexSubImage2D(mTextureTarget,
+					pLODLevel,
+					0,
+					0,
+					mTextureWidth >> pLODLevel,
+					mTextureHeight >> pLODLevel,
+					mTextureOpenGLFormat,
+					mTextureOpenGLDataType,
+					pBuffer);
+		} else {
+			mGL.glTexSubImage3D(mTextureTarget,
+					pLODLevel,
+					0,
+					0,
+					0,
+					mTextureWidth >> pLODLevel,
+					mTextureHeight >> pLODLevel,
+					mTextureDepth >> pLODLevel,
+					mTextureOpenGLFormat,
+					mTextureOpenGLDataType,
+					pBuffer);
+		}
+
 		if (pAutoGenerateMipMaps && mMipMapLevels > 1)
 			updateMipMaps();
 	}
