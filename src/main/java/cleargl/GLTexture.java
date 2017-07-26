@@ -13,8 +13,6 @@ import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.Hashtable;
 import javax.imageio.ImageIO;
-import com.jogamp.opengl.GL;
-import com.jogamp.opengl.GL2ES2;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLException;
 
@@ -132,63 +130,81 @@ public class GLTexture implements GLInterface, GLCloseable {
 		mTextureDepth = pTextureDepth;
 		mMipMapLevels = pMipMapLevels;
 
-		mTextureTarget = mTextureDepth == 1 ? GL.GL_TEXTURE_2D
-				: GL2ES2.GL_TEXTURE_3D;
-		mTextureOpenGLFormat = mNumberOfChannels == 4 ? GL.GL_RGBA// GL_BGRA
-				: GL2ES2.GL_RED;
+		mTextureTarget = mTextureDepth == 1 ? GL4.GL_TEXTURE_2D
+				: GL4.GL_TEXTURE_3D;
+		switch(mNumberOfChannels) {
+			case 1:
+				if(mType == GLTypeEnum.UnsignedShort) {
+					mTextureOpenGLFormat = GL4.GL_RED_INTEGER;
+				} else {
+					mTextureOpenGLFormat = GL4.GL_RED;
+				}
+				break;
+			case 2:
+				if(mType == GLTypeEnum.UnsignedByte) {
+					mTextureOpenGLFormat = GL4.GL_RG_INTEGER;
+				} else {
+					mTextureOpenGLFormat = GL4.GL_RG;
+				}
+				break;
+			case 3:
+				if(mType == GLTypeEnum.UnsignedByte) {
+					mTextureOpenGLFormat = GL4.GL_RGB_INTEGER;
+				} else {
+					mTextureOpenGLFormat = GL4.GL_RGB;
+				}
+				break;
+			case 4:
+			default:
+				if(mType == GLTypeEnum.UnsignedByte) {
+					mTextureOpenGLFormat = GL4.GL_RGBA_INTEGER;
+				} else {
+					mTextureOpenGLFormat = GL4.GL_RGBA;
+				}
+		}
 
 		mTextureOpenGLDataType = mType.glType();
 		if (mType == GLTypeEnum.Byte) {
-			mTextureOpenGLInternalFormat = mNumberOfChannels == 4 ? GL.GL_RGBA8
-					: GL.GL_R8;
 			switch (mNumberOfChannels) {
 				case 1:
-					mTextureOpenGLInternalFormat = GL.GL_R8;
+					mTextureOpenGLInternalFormat = GL4.GL_R8;
 					break;
 				case 2:
-					mTextureOpenGLInternalFormat = GL.GL_RG8;
+					mTextureOpenGLInternalFormat = GL4.GL_RG8;
 					break;
 				case 3:
-					mTextureOpenGLInternalFormat = GL.GL_RGB8;
+					mTextureOpenGLInternalFormat = GL4.GL_RGB8;
 					break;
 				case 4:
-					mTextureOpenGLInternalFormat = GL.GL_RGBA8;
+					mTextureOpenGLInternalFormat = GL4.GL_RGBA8;
 					break;
 				default:
-					mTextureOpenGLInternalFormat = GL.GL_RGBA8;
+					mTextureOpenGLInternalFormat = GL4.GL_RGBA8;
 			}
 			mBytesPerChannel = 1;
 		} else if (mType == GLTypeEnum.UnsignedByte) {
 			switch (mNumberOfChannels) {
 				case 1:
-					mTextureOpenGLInternalFormat = GL.GL_R8;
+					mTextureOpenGLInternalFormat = GL4.GL_R8;
 					break;
 				case 2:
-					mTextureOpenGLInternalFormat = GL.GL_RG8;
+					mTextureOpenGLInternalFormat = GL4.GL_RG8;
 					break;
 				case 3:
-					mTextureOpenGLInternalFormat = GL.GL_RGB8;
+					mTextureOpenGLInternalFormat = GL4.GL_RGB8;
 					break;
 				case 4:
-					mTextureOpenGLInternalFormat = GL.GL_RGBA8;
+					mTextureOpenGLInternalFormat = GL4.GL_RGBA8;
 					break;
 				default:
-					mTextureOpenGLInternalFormat = GL.GL_RGBA8;
+					mTextureOpenGLInternalFormat = GL4.GL_RGBA8;
 			}
 			mBytesPerChannel = 1;
 		} else if (mType == GLTypeEnum.Short) {
-			mTextureOpenGLInternalFormat = mNumberOfChannels == 4 ? GL.GL_RGBA16F
-					: GL.GL_R16F;
+			mTextureOpenGLInternalFormat = mNumberOfChannels == 4 ? GL4.GL_RGBA16F
+					: GL4.GL_R16F;
 			mBytesPerChannel = 2;
 		} else if (mType == GLTypeEnum.UnsignedShort) {
-			mTextureOpenGLInternalFormat = mNumberOfChannels == 4 ? GL.GL_RGBA16F
-					: GL.GL_R16F;
-			mBytesPerChannel = 2;
-		} else if (mType == GLTypeEnum.Int) {
-			mTextureOpenGLInternalFormat = mNumberOfChannels == 4 ? GL.GL_RGBA32F
-					: GL.GL_R32F;
-			mBytesPerChannel = 4;
-		} else if (mType == GLTypeEnum.UnsignedInt) {
 			switch(mNumberOfChannels) {
 				case 1:
 					mTextureOpenGLInternalFormat = GL4.GL_R16UI;
@@ -205,44 +221,65 @@ public class GLTexture implements GLInterface, GLCloseable {
 			}
 
 			mBytesPerChannel = 2;
+		} else if (mType == GLTypeEnum.Int) {
+			mTextureOpenGLInternalFormat = mNumberOfChannels == 4 ? GL4.GL_RGBA32F
+					: GL4.GL_R32F;
+			mBytesPerChannel = 4;
+		} else if (mType == GLTypeEnum.UnsignedInt) {
+			switch(mNumberOfChannels) {
+				case 1:
+					mTextureOpenGLInternalFormat = GL4.GL_R32UI;
+					break;
+				case 2:
+					mTextureOpenGLInternalFormat = GL4.GL_RG32UI;
+					break;
+				case 3:
+					mTextureOpenGLInternalFormat = GL4.GL_RGB32UI;
+					break;
+				case 4:
+				default:
+					mTextureOpenGLInternalFormat = GL4.GL_RGBA32UI;
+			}
+
+			mBytesPerChannel = 4;
 		} else if (mType == GLTypeEnum.Float) {
 			switch (mNumberOfChannels) {
 				case 1:
-					mTextureOpenGLInternalFormat = GL.GL_R32F;
+					mTextureOpenGLInternalFormat = GL4.GL_R32F;
 					mBytesPerChannel = 4;
 					break;
 				case 2:
 					if(precision == 16) {
-						mTextureOpenGLInternalFormat = GL.GL_RG16F;
+						mTextureOpenGLInternalFormat = GL4.GL_RG16F;
 						mBytesPerChannel = 4;
 					} else if(precision == 32) {
-						mTextureOpenGLInternalFormat = GL.GL_RG32F;
+						mTextureOpenGLInternalFormat = GL4.GL_RG32F;
 						mBytesPerChannel = 4;
 					}
 				case 3:
 					if (precision == 16) {
-						mTextureOpenGLInternalFormat = GL.GL_RGB16F;
+						mTextureOpenGLInternalFormat = GL4.GL_RGB16F;
 						mBytesPerChannel = 4;
 					} else if (precision == 32) {
-						mTextureOpenGLInternalFormat = GL.GL_RGB32F;
+						mTextureOpenGLInternalFormat = GL4.GL_RGB32F;
 						mBytesPerChannel = 4;
 					}
 					break;
 				case 4:
 					if (precision == 16) {
-						mTextureOpenGLInternalFormat = GL.GL_RGBA16F;
+						mTextureOpenGLInternalFormat = GL4.GL_RGBA16F;
 						mBytesPerChannel = 4;
 					} else {
-						mTextureOpenGLInternalFormat = GL.GL_RGBA32F;
+						mTextureOpenGLInternalFormat = GL4.GL_RGBA32F;
 						mBytesPerChannel = 4;
 					}
 					break;
 				case -1:
 					if (precision == 24) {
-						mTextureOpenGLInternalFormat = GL.GL_DEPTH_COMPONENT24;
+						mTextureOpenGLInternalFormat = GL4.GL_DEPTH_COMPONENT24;
 						mBytesPerChannel = 3;
 					} else {
-						mTextureOpenGLInternalFormat = GL.GL_DEPTH_COMPONENT32;
+						mTextureOpenGLInternalFormat = GL4.GL_DEPTH_COMPONENT32;
 						mBytesPerChannel = 4;
 					}
 					break;
@@ -252,30 +289,47 @@ public class GLTexture implements GLInterface, GLCloseable {
 
 		mGL.glGenTextures(1, mTextureId, 0);
 		bind();
-		mGL.glTexParameterf(mTextureTarget,
-				GL.GL_TEXTURE_MAG_FILTER,
-				pLinearInterpolation ? GL.GL_LINEAR
-						: GL.GL_NEAREST);
-		mGL.glTexParameterf(mTextureTarget,
-				GL.GL_TEXTURE_MIN_FILTER,
-				mMipMapLevels > 1 ? (pLinearInterpolation ? GL.GL_LINEAR_MIPMAP_LINEAR
-						: GL.GL_NEAREST_MIPMAP_NEAREST)
-						: (pLinearInterpolation ? GL.GL_LINEAR
-								: GL.GL_NEAREST));
-		mGL.glTexParameterf(mTextureTarget,
-				GL.GL_TEXTURE_WRAP_S,
-				GL.GL_REPEAT);
-		mGL.glTexParameterf(mTextureTarget,
-				GL.GL_TEXTURE_WRAP_T,
-				GL.GL_REPEAT);
 
-		if (mTextureDepth == 1) {
+		if(mTextureTarget == GL4.GL_TEXTURE_2D) {
+			mGL.glTexParameteri(mTextureTarget,
+					GL4.GL_TEXTURE_MAG_FILTER,
+					pLinearInterpolation ? GL4.GL_LINEAR
+							: GL4.GL_NEAREST);
+			mGL.glTexParameteri(mTextureTarget,
+					GL4.GL_TEXTURE_MIN_FILTER,
+					mMipMapLevels > 1 ? (pLinearInterpolation ? GL4.GL_LINEAR_MIPMAP_LINEAR
+							: GL4.GL_NEAREST_MIPMAP_NEAREST)
+							: (pLinearInterpolation ? GL4.GL_LINEAR
+							: GL4.GL_NEAREST));
+			mGL.glTexParameteri(mTextureTarget,
+					GL4.GL_TEXTURE_WRAP_S,
+					GL4.GL_REPEAT);
+			mGL.glTexParameteri(mTextureTarget,
+					GL4.GL_TEXTURE_WRAP_T,
+					GL4.GL_REPEAT);
+
 			mGL.glTexStorage2D(mTextureTarget,
 					mMipMapLevels,
 					mTextureOpenGLInternalFormat,
 					mTextureWidth,
 					mTextureHeight);
 		} else {
+			mGL.glTexParameteri(mTextureTarget,
+					GL4.GL_TEXTURE_MIN_FILTER,
+					GL4.GL_NEAREST);
+			mGL.glTexParameteri(mTextureTarget,
+					GL4.GL_TEXTURE_MAG_FILTER,
+					GL4.GL_NEAREST);
+			mGL.glTexParameteri(mTextureTarget,
+					GL4.GL_TEXTURE_WRAP_S,
+					GL4.GL_CLAMP_TO_EDGE);
+			mGL.glTexParameteri(mTextureTarget,
+					GL4.GL_TEXTURE_WRAP_T,
+					GL4.GL_CLAMP_TO_EDGE);
+			mGL.glTexParameteri(mTextureTarget,
+					GL4.GL_TEXTURE_WRAP_R,
+					GL4.GL_CLAMP_TO_EDGE);
+
 			mGL.glTexStorage3D(mTextureTarget,
 					1,
 					mTextureOpenGLInternalFormat,
@@ -328,28 +382,29 @@ public class GLTexture implements GLInterface, GLCloseable {
 	}
 
 	public void bind() {
-		mGL.glActiveTexture(GL.GL_TEXTURE0);
+		mGL.glActiveTexture(GL4.GL_TEXTURE0);
 		mGL.glBindTexture(mTextureTarget, getId());
 	}
 
 	public void bind(final int pTextureUnit) {
-		mGL.glActiveTexture(GL.GL_TEXTURE0 + pTextureUnit);
+		mGL.glActiveTexture(GL4.GL_TEXTURE0 + pTextureUnit);
 		mGL.glBindTexture(mTextureTarget, getId());
 	}
 
 	public void setClamp(final boolean clampS, final boolean clampT) {
 		mGL.glTexParameterf(mTextureTarget,
-				GL.GL_TEXTURE_WRAP_S,
-				clampS ? GL.GL_CLAMP_TO_EDGE : GL.GL_REPEAT);
+				GL4.GL_TEXTURE_WRAP_S,
+				clampS ? GL4.GL_CLAMP_TO_EDGE : GL4.GL_REPEAT);
 		mGL.glTexParameterf(mTextureTarget,
-				GL.GL_TEXTURE_WRAP_T,
-				clampT ? GL.GL_CLAMP_TO_EDGE : GL.GL_REPEAT);
+				GL4.GL_TEXTURE_WRAP_T,
+				clampT ? GL4.GL_CLAMP_TO_EDGE : GL4.GL_REPEAT);
 	}
 
 	public void clear() {
 		bind();
 
 		final int lNeededSize = mTextureWidth * mTextureHeight
+                * mTextureDepth
 				* mBytesPerChannel
 				* mNumberOfChannels;
 
@@ -357,15 +412,29 @@ public class GLTexture implements GLInterface, GLCloseable {
 		final Buffer lEmptyBuffer = ByteBuffer.allocateDirect(lNeededSize)
 				.order(ByteOrder.nativeOrder());
 
-		mGL.glTexSubImage2D(mTextureTarget,
-				0,
-				0,
-				0,
-				mTextureWidth,
-				mTextureHeight,
-				mTextureOpenGLFormat,
-				mTextureOpenGLDataType,
-				lEmptyBuffer);
+		if(mTextureTarget == GL4.GL_TEXTURE_2D) {
+			mGL.glTexSubImage2D(mTextureTarget,
+					0,
+					0,
+					0,
+					mTextureWidth,
+					mTextureHeight,
+					mTextureOpenGLFormat,
+					mTextureOpenGLDataType,
+					lEmptyBuffer);
+		} else {
+			mGL.glTexSubImage3D(mTextureTarget,
+					0,
+					0,
+					0,
+					0,
+					mTextureWidth,
+					mTextureHeight,
+					mTextureDepth,
+					mTextureOpenGLFormat,
+					mTextureOpenGLDataType,
+					lEmptyBuffer);
+		}
 		if (mMipMapLevels > 1)
 			updateMipMaps();
 
@@ -399,7 +468,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 		bind();
 		pBuffer.rewind();
 
-		if(mTextureDepth == 1) {
+		if(mTextureTarget == GL4.GL_TEXTURE_2D) {
 			mGL.glTexSubImage2D(mTextureTarget,
 					pLODLevel,
 					0,
@@ -423,8 +492,9 @@ public class GLTexture implements GLInterface, GLCloseable {
 					pBuffer);
 		}
 
-		if (pAutoGenerateMipMaps && mMipMapLevels > 1)
+		if (pAutoGenerateMipMaps && mMipMapLevels > 1 && mTextureTarget == GL4.GL_TEXTURE_2D) {
 			updateMipMaps();
+		}
 	}
 
 	public void copyFrom(final Buffer pBuffer) {
@@ -473,8 +543,8 @@ public class GLTexture implements GLInterface, GLCloseable {
 	}
 
 	@Override
-	public GL getGL() {
-		return mGL.getGL();
+	public GL4 getGL() {
+		return mGL.getGL().getGL4();
 	}
 
 	@Override
@@ -549,12 +619,9 @@ public class GLTexture implements GLInterface, GLCloseable {
 		} else {
 			try {
 				fis = new FileInputStream(filename);
-				channel = fis.getChannel();
-				final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-				channel.transferTo(0, channel.size(), Channels.newChannel(byteArrayOutputStream));
-				bi = ImageIO.read(new ByteArrayInputStream(byteArrayOutputStream.toByteArray()));
+				bi = ImageIO.read(fis);
+				fis.close();
 
-				channel.close();
 			} catch (final Exception e) {
 				System.err.println("GLTexture: could not read image from " + filename + ".");
 				return null;
@@ -581,9 +648,16 @@ public class GLTexture implements GLInterface, GLCloseable {
 			levels = 1;
 		}
 
+		int channelCount = bi.getColorModel().getNumComponents();
+
+		// work around a Java2D issue
+		if(channelCount == 3 && filename.substring(filename.lastIndexOf(".")).toLowerCase().endsWith("png")) {
+			channelCount = 4;
+		}
+
 		tex = new GLTexture(gl,
 				nativeTypeEnumFromBufferedImage(bi),
-				bi.getColorModel().getNumComponents(),
+				channelCount,
 				texWidth, texHeight, 1,
 				linearInterpolation,
 				levels);
