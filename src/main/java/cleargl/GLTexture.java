@@ -141,14 +141,14 @@ public class GLTexture implements GLInterface, GLCloseable {
 				}
 				break;
 			case 2:
-				if(mType == GLTypeEnum.UnsignedByte) {
+				if(mType == GLTypeEnum.UnsignedShort) {
 					mTextureOpenGLFormat = GL4.GL_RG_INTEGER;
 				} else {
 					mTextureOpenGLFormat = GL4.GL_RG;
 				}
 				break;
 			case 3:
-				if(mType == GLTypeEnum.UnsignedByte) {
+				if(mType == GLTypeEnum.UnsignedShort) {
 					mTextureOpenGLFormat = GL4.GL_RGB_INTEGER;
 				} else {
 					mTextureOpenGLFormat = GL4.GL_RGB;
@@ -156,7 +156,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 				break;
 			case 4:
 			default:
-				if(mType == GLTypeEnum.UnsignedByte) {
+				if(mType == GLTypeEnum.UnsignedShort) {
 					mTextureOpenGLFormat = GL4.GL_RGBA_INTEGER;
 				} else {
 					mTextureOpenGLFormat = GL4.GL_RGBA;
