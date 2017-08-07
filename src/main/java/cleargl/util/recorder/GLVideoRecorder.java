@@ -95,7 +95,8 @@ public class GLVideoRecorder {
 							System.out.println("Recorder requests display now!");
 							pDisplayRequestRunnable.run();
 						}
-						final int lTargetPeriodInMilliSeconds = (int) (1000 / getTargetFrameRate());
+						final int lTargetPeriodInMilliSeconds = (int) (1000
+								/ getTargetFrameRate());
 						try {
 							Thread.sleep(lTargetPeriodInMilliSeconds);
 						} catch (final InterruptedException e) {
@@ -104,7 +105,8 @@ public class GLVideoRecorder {
 				}
 			};
 			final Thread lDisplayRequestDeamonThread = new Thread(lDisplayRequestRunnable,
-					GLVideoRecorder.class.getSimpleName() + ".DisplayRequestThread");
+					GLVideoRecorder.class.getSimpleName()
+							+ ".DisplayRequestThread");
 			lDisplayRequestDeamonThread.setDaemon(true);
 			lDisplayRequestDeamonThread.setPriority(Thread.MIN_PRIORITY);
 			lDisplayRequestDeamonThread.start();
@@ -248,7 +250,10 @@ public class GLVideoRecorder {
 
 	private boolean tooSoon() {
 		final long lCurrentTimePoint = System.nanoTime();
-		final double lElpasedTimeInSeconds = 0.001 * 0.001 * 0.001 * (abs(lCurrentTimePoint - mLastImageTimePoint));
+		final double lElpasedTimeInSeconds = 0.001 * 0.001
+				* 0.001
+				* (abs(lCurrentTimePoint
+						- mLastImageTimePoint));
 		final double lTargetPeriodInSeconds = 1 / getTargetFrameRate();
 		if (lElpasedTimeInSeconds < lTargetPeriodInSeconds) {
 			// System.out.println("too soon!");
@@ -272,9 +277,11 @@ public class GLVideoRecorder {
 	private void writeDrawableToFile(GLAutoDrawable pDrawable,
 			final File pOutputFile,
 			final boolean pAsynchronous) {
-		final int lTargetPeriodInMiliSeconds = (int) (1000 / getTargetFrameRate());
+		final int lTargetPeriodInMiliSeconds = (int) (1000
+				/ getTargetFrameRate());
 		try {
-			final boolean lIsLocked = mReadPixelsLock.tryLock(lTargetPeriodInMiliSeconds / 2,
+			final boolean lIsLocked = mReadPixelsLock.tryLock(lTargetPeriodInMiliSeconds
+					/ 2,
 					TimeUnit.MILLISECONDS);
 
 			if (lIsLocked) {
@@ -282,10 +289,9 @@ public class GLVideoRecorder {
 				final int lHeight = pDrawable.getSurfaceHeight();
 
 				ByteBuffer lByteBuffer = mPixelRGBBufferQueue.poll();
-				if (lByteBuffer == null || lByteBuffer.capacity() != lWidth * lHeight
-						* 3) {
-					lByteBuffer = ByteBuffer.allocateDirect(lWidth * lHeight
-							* 3)
+				if (lByteBuffer == null
+						|| lByteBuffer.capacity() != lWidth * lHeight * 3) {
+					lByteBuffer = ByteBuffer.allocateDirect(lWidth * lHeight * 3)
 							.order(ByteOrder.nativeOrder());
 				}
 
@@ -361,7 +367,7 @@ public class GLVideoRecorder {
 			// OpenGL.
 
 			int p = pWidth * pHeight * 3; // Points to first byte (red) in each
-											// row.
+			// row.
 			int q; // Index into ByteBuffer
 			int i = 0; // Index into target int[]
 			final int w3 = pWidth * 3; // Number of bytes in each row
@@ -385,7 +391,8 @@ public class GLVideoRecorder {
 
 			BufferedImage lBufferedImage = mPixelRGBBufferedImageThreadLocal.get();
 
-			if (lBufferedImage == null || lBufferedImage.getWidth() != pWidth
+			if (lBufferedImage == null
+					|| lBufferedImage.getWidth() != pWidth
 					|| lBufferedImage.getHeight() != pHeight) {
 				lBufferedImage = new BufferedImage(pWidth,
 						pHeight,
