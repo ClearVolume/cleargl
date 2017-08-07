@@ -18,6 +18,7 @@ import com.jogamp.opengl.GL2ES2;
 import com.jogamp.opengl.GL4;
 import com.jogamp.opengl.GLException;
 
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class GLTexture implements GLInterface, GLCloseable {
 
 	private final GL4 mGL;
@@ -159,6 +160,8 @@ public class GLTexture implements GLInterface, GLCloseable {
 				case 1:
 					mTextureOpenGLInternalFormat = GL.GL_R8;
 					break;
+				case 2:
+					mTextureOpenGLInternalFormat = GL.GL_RG8;
 				case 3:
 					mTextureOpenGLInternalFormat = GL.GL_RGB8;
 					break;
@@ -191,6 +194,14 @@ public class GLTexture implements GLInterface, GLCloseable {
 					mTextureOpenGLInternalFormat = GL.GL_R32F;
 					mBytesPerChannel = 4;
 					break;
+				case 2:
+					if(precision == 16) {
+						mTextureOpenGLInternalFormat = GL.GL_RG16F;
+						mBytesPerChannel = 4;
+					} else if(precision == 32) {
+						mTextureOpenGLInternalFormat = GL.GL_RG32F;
+						mBytesPerChannel = 4;
+					}
 				case 3:
 					if (precision == 16) {
 						mTextureOpenGLInternalFormat = GL.GL_RGB16F;
@@ -458,7 +469,12 @@ public class GLTexture implements GLInterface, GLCloseable {
 	}
 
 	public static GLTexture loadFromFile(final GL4 gl, final String filename, final boolean linearInterpolation,
-			final int mipmapLevels) {
+										 final int mipmapLevels) {
+		return loadFromFile(gl, filename, linearInterpolation, true, mipmapLevels);
+	}
+
+	public static GLTexture loadFromFile(final GL4 gl, final String filename, final boolean linearInterpolation,
+			final boolean generateMipmaps, final int maxMipmapLevels) {
 		BufferedImage bi;
 		BufferedImage flippedImage;
 		final ByteBuffer imageData;
@@ -518,12 +534,18 @@ public class GLTexture implements GLInterface, GLCloseable {
 			texHeight *= 2;
 		}
 
+		int levels = Math.min(maxMipmapLevels, 1 + (int)Math.floor(Math.log(Math.max(texWidth, texHeight)/Math.log(2.0))));
+
+		if(!generateMipmaps) {
+			levels = 1;
+		}
+
 		tex = new GLTexture(gl,
 				nativeTypeEnumFromBufferedImage(bi),
 				bi.getColorModel().getNumComponents(),
 				texWidth, texHeight, 1,
 				linearInterpolation,
-				mipmapLevels);
+				levels);
 
 		tex.clear();
 		tex.copyFrom(imageData);
