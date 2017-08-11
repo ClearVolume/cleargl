@@ -1,4 +1,4 @@
-# ClearGL 2.0.0-SNAPSHOT
+# ClearGL 2.1.0-SNAPSHOT
 
 Facade API on top of JOGL (http://jogamp.org/jogl/www/) offering a simple interface for creating OpenGL contexts/windows, GLSL shader programs, and textures. Use it in your favourite JVM-based language.
 
