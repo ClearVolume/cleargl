@@ -242,6 +242,15 @@ public class GLShader implements GLInterface, GLCloseable {
 
 	@Override
 	public String toString() {
+		return "GLShader ["
+				+ "mShaderId="
+				+ mShaderId
+				+ ", mShaderType="
+				+ mShaderType
+				+ "]";
+	}
+
+	public String toStringDebug() {
 		return "GLShader [mGL=" + mGL
 				+ ", mShaderId="
 				+ mShaderId
@@ -251,5 +260,4 @@ public class GLShader implements GLInterface, GLCloseable {
 				+ mShaderSource
 				+ "]";
 	}
-
 }
