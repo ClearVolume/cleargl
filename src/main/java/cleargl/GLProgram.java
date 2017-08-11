@@ -302,7 +302,7 @@ public class GLProgram implements GLInterface, GLCloseable {
 			recompileProgram(mGL);
 		}
 
-		mGL.getGL3().glUseProgram(mProgramId);
+		mGL.getGL4().glUseProgram(mProgramId);
 	}
 
 	public void unbind() {
