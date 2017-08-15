@@ -137,7 +137,7 @@ archivesBaseName = 'cleargl'
 if(project.hasProperty('releasebuild')) {
     version = getVersionName()
 } else {
-    version = "2.0.0-SNAPSHOT"
+    version = "2.1.0-SNAPSHOT"
 }
 
 artifacts

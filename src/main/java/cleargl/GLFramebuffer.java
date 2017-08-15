@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import com.jogamp.opengl.GL4;
 
 /**
@@ -46,7 +45,8 @@ public class GLFramebuffer {
 		return backingTextures.size() > 0;
 	}
 
-	private void addFloatBufferInternal(final GL4 gl, final String name, final int channelCount, final int channelDepth) {
+	private void addFloatBufferInternal(final GL4 gl, final String name, final int channelCount,
+			final int channelDepth) {
 		if (!initialized) {
 			return;
 		}
@@ -76,14 +76,15 @@ public class GLFramebuffer {
 	}
 
 	public void addFloatRGBBuffer(final GL4 gl, final String name, final int channelDepth) {
-	    addFloatBufferInternal(gl, name, 3, channelDepth);
+		addFloatBufferInternal(gl, name, 3, channelDepth);
 	}
 
 	public void addFloatRGBABuffer(final GL4 gl, final String name, final int channelDepth) {
-	    addFloatBufferInternal(gl, name, 4, channelDepth);
+		addFloatBufferInternal(gl, name, 4, channelDepth);
 	}
 
-	private void addUnsignedByteBufferInternal(final GL4 gl, final String name, final int channelCount, final int channelDepth) {
+	private void addUnsignedByteBufferInternal(final GL4 gl, final String name, final int channelCount,
+			final int channelDepth) {
 		if (!initialized) {
 			return;
 		}
@@ -105,9 +106,9 @@ public class GLFramebuffer {
 	}
 
 
-    public void addUnsignedByteRBuffer(final GL4 gl, final String name, final int channelDepth) {
-        addUnsignedByteBufferInternal(gl, name, 1, channelDepth);
-    }
+	public void addUnsignedByteRBuffer(final GL4 gl, final String name, final int channelDepth) {
+		addUnsignedByteBufferInternal(gl, name, 1, channelDepth);
+	}
 
 	public void addUnsignedByteRGBuffer(final GL4 gl, final String name, final int channelDepth) {
 		addUnsignedByteBufferInternal(gl, name, 2, channelDepth);
@@ -118,7 +119,7 @@ public class GLFramebuffer {
 	}
 
 	public void addUnsignedByteRGBABuffer(final GL4 gl, final String name, final int channelDepth) {
-	    addUnsignedByteBufferInternal(gl, name, 4, channelDepth);
+		addUnsignedByteBufferInternal(gl, name, 4, channelDepth);
 	}
 
 	public void addDepthBuffer(final GL4 gl, final String name, final int depth) {
@@ -179,13 +180,13 @@ public class GLFramebuffer {
 	public int bindTexturesToUnitsWithOffset(final GL4 gl, final int offset) {
 		int totalUnits = 0;
 
-		for(Map.Entry<String, GLTexture> entry: backingTextures.entrySet()) {
+		for (Map.Entry<String, GLTexture> entry : backingTextures.entrySet()) {
 			gl.glActiveTexture(GL4.GL_TEXTURE0 + offset + totalUnits);
 			gl.glBindTexture(GL4.GL_TEXTURE_2D, entry.getValue().getId());
 			totalUnits++;
 		}
 
-		for(Map.Entry<String, GLTexture> entry: depthBuffers.entrySet()) {
+		for (Map.Entry<String, GLTexture> entry : depthBuffers.entrySet()) {
 			gl.glActiveTexture(GL4.GL_TEXTURE0 + offset + totalUnits);
 			gl.glBindTexture(GL4.GL_TEXTURE_2D, entry.getValue().getId());
 			totalUnits++;
@@ -197,7 +198,7 @@ public class GLFramebuffer {
 	public List<Integer> getTextureIds(final GL4 gl) {
 		final ArrayList<Integer> list = new ArrayList<>();
 
-		for (Map.Entry<String, GLTexture> entry: backingTextures.entrySet()) {
+		for (Map.Entry<String, GLTexture> entry : backingTextures.entrySet()) {
 			list.add(entry.getValue().getId());
 		}
 
@@ -218,7 +219,7 @@ public class GLFramebuffer {
 		final LinkedHashMap<String, GLTexture> newBackingTextures = new LinkedHashMap<>();
 		final LinkedHashMap<String, GLTexture> newDepthBuffers = new LinkedHashMap<>();
 
-		for (Map.Entry<String, GLTexture> entry: backingTextures.entrySet()) {
+		for (Map.Entry<String, GLTexture> entry : backingTextures.entrySet()) {
 			final GLTexture newT = new GLTexture(gl,
 					entry.getValue().getNativeType(),
 					entry.getValue().getChannels(),
@@ -235,7 +236,7 @@ public class GLFramebuffer {
 					0);
 		}
 
-		for (Map.Entry<String, GLTexture> entry: depthBuffers.entrySet()) {
+		for (Map.Entry<String, GLTexture> entry : depthBuffers.entrySet()) {
 			final GLTexture newT = new GLTexture(gl,
 					entry.getValue().getNativeType(),
 					-1,
@@ -289,17 +290,19 @@ public class GLFramebuffer {
 			info = new StringBuilder("GLFramebuffer " + framebufferId[0] + "\n|\n");
 
 			for (final GLTexture att : backingTextures.values()) {
-				info.append(String.format("+-\tColor Attachment %s, %dx%d/%d*%d, 0x%s\n", Integer.toHexString(att.getId()),
-						att.getWidth(), att.getHeight(), att.getChannels(), att.getBitsPerChannel(),
-						Integer.toHexString(att.getInternalFormat())));
+				info.append(
+						String.format("+-\tColor Attachment %s, %dx%d/%d*%d, 0x%s\n", Integer.toHexString(att.getId()),
+								att.getWidth(), att.getHeight(), att.getChannels(), att.getBitsPerChannel(),
+								Integer.toHexString(att.getInternalFormat())));
 			}
 
 			info.append("|\n");
 
 			for (final GLTexture att : depthBuffers.values()) {
-				info.append(String.format("+-\tDepth Attachment %s, %dx%d/%d*%d, 0x%s\n", Integer.toHexString(att.getId()),
-						att.getWidth(), att.getHeight(), att.getChannels(), att.getBitsPerChannel(),
-						Integer.toHexString(att.getInternalFormat())));
+				info.append(
+						String.format("+-\tDepth Attachment %s, %dx%d/%d*%d, 0x%s\n", Integer.toHexString(att.getId()),
+								att.getWidth(), att.getHeight(), att.getChannels(), att.getBitsPerChannel(),
+								Integer.toHexString(att.getInternalFormat())));
 			}
 		}
 		return info.toString();

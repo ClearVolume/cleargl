@@ -132,23 +132,23 @@ public class GLTexture implements GLInterface, GLCloseable {
 
 		mTextureTarget = mTextureDepth == 1 ? GL4.GL_TEXTURE_2D
 				: GL4.GL_TEXTURE_3D;
-		switch(mNumberOfChannels) {
+		switch (mNumberOfChannels) {
 			case 1:
-				if(mType == GLTypeEnum.UnsignedShort) {
+				if (mType == GLTypeEnum.UnsignedShort) {
 					mTextureOpenGLFormat = GL4.GL_RED_INTEGER;
 				} else {
 					mTextureOpenGLFormat = GL4.GL_RED;
 				}
 				break;
 			case 2:
-				if(mType == GLTypeEnum.UnsignedShort) {
+				if (mType == GLTypeEnum.UnsignedShort) {
 					mTextureOpenGLFormat = GL4.GL_RG_INTEGER;
 				} else {
 					mTextureOpenGLFormat = GL4.GL_RG;
 				}
 				break;
 			case 3:
-				if(mType == GLTypeEnum.UnsignedShort) {
+				if (mType == GLTypeEnum.UnsignedShort) {
 					mTextureOpenGLFormat = GL4.GL_RGB_INTEGER;
 				} else {
 					mTextureOpenGLFormat = GL4.GL_RGB;
@@ -156,7 +156,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 				break;
 			case 4:
 			default:
-				if(mType == GLTypeEnum.UnsignedShort) {
+				if (mType == GLTypeEnum.UnsignedShort) {
 					mTextureOpenGLFormat = GL4.GL_RGBA_INTEGER;
 				} else {
 					mTextureOpenGLFormat = GL4.GL_RGBA;
@@ -205,7 +205,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 					: GL4.GL_R16F;
 			mBytesPerChannel = 2;
 		} else if (mType == GLTypeEnum.UnsignedShort) {
-			switch(mNumberOfChannels) {
+			switch (mNumberOfChannels) {
 				case 1:
 					mTextureOpenGLInternalFormat = GL4.GL_R16UI;
 					break;
@@ -226,7 +226,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 					: GL4.GL_R32F;
 			mBytesPerChannel = 4;
 		} else if (mType == GLTypeEnum.UnsignedInt) {
-			switch(mNumberOfChannels) {
+			switch (mNumberOfChannels) {
 				case 1:
 					mTextureOpenGLInternalFormat = GL4.GL_R32UI;
 					break;
@@ -249,10 +249,10 @@ public class GLTexture implements GLInterface, GLCloseable {
 					mBytesPerChannel = 4;
 					break;
 				case 2:
-					if(precision == 16) {
+					if (precision == 16) {
 						mTextureOpenGLInternalFormat = GL4.GL_RG16F;
 						mBytesPerChannel = 4;
-					} else if(precision == 32) {
+					} else if (precision == 32) {
 						mTextureOpenGLInternalFormat = GL4.GL_RG32F;
 						mBytesPerChannel = 4;
 					}
@@ -290,7 +290,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 		mGL.glGenTextures(1, mTextureId, 0);
 		bind();
 
-		if(mTextureTarget == GL4.GL_TEXTURE_2D) {
+		if (mTextureTarget == GL4.GL_TEXTURE_2D) {
 			mGL.glTexParameteri(mTextureTarget,
 					GL4.GL_TEXTURE_MAG_FILTER,
 					pLinearInterpolation ? GL4.GL_LINEAR
@@ -300,7 +300,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 					mMipMapLevels > 1 ? (pLinearInterpolation ? GL4.GL_LINEAR_MIPMAP_LINEAR
 							: GL4.GL_NEAREST_MIPMAP_NEAREST)
 							: (pLinearInterpolation ? GL4.GL_LINEAR
-							: GL4.GL_NEAREST));
+									: GL4.GL_NEAREST));
 			mGL.glTexParameteri(mTextureTarget,
 					GL4.GL_TEXTURE_WRAP_S,
 					GL4.GL_REPEAT);
@@ -404,7 +404,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 		bind();
 
 		final int lNeededSize = mTextureWidth * mTextureHeight
-                * mTextureDepth
+				* mTextureDepth
 				* mBytesPerChannel
 				* mNumberOfChannels;
 
@@ -412,7 +412,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 		final Buffer lEmptyBuffer = ByteBuffer.allocateDirect(lNeededSize)
 				.order(ByteOrder.nativeOrder());
 
-		if(mTextureTarget == GL4.GL_TEXTURE_2D) {
+		if (mTextureTarget == GL4.GL_TEXTURE_2D) {
 			mGL.glTexSubImage2D(mTextureTarget,
 					0,
 					0,
@@ -468,7 +468,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 		bind();
 		pBuffer.rewind();
 
-		if(mTextureTarget == GL4.GL_TEXTURE_2D) {
+		if (mTextureTarget == GL4.GL_TEXTURE_2D) {
 			mGL.glTexSubImage2D(mTextureTarget,
 					pLODLevel,
 					0,
@@ -580,7 +580,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 	}
 
 	public static GLTexture loadFromFile(final GL4 gl, final String filename, final boolean linearInterpolation,
-										 final int mipmapLevels) {
+			final int mipmapLevels) {
 		return loadFromFile(gl, filename, linearInterpolation, true, mipmapLevels);
 	}
 
@@ -642,16 +642,17 @@ public class GLTexture implements GLInterface, GLCloseable {
 			texHeight *= 2;
 		}
 
-		int levels = Math.min(maxMipmapLevels, 1 + (int)Math.floor(Math.log(Math.max(texWidth, texHeight)/Math.log(2.0))));
+		int levels = Math.min(maxMipmapLevels,
+				1 + (int) Math.floor(Math.log(Math.max(texWidth, texHeight) / Math.log(2.0))));
 
-		if(!generateMipmaps) {
+		if (!generateMipmaps) {
 			levels = 1;
 		}
 
 		int channelCount = bi.getColorModel().getNumComponents();
 
 		// work around a Java2D issue
-		if(channelCount == 3 && filename.substring(filename.lastIndexOf(".")).toLowerCase().endsWith("png")) {
+		if (channelCount == 3 && filename.substring(filename.lastIndexOf(".")).toLowerCase().endsWith("png")) {
 			channelCount = 4;
 		}
 
