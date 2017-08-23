@@ -196,7 +196,10 @@ public class ClearGLWindow implements ClearGLDisplayable {
 		try {
 
 			try {
-				mAnimator.stop();
+				runOnEDT(false, () -> {
+					mAnimator.stop();
+				});
+
 			} catch (final Throwable e) {
 				System.err.println(e.getLocalizedMessage());
 			}
