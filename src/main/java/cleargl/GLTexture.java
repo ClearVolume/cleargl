@@ -8,7 +8,6 @@ import java.io.*;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
-import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -580,11 +579,20 @@ public class GLTexture implements GLInterface, GLCloseable {
 	}
 
 	public static GLTexture loadFromFile(final GL4 gl, final String filename, final boolean linearInterpolation,
-			final int mipmapLevels) {
+			final int mipmapLevels) throws FileNotFoundException {
 		return loadFromFile(gl, filename, linearInterpolation, true, mipmapLevels);
 	}
 
 	public static GLTexture loadFromFile(final GL4 gl, final String filename, final boolean linearInterpolation,
+			final boolean generateMipmaps, final int maxMipmapLevels) throws FileNotFoundException {
+		FileInputStream inputStream = new FileInputStream(filename);
+		final String type = filename.substring(filename.lastIndexOf('.')).toLowerCase();
+
+		return loadFromFile(gl, inputStream, type, linearInterpolation, generateMipmaps, maxMipmapLevels);
+	}
+
+	public static GLTexture loadFromFile(final GL4 gl, final InputStream input, final String type,
+			final boolean linearInterpolation,
 			final boolean generateMipmaps, final int maxMipmapLevels) {
 		BufferedImage bi;
 		BufferedImage flippedImage;
@@ -594,18 +602,14 @@ public class GLTexture implements GLInterface, GLCloseable {
 		int[] pixels = null;
 		GLTexture tex;
 
-		if (filename.substring(filename.lastIndexOf('.')).toLowerCase().endsWith("tga")) {
+		if (type.toLowerCase().endsWith("tga")) {
 			byte[] buffer = null;
 
 			try {
-				fis = new FileInputStream(filename);
-				channel = fis.getChannel();
-				final ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-				channel.transferTo(0, channel.size(), Channels.newChannel(byteArrayOutputStream));
-				buffer = byteArrayOutputStream.toByteArray();
-
-				channel.close();
-				fis.close();
+				BufferedInputStream s = new BufferedInputStream(input);
+				buffer = new byte[s.available()];
+				s.read(buffer);
+				s.close();
 
 				pixels = TGAReader.read(buffer, TGAReader.ARGB);
 				final int width = TGAReader.getWidth(buffer);
@@ -613,17 +617,15 @@ public class GLTexture implements GLInterface, GLCloseable {
 				bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 				bi.setRGB(0, 0, width, height, pixels, 0, width);
 			} catch (final Exception e) {
-				System.err.println("GLTexture: could not read image from TGA" + filename + ".");
+				System.err.println("GLTexture: could not read image from TGA");
 				return null;
 			}
 		} else {
 			try {
-				fis = new FileInputStream(filename);
-				bi = ImageIO.read(fis);
-				fis.close();
+				bi = ImageIO.read(input);
 
 			} catch (final Exception e) {
-				System.err.println("GLTexture: could not read image from " + filename + ".");
+				System.err.println("GLTexture: could not read image." + e.getMessage());
 				return null;
 			}
 		}
@@ -652,7 +654,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 		int channelCount = bi.getColorModel().getNumComponents();
 
 		// work around a Java2D issue
-		if (channelCount == 3 && filename.substring(filename.lastIndexOf(".")).toLowerCase().endsWith("png")) {
+		if (channelCount == 3 && type.toLowerCase().endsWith("png")) {
 			channelCount = 4;
 		}
 
