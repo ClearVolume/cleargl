@@ -48,12 +48,17 @@ public class GLShader implements GLInterface, GLCloseable {
 		} catch (URISyntaxException | FileSystemNotFoundException e) {
 			try {
 				final URI uri = p.toURI();
+
+				if ("bundleresource".equals(uri.getScheme()) || "bundle".equals(uri.getScheme())) {
+					return null;
+				}
+
 				Map<String, String> env = new HashMap<>();
 				FileSystem fs = FileSystems.newFileSystem(uri, Collections.EMPTY_MAP);
 
 				return Paths.get(p.toURI());
 			} catch (URISyntaxException | FileSystemAlreadyExistsException | IOException ee) {
-
+				System.err.println("Could not convert " + p.toString() + " to path.");
 			}
 
 		}
@@ -74,7 +79,11 @@ public class GLShader implements GLInterface, GLCloseable {
 		mShaderSourceRootClass = pRootClass;
 		mParameters = new HashMap<>();
 		Path p = getPath(pRootClass.getResource(pResourceName));
-		mShaderBasePath = p.getParent();
+		if (p != null) {
+			mShaderBasePath = p.getParent();
+		} else {
+			mShaderBasePath = null;
+		}
 
 		// preprocess shader
 		final String shaderSourceProcessed = preprocessShader(mShaderSource);
@@ -100,7 +109,11 @@ public class GLShader implements GLInterface, GLCloseable {
 		mParameters = params;
 
 		Path p = getPath(pRootClass.getResource(pResourceName));
-		mShaderBasePath = p.getParent();
+		if (p != null) {
+			mShaderBasePath = p.getParent();
+		} else {
+			mShaderBasePath = null;
+		}
 
 		// preprocess shader
 		final String shaderSourceProcessed = preprocessShader(mShaderSource);
@@ -182,14 +195,18 @@ public class GLShader implements GLInterface, GLCloseable {
 			final String includeFileName = effectiveSource.substring(startPos + "%include <".length(), endPos);
 			String includeSource = "";
 
-			try {
-				includeSource = Files.lines(mShaderBasePath.resolve(includeFileName))
-						.parallel()
-						.filter(line -> !line.startsWith("//"))
-						.map(String::trim)
-						.collect(Collectors.joining());
-			} catch (final IOException e) {
-				e.printStackTrace();
+			if (mShaderBasePath != null) {
+				try {
+					includeSource = Files.lines(mShaderBasePath.resolve(includeFileName))
+							.parallel()
+							.filter(line -> !line.startsWith("//"))
+							.map(String::trim)
+							.collect(Collectors.joining());
+				} catch (final IOException e) {
+					e.printStackTrace();
+				}
+			} else {
+				includeSource = "// NOT INCLUDED AS LOADING FROM OSGi BUNDLE";
 			}
 
 			effectiveSource = effectiveSource.substring(0, startPos) + "\n// included from " + includeFileName + "\n"

@@ -1,0 +1,32 @@
+diff --git a/src/main/java/cleargl/GLShader.java b/src/main/java/cleargl/GLShader.java
+index ddda52b..d8e178e 100644
+--- a/src/main/java/cleargl/GLShader.java
++++ b/src/main/java/cleargl/GLShader.java
+@@ -48,12 +48,17 @@ public class GLShader implements GLInterface, GLCloseable {
+ 		} catch (URISyntaxException | FileSystemNotFoundException e) {
+ 			try {
+ 				final URI uri = p.toURI();
++
++				if("bundleresource".equals(uri.getScheme()) || "bundle".equals(uri.getScheme())) {
++					return null;
++				}
++
+ 				Map<String, String> env = new HashMap<>();
+ 				FileSystem fs = FileSystems.newFileSystem(uri, Collections.EMPTY_MAP);
+ 
+ 				return Paths.get(p.toURI());
+ 			} catch (URISyntaxException | FileSystemAlreadyExistsException | IOException ee) {
+-
++				System.err.println("Could not convert " + p.toString() + " to path.");
+ 			}
+ 
+ 		}
+@@ -177,7 +182,7 @@ public class GLShader implements GLInterface, GLCloseable {
+ 		// find includes
+ 		startPos = 0;
+ 		endPos = 0;
+-		while ((startPos = effectiveSource.indexOf("%include <")) != -1) {
++		while ((startPos = effectiveSource.indexOf("%include <")) != -1 && mShaderBasePath != null) {
+ 			endPos = effectiveSource.indexOf(">", startPos);
+ 			final String includeFileName = effectiveSource.substring(startPos + "%include <".length(), endPos);
+ 			String includeSource = "";
