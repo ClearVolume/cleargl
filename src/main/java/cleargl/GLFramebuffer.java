@@ -205,6 +205,14 @@ public class GLFramebuffer {
 		return list;
 	}
 
+	public int getTextureId(final String name) {
+		if (backingTextures.containsKey(name)) {
+			return backingTextures.get(name).getId();
+		} else {
+			return -1;
+		}
+	}
+
 	public void revertToDefaultFramebuffer(final GL4 gl) {
 		gl.glBindFramebuffer(GL4.GL_FRAMEBUFFER, 0);
 	}
