@@ -10,6 +10,7 @@ import com.jogamp.opengl.math.VectorUtil;
 public class GLMatrix implements Serializable {
 
 	private final float[] mMatrix;
+	private final float[] scratch = new float[16];
 
 	public GLMatrix() {
 		mMatrix = new float[16];
@@ -284,7 +285,7 @@ public class GLMatrix implements Serializable {
 	public GLMatrix rotEuler(final double bankX,
 			final double headingY,
 			final double attitudeZ) {
-		final float[] lRotMatrix = FloatUtil.makeRotationEuler(new float[16],
+		final float[] lRotMatrix = FloatUtil.makeRotationEuler(scratch,
 				0,
 				(float) bankX,
 				(float) headingY,
@@ -295,7 +296,7 @@ public class GLMatrix implements Serializable {
 	}
 
 	public GLMatrix translate(final float pDeltaX, final float pDeltaY, final float pDeltaZ) {
-		final float[] lTranslationMatrix = FloatUtil.makeTranslation(new float[16],
+		final float[] lTranslationMatrix = FloatUtil.makeTranslation(scratch,
 				true,
 				pDeltaX,
 				pDeltaY,
@@ -311,7 +312,7 @@ public class GLMatrix implements Serializable {
 
 	public GLMatrix scale(final float pScaleX, final float pScaleY, final float pScaleZ) {
 
-		final float[] lScaleMatrix = FloatUtil.makeScale(new float[16],
+		final float[] lScaleMatrix = FloatUtil.makeScale(scratch,
 				true,
 				pScaleX,
 				pScaleY,
@@ -323,7 +324,7 @@ public class GLMatrix implements Serializable {
 
 	public void invscale(final float pScaleX, final float pScaleY, final float pScaleZ) {
 
-		final float[] lScaleMatrix = FloatUtil.makeScale(new float[16],
+		final float[] lScaleMatrix = FloatUtil.makeScale(scratch,
 				true,
 				1.0f / pScaleX,
 				1.0f / pScaleY,
@@ -333,7 +334,7 @@ public class GLMatrix implements Serializable {
 	}
 
 	public GLMatrix mult(final Quaternion pQuaternion) {
-		final float[] lQuaternionMatrix = pQuaternion.toMatrix(new float[16],
+		final float[] lQuaternionMatrix = pQuaternion.toMatrix(scratch,
 				0);
 		FloatUtil.multMatrix(mMatrix, lQuaternionMatrix);
 
@@ -452,29 +453,26 @@ public class GLMatrix implements Serializable {
 	}
 
 	public GLMatrix invert() {
-		final float[] tmp = new float[16];
-		System.arraycopy(mMatrix, 0, tmp, 0, mMatrix.length);
+		System.arraycopy(mMatrix, 0, scratch, 0, mMatrix.length);
 
-		FloatUtil.invertMatrix(tmp, mMatrix);
+		FloatUtil.invertMatrix(scratch, mMatrix);
 		return this;
 	}
 
 	public GLMatrix getInverse() {
-		final float[] tmp = new float[16];
 		final GLMatrix inverse;
-		System.arraycopy(mMatrix, 0, tmp, 0, mMatrix.length);
+		System.arraycopy(mMatrix, 0, scratch, 0, mMatrix.length);
 
-		FloatUtil.invertMatrix(mMatrix, tmp);
-		inverse = new GLMatrix(tmp);
+		FloatUtil.invertMatrix(mMatrix, scratch);
+		inverse = new GLMatrix(scratch);
 
 		return inverse;
 	}
 
 	public GLMatrix transpose() {
-		final float[] tmp = new float[16];
-		System.arraycopy(mMatrix, 0, tmp, 0, mMatrix.length);
+		System.arraycopy(mMatrix, 0, scratch, 0, mMatrix.length);
 
-		FloatUtil.transposeMatrix(tmp, mMatrix);
+		FloatUtil.transposeMatrix(scratch, mMatrix);
 
 		return this;
 	}
