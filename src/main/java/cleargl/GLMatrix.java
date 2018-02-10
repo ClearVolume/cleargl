@@ -3,6 +3,8 @@ package cleargl;
 import static java.lang.Math.*;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
+
 import com.jogamp.opengl.math.FloatUtil;
 import com.jogamp.opengl.math.Quaternion;
 import com.jogamp.opengl.math.VectorUtil;
@@ -312,8 +314,9 @@ public class GLMatrix implements Serializable {
 
 	public GLMatrix scale(final float pScaleX, final float pScaleY, final float pScaleZ) {
 
+		Arrays.fill(scratch, 0.0f);
 		final float[] lScaleMatrix = FloatUtil.makeScale(scratch,
-				true,
+				false,
 				pScaleX,
 				pScaleY,
 				pScaleZ);
