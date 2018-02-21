@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL4;
 
 /**
@@ -177,6 +179,16 @@ public class GLFramebuffer {
 		gl.glBindFramebuffer(GL4.GL_READ_FRAMEBUFFER, getId());
 	}
 
+	public void setReadBuffers(final GL4 gl, String sourceName) {
+		gl.glBindFramebuffer(GL4.GL_READ_FRAMEBUFFER, getId());
+
+		for(int i = 0; i < backingTextures.size(); i++) {
+		    if(backingTextures.keySet().toArray()[i].equals(sourceName)) {
+				gl.glReadBuffer(GL4.GL_COLOR_ATTACHMENT0 + i);
+			}
+		}
+	}
+
 	public int bindTexturesToUnitsWithOffset(final GL4 gl, final int offset) {
 		int totalUnits = 0;
 
@@ -211,6 +223,18 @@ public class GLFramebuffer {
 		} else {
 			return -1;
 		}
+	}
+
+	public int getTextureType(final String name)  {
+		if (backingTextures.containsKey(name)) {
+			return 0;
+		}
+
+		if(depthBuffers.containsKey(name)) {
+			return 1;
+		}
+
+		return -1;
 	}
 
 	public void revertToDefaultFramebuffer(final GL4 gl) {
