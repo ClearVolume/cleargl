@@ -133,21 +133,21 @@ public class GLTexture implements GLInterface, GLCloseable {
 				: GL4.GL_TEXTURE_3D;
 		switch (mNumberOfChannels) {
 			case 1:
-				if (mType == GLTypeEnum.UnsignedShort) {
+				if ((mType == GLTypeEnum.UnsignedShort || mType == GLTypeEnum.UnsignedByte) && mTextureDepth > 1) {
 					mTextureOpenGLFormat = GL4.GL_RED_INTEGER;
 				} else {
 					mTextureOpenGLFormat = GL4.GL_RED;
 				}
 				break;
 			case 2:
-				if (mType == GLTypeEnum.UnsignedShort) {
+				if ((mType == GLTypeEnum.UnsignedShort || mType == GLTypeEnum.UnsignedByte) && mTextureDepth > 1) {
 					mTextureOpenGLFormat = GL4.GL_RG_INTEGER;
 				} else {
 					mTextureOpenGLFormat = GL4.GL_RG;
 				}
 				break;
 			case 3:
-				if (mType == GLTypeEnum.UnsignedShort) {
+				if ((mType == GLTypeEnum.UnsignedShort || mType == GLTypeEnum.UnsignedByte) && mTextureDepth > 1) {
 					mTextureOpenGLFormat = GL4.GL_RGB_INTEGER;
 				} else {
 					mTextureOpenGLFormat = GL4.GL_RGB;
@@ -155,7 +155,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 				break;
 			case 4:
 			default:
-				if (mType == GLTypeEnum.UnsignedShort) {
+				if ((mType == GLTypeEnum.UnsignedShort || mType == GLTypeEnum.UnsignedByte) && mTextureDepth > 1) {
 					mTextureOpenGLFormat = GL4.GL_RGBA_INTEGER;
 				} else {
 					mTextureOpenGLFormat = GL4.GL_RGBA;
@@ -181,7 +181,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 					mTextureOpenGLInternalFormat = GL4.GL_RGBA8;
 			}
 			mBytesPerChannel = 1;
-		} else if (mType == GLTypeEnum.UnsignedByte) {
+		} else if (mType == GLTypeEnum.UnsignedByte && mTextureDepth == 1) {
 			switch (mNumberOfChannels) {
 				case 1:
 					mTextureOpenGLInternalFormat = GL4.GL_R8;
@@ -197,6 +197,24 @@ public class GLTexture implements GLInterface, GLCloseable {
 					break;
 				default:
 					mTextureOpenGLInternalFormat = GL4.GL_RGBA8;
+			}
+			mBytesPerChannel = 1;
+		} else if (mType == GLTypeEnum.UnsignedByte && mTextureDepth > 1) {
+			switch (mNumberOfChannels) {
+				case 1:
+					mTextureOpenGLInternalFormat = GL4.GL_R8UI;
+					break;
+				case 2:
+					mTextureOpenGLInternalFormat = GL4.GL_RG8UI;
+					break;
+				case 3:
+					mTextureOpenGLInternalFormat = GL4.GL_RGB8UI;
+					break;
+				case 4:
+					mTextureOpenGLInternalFormat = GL4.GL_RGBA8UI;
+					break;
+				default:
+					mTextureOpenGLInternalFormat = GL4.GL_RGBA8UI;
 			}
 			mBytesPerChannel = 1;
 		} else if (mType == GLTypeEnum.Short) {
