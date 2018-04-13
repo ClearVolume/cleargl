@@ -333,10 +333,12 @@ public class GLTexture implements GLInterface, GLCloseable {
 		} else {
 			mGL.glTexParameteri(mTextureTarget,
 					GL4.GL_TEXTURE_MIN_FILTER,
-					GL4.GL_NEAREST);
+					pLinearInterpolation ? GL4.GL_LINEAR
+							: GL4.GL_NEAREST);
 			mGL.glTexParameteri(mTextureTarget,
 					GL4.GL_TEXTURE_MAG_FILTER,
-					GL4.GL_NEAREST);
+					pLinearInterpolation ? GL4.GL_LINEAR
+							: GL4.GL_NEAREST);
 			mGL.glTexParameteri(mTextureTarget,
 					GL4.GL_TEXTURE_WRAP_S,
 					GL4.GL_CLAMP_TO_EDGE);
