@@ -64,7 +64,13 @@ public class GLVector implements Serializable {
 	}
 
 	public GLVector xyzw() {
-		return new GLVector(mElements[0], mElements[1], mElements[2], mElements[3]);
+	    if(mElements.length == 2) {
+			return new GLVector(mElements[0], mElements[1], 0.0f, 0.0f);
+		} else if(mElements.length == 3) {
+			return new GLVector(mElements[0], mElements[1], mElements[2], 1.0f);
+		} else {
+			return new GLVector(mElements[0], mElements[1], mElements[2], mElements[3]);
+		}
 	}
 
 	public float get(final int pIndex) {
