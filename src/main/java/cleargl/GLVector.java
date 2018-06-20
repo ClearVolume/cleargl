@@ -64,9 +64,9 @@ public class GLVector implements Serializable {
 	}
 
 	public GLVector xyzw() {
-	    if(mElements.length == 2) {
+		if (mElements.length == 2) {
 			return new GLVector(mElements[0], mElements[1], 0.0f, 0.0f);
-		} else if(mElements.length == 3) {
+		} else if (mElements.length == 3) {
 			return new GLVector(mElements[0], mElements[1], mElements[2], 1.0f);
 		} else {
 			return new GLVector(mElements[0], mElements[1], mElements[2], mElements[3]);
@@ -193,11 +193,11 @@ public class GLVector implements Serializable {
 
 	@Override
 	public int hashCode() {
-	    int hash = Arrays.hashCode(mElements);
-	    long value = mDimension;
-	    hash = 31 * hash + (int)(value ^ (value >>> 32));
+		int hash = Arrays.hashCode(mElements);
+		long value = mDimension;
+		hash = 31 * hash + (int) (value ^ (value >>> 32));
 
-	    return hash;
+		return hash;
 	}
 
 	@Override
