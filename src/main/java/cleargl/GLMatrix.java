@@ -613,7 +613,14 @@ public class GLMatrix implements Serializable {
 	}
 
 	@Override public int hashCode() {
-		return Arrays.hashCode(mMatrix);
+		long result = 1;
+		int i = 0;
+		for (float element : mMatrix) {
+			long bits = Float.floatToIntBits(element);
+			result = 31 * result + bits ^ ((++i + bits) >>> 32);
+		}
+
+		return (int)result;
 	}
 
 }

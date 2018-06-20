@@ -194,7 +194,8 @@ public class GLVector implements Serializable {
 	@Override
 	public int hashCode() {
 	    int hash = Arrays.hashCode(mElements);
-	    hash = 31 * hash + (int)(mDimension ^ (mDimension >>> 32));
+	    long value = mDimension;
+	    hash = 31 * hash + (int)(value ^ (value >>> 32));
 
 	    return hash;
 	}
