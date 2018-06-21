@@ -2,8 +2,8 @@ language: java
 
 env:
   global:
-    - secure: "Uze8VFBIsg35ZR19/QmgCo7Sifo75TViTWePBeLdJh7sPO2WFFJVAPQIXNtD2kurCa3Qx4iyuxRucUI+eqJPqzTs8WfS8ocB4eSd+bwYa2UR9c98kCZGQwZI3B+PlYxd1d6TK3/uAhgH2OkaWp8KvSQMHw7/osSQ0Q6mqn3xOp4="
-    - secure: "A0+qHoj7bdI8zjaKTqJGYrouWxjigdamDrDQqHuKDc9xcb9yUlT8oBmfLpum66LjcH1SZsj39aZgQc/8MuFKjzVBvvFUm79/pApr+43J4sPJSuFEJoJtcdPhHSxnRKvcIas4LY1XZjbxLf5SaKtFOaiLpoFkOXgyrxFUQwZAcE8="
+    - secure: "QFelCXkmjAiBcKhtAeecGJqTu3WzeFk1LGsreE25y2DO8kV4pvf5gTGP9jwLybSGpA7AS11Ofqq7Mh9LJ21tPn59iyz0j2Z7YTjY+7P+Z+z7m4Wav0bKjdetZSgvqX9pFGmfmVHjGpMu0M3ixpRHxKpHhgZQYYgEWr9nNOtjLew="
+    - secure: "FsmkRwqYYftyyPf13RetjCnPLOUislnw7IEcVmkW67L73aDPcdDQbVXe8ITpynrQOXQdbAWr9T8H+aEyEu6ddMuMpNFB9T1t75sSYt5FQ/NwDoeNX8hyCibcP8pLL8SrMxFInujLqzR/83cEkvPMCN86MEWVL0Snh/swqyERD80="
 
 script: "./gradlew build -x spotlessCheck"
 
