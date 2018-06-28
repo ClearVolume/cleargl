@@ -1,5 +1,9 @@
 package cleargl;
 
+import com.jogamp.opengl.GL4;
+import com.jogamp.opengl.GLException;
+
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
@@ -11,9 +15,6 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.Hashtable;
-import javax.imageio.ImageIO;
-import com.jogamp.opengl.GL4;
-import com.jogamp.opengl.GLException;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class GLTexture implements GLInterface, GLCloseable {
@@ -155,21 +156,21 @@ public class GLTexture implements GLInterface, GLCloseable {
 				: GL4.GL_TEXTURE_3D;
 		switch (mNumberOfChannels) {
 			case 1:
-				if ((mType == GLTypeEnum.UnsignedShort || mType == GLTypeEnum.UnsignedByte) && mTextureDepth > 1) {
+				if ((mType == GLTypeEnum.UnsignedShort || mType == GLTypeEnum.UnsignedByte) && mTextureDepth > 1 && !normalized) {
 					mTextureOpenGLFormat = GL4.GL_RED_INTEGER;
 				} else {
 					mTextureOpenGLFormat = GL4.GL_RED;
 				}
 				break;
 			case 2:
-				if ((mType == GLTypeEnum.UnsignedShort || mType == GLTypeEnum.UnsignedByte) && mTextureDepth > 1) {
+				if ((mType == GLTypeEnum.UnsignedShort || mType == GLTypeEnum.UnsignedByte) && mTextureDepth > 1 && !normalized) {
 					mTextureOpenGLFormat = GL4.GL_RG_INTEGER;
 				} else {
 					mTextureOpenGLFormat = GL4.GL_RG;
 				}
 				break;
 			case 3:
-				if ((mType == GLTypeEnum.UnsignedShort || mType == GLTypeEnum.UnsignedByte) && mTextureDepth > 1) {
+				if ((mType == GLTypeEnum.UnsignedShort || mType == GLTypeEnum.UnsignedByte) && mTextureDepth > 1 && !normalized) {
 					mTextureOpenGLFormat = GL4.GL_RGB_INTEGER;
 				} else {
 					mTextureOpenGLFormat = GL4.GL_RGB;
@@ -177,7 +178,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 				break;
 			case 4:
 			default:
-				if ((mType == GLTypeEnum.UnsignedShort || mType == GLTypeEnum.UnsignedByte) && mTextureDepth > 1) {
+				if ((mType == GLTypeEnum.UnsignedShort || mType == GLTypeEnum.UnsignedByte) && mTextureDepth > 1 && !normalized) {
 					mTextureOpenGLFormat = GL4.GL_RGBA_INTEGER;
 				} else {
 					mTextureOpenGLFormat = GL4.GL_RGBA;
