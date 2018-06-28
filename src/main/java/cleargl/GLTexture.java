@@ -117,7 +117,29 @@ public class GLTexture implements GLInterface, GLCloseable {
 			final int pTextureDepth,
 			final boolean pLinearInterpolation,
 			final int pMipMapLevels,
-			final int precision)
+			final int precision) {
+		this(pGL,
+				pType,
+				pNumberOfChannels,
+				pTextureWidth,
+				pTextureHeight,
+				pTextureDepth,
+				pLinearInterpolation,
+				pMipMapLevels,
+				precision,
+				true);
+	}
+
+	public GLTexture(final GL4 pGL,
+			final GLTypeEnum pType,
+			final int pNumberOfChannels,
+			final int pTextureWidth,
+			final int pTextureHeight,
+			final int pTextureDepth,
+			final boolean pLinearInterpolation,
+			final int pMipMapLevels,
+			final int precision,
+			final boolean normalized)
 
 	{
 		super();
@@ -202,19 +224,19 @@ public class GLTexture implements GLInterface, GLCloseable {
 		} else if (mType == GLTypeEnum.UnsignedByte && mTextureDepth > 1) {
 			switch (mNumberOfChannels) {
 				case 1:
-					mTextureOpenGLInternalFormat = GL4.GL_R8UI;
+					mTextureOpenGLInternalFormat = normalized ? GL4.GL_R8 : GL4.GL_R8UI;
 					break;
 				case 2:
-					mTextureOpenGLInternalFormat = GL4.GL_RG8UI;
+					mTextureOpenGLInternalFormat = normalized ? GL4.GL_RG8 : GL4.GL_RG8UI;
 					break;
 				case 3:
-					mTextureOpenGLInternalFormat = GL4.GL_RGB8UI;
+					mTextureOpenGLInternalFormat = normalized ? GL4.GL_RGB8 : GL4.GL_RGB8UI;
 					break;
 				case 4:
-					mTextureOpenGLInternalFormat = GL4.GL_RGBA8UI;
+					mTextureOpenGLInternalFormat = normalized ? GL4.GL_RGBA8 : GL4.GL_RGBA8UI;
 					break;
 				default:
-					mTextureOpenGLInternalFormat = GL4.GL_RGBA8UI;
+					mTextureOpenGLInternalFormat = normalized ? GL4.GL_RGBA8 : GL4.GL_RGBA8UI;
 			}
 			mBytesPerChannel = 1;
 		} else if (mType == GLTypeEnum.Short) {
@@ -224,17 +246,17 @@ public class GLTexture implements GLInterface, GLCloseable {
 		} else if (mType == GLTypeEnum.UnsignedShort) {
 			switch (mNumberOfChannels) {
 				case 1:
-					mTextureOpenGLInternalFormat = GL4.GL_R16UI;
+					mTextureOpenGLInternalFormat = normalized ? GL4.GL_R16 : GL4.GL_R16UI;
 					break;
 				case 2:
-					mTextureOpenGLInternalFormat = GL4.GL_RG16UI;
+					mTextureOpenGLInternalFormat = normalized ? GL4.GL_RG16 : GL4.GL_RG16UI;
 					break;
 				case 3:
-					mTextureOpenGLInternalFormat = GL4.GL_RGB16UI;
+					mTextureOpenGLInternalFormat = normalized ? GL4.GL_RGB16 : GL4.GL_RGB16UI;
 					break;
 				case 4:
 				default:
-					mTextureOpenGLInternalFormat = GL4.GL_RGBA16UI;
+					mTextureOpenGLInternalFormat = normalized ? GL4.GL_RGBA16 : GL4.GL_RGBA16UI;
 			}
 
 			mBytesPerChannel = 2;
