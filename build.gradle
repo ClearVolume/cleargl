@@ -118,6 +118,12 @@ task TestProgFatJar(type:Jar) {
 //***********************************************************************************
 // BINTRAY PUBLISHING
 
+def getMavenPOMVersion = {
+    File mavenPOM = new File("pom.xml")
+    def xmlSlurper = new XmlSlurper()
+    def output = xmlSlurper.parse(mavenPOM)
+    return output."version"
+}
 /*
  * Gets the version name from the latest Git tag
  */
@@ -135,10 +141,12 @@ archivesBaseName = 'cleargl'
 //version = '2.0.1-SNAPSHOT'
 
 if(project.hasProperty('releasebuild')) {
-    version = getVersionName()
+    version = getMavenPOMVersion()
 } else {
-    version = "2.2.2-SNAPSHOT"
+    version = getMavenPOMVersion()
 }
+
+println("Building ClearGL ${version}")
 
 artifacts
 {
