@@ -539,6 +539,42 @@ public class GLTexture implements GLInterface, GLCloseable {
 		}
 	}
 
+	public void copyFrom(final Buffer pBuffer,
+						 final int width, final int height, final int depth,
+						 final int x, final int y, final int z,
+						 boolean pAutoGenerateMipMaps) {
+		bind();
+		pBuffer.rewind();
+
+		if (mTextureTarget == GL4.GL_TEXTURE_2D) {
+			mGL.glTexSubImage2D(mTextureTarget,
+					0,
+					x,
+					y,
+					width,
+					height,
+					mTextureOpenGLFormat,
+					mTextureOpenGLDataType,
+					pBuffer);
+		} else {
+			mGL.glTexSubImage3D(mTextureTarget,
+					0,
+					x,
+					y,
+					z,
+					width,
+					height,
+					depth,
+					mTextureOpenGLFormat,
+					mTextureOpenGLDataType,
+					pBuffer);
+		}
+
+		if (pAutoGenerateMipMaps && mMipMapLevels > 1 && mTextureTarget == GL4.GL_TEXTURE_2D) {
+			updateMipMaps();
+		}
+	}
+
 	public void copyFrom(final Buffer pBuffer) {
 		copyFrom(pBuffer, 0, true);
 	}
