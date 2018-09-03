@@ -114,7 +114,8 @@ public class ClearGLWindow implements ClearGLDisplayable {
 		mViewMatrix = new GLMatrix();
 
 		final GLProfile lProfile = GLProfile.get(pGLVersion);
-		System.out.println(this.getClass().getSimpleName() + ": "
+		System.out.println(this.getClass().getSimpleName()
+				+ ": "
 				+ lProfile);
 		final GLCapabilities lCapabilities = new GLCapabilities(lProfile);
 
@@ -127,13 +128,16 @@ public class ClearGLWindow implements ClearGLDisplayable {
 
 		mWindow = NewtFactory.createWindow(lCapabilities);
 		mGlWindow = GLWindow.create(mWindow);
-		mGlWindow.setCapabilitiesChooser(lMultisampleChooser);
-		mGlWindow.setTitle(pWindowTitle);
 
-		pClearGLWindowEventListener.setClearGLWindow(this);
-		mGlWindow.addGLEventListener(pClearGLWindowEventListener);
-		mGlWindow.setSurfaceSize(pDefaultWidth, pDefaultHeight);
-		mGlWindow.setAutoSwapBufferMode(true);
+		runOnEDT(true, () -> {
+			mGlWindow.setCapabilitiesChooser(lMultisampleChooser);
+			mGlWindow.setTitle(pWindowTitle);
+
+			pClearGLWindowEventListener.setClearGLWindow(this);
+			mGlWindow.addGLEventListener(pClearGLWindowEventListener);
+			mGlWindow.setSurfaceSize(pDefaultWidth, pDefaultHeight);
+			mGlWindow.setAutoSwapBufferMode(true);
+		});
 
 		// if(mGlWindow.getContext() instanceof GLContextImpl) {
 		// }
@@ -155,8 +159,7 @@ public class ClearGLWindow implements ClearGLDisplayable {
 	}
 
 	public void start() {
-		mAnimator = new FPSAnimator(this.getGLAutoDrawable(),
-				mFramesPerSecond);
+		mAnimator = new FPSAnimator(this.getGLAutoDrawable(), mFramesPerSecond);
 		mAnimator.setUpdateFPSFrames(60, null);
 
 		mAnimator.start();
@@ -182,7 +185,7 @@ public class ClearGLWindow implements ClearGLDisplayable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see cleargl.ClearGLDisplayable#close()
 	 */
 	@Override
@@ -273,7 +276,7 @@ public class ClearGLWindow implements ClearGLDisplayable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see cleargl.ClearGLDisplayable#setPerspectiveProjectionMatrix(float,
 	 * float, float, float)
 	 */
@@ -305,7 +308,7 @@ public class ClearGLWindow implements ClearGLDisplayable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see cleargl.ClearGLDisplayable#setOrthoProjectionMatrix(float, float,
 	 * float, float, float, float)
 	 */
@@ -327,7 +330,7 @@ public class ClearGLWindow implements ClearGLDisplayable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see cleargl.ClearGLDisplayable#lookAt(float, float, float, float, float,
 	 * float, float, float, float)
 	 */
@@ -354,7 +357,7 @@ public class ClearGLWindow implements ClearGLDisplayable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see cleargl.ClearGLDisplayable#getProjectionMatrix()
 	 */
 	@Override
@@ -364,7 +367,7 @@ public class ClearGLWindow implements ClearGLDisplayable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see cleargl.ClearGLDisplayable#getViewMatrix()
 	 */
 	@Override
@@ -374,7 +377,7 @@ public class ClearGLWindow implements ClearGLDisplayable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see cleargl.ClearGLDisplayable#getWindowTitle()
 	 */
 	@Override
@@ -384,18 +387,20 @@ public class ClearGLWindow implements ClearGLDisplayable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see cleargl.ClearGLDisplayable#disableClose()
 	 */
 	@Override
 	public void disableClose() {
 		runOnEDT(false,
-				() -> mGlWindow.setDefaultCloseOperation(WindowClosingMode.DO_NOTHING_ON_CLOSE));
+				() -> mGlWindow.setDefaultCloseOperation(
+						WindowClosingMode.DO_NOTHING_ON_CLOSE));
 	}
 
 	@Override
 	public String toString() {
-		return "ClearGLWindow [mGlWindow=" + mGlWindow
+		return "ClearGLWindow [mGlWindow="
+				+ mGlWindow
 				+ ", mWindow="
 				+ mWindow
 				+ ", mWindowDefaultWidth="
@@ -407,7 +412,7 @@ public class ClearGLWindow implements ClearGLDisplayable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see cleargl.ClearGLDisplayable#isFullscreen()
 	 */
 	@Override
@@ -417,7 +422,7 @@ public class ClearGLWindow implements ClearGLDisplayable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see cleargl.ClearGLDisplayable#setFullscreen(boolean)
 	 */
 	@Override
@@ -439,8 +444,10 @@ public class ClearGLWindow implements ClearGLDisplayable {
 				}
 
 				try {
-					lFullscreen = Integer.parseInt(System.getProperty("ClearGL.FullscreenDevice"));
-					System.out.println("Fullscreen ID set to " + lFullscreen
+					lFullscreen = Integer.parseInt(System.getProperty(
+							"ClearGL.FullscreenDevice"));
+					System.out.println("Fullscreen ID set to "
+							+ lFullscreen
 							+ " by property.");
 				} catch (final java.lang.NumberFormatException e) {
 					lFullscreen = 0;
@@ -457,7 +464,8 @@ public class ClearGLWindow implements ClearGLDisplayable {
 				screen.addReference(); // trigger creation
 
 				if (pFullScreen) {
-					monitors.add(screen.getMonitorDevices().get(lFullscreen)); // Q1
+					monitors.add(screen.getMonitorDevices()
+							.get(lFullscreen)); // Q1
 				} else {
 					// monitor array stays empty
 				}

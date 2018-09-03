@@ -119,7 +119,7 @@ task TestProgFatJar(type:Jar) {
 // BINTRAY PUBLISHING
 
 def getMavenPOMVersion = {
-    File mavenPOM = new File("pom.xml")
+    File mavenPOM = new File("${project.projectDir}/pom.xml")
     def xmlSlurper = new XmlSlurper()
     def output = xmlSlurper.parse(mavenPOM)
     return output."version"
