@@ -127,7 +127,31 @@ public class GLTexture implements GLInterface, GLCloseable {
 				pLinearInterpolation,
 				pMipMapLevels,
 				precision,
-				true);
+				true,
+				false);
+	}
+
+	public GLTexture(final GL4 pGL,
+					 final GLTypeEnum pType,
+					 final int pNumberOfChannels,
+					 final int pTextureWidth,
+					 final int pTextureHeight,
+					 final int pTextureDepth,
+					 final boolean pLinearInterpolation,
+					 final int pMipMapLevels,
+					 final int precision,
+					 final boolean normalized) {
+		this(pGL,
+				pType,
+				pNumberOfChannels,
+				pTextureWidth,
+				pTextureHeight,
+				pTextureDepth,
+				pLinearInterpolation,
+				pMipMapLevels,
+				precision,
+				normalized,
+				false);
 	}
 
 	public GLTexture(final GL4 pGL,
@@ -139,7 +163,8 @@ public class GLTexture implements GLInterface, GLCloseable {
 			final boolean pLinearInterpolation,
 			final int pMipMapLevels,
 			final int precision,
-			final boolean normalized)
+			final boolean normalized,
+			final boolean sRGB)
 
 	{
 		super();
@@ -175,7 +200,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 						&& !normalized) {
 					mTextureOpenGLFormat = GL4.GL_RGB_INTEGER;
 				} else {
-					mTextureOpenGLFormat = GL4.GL_RGB;
+					mTextureOpenGLFormat = sRGB ? GL4.GL_SRGB : GL4.GL_RGB;
 				}
 				break;
 			case 4:
@@ -184,7 +209,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 						&& !normalized) {
 					mTextureOpenGLFormat = GL4.GL_RGBA_INTEGER;
 				} else {
-					mTextureOpenGLFormat = GL4.GL_RGBA;
+					mTextureOpenGLFormat = sRGB ? GL4.GL_SRGB_ALPHA : GL4.GL_RGBA;
 				}
 		}
 

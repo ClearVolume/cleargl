@@ -25,12 +25,19 @@ public class GLFramebuffer {
 
 	protected boolean initialized;
 
+	protected boolean sRGB;
+
 	public GLFramebuffer(final GL4 gl, final int width, final int height) {
+		this(gl, width, height, false);
+	}
+
+	public GLFramebuffer(final GL4 gl, final int width, final int height, final boolean sRGB) {
 		framebufferId = new int[1];
 		backingTextures = new LinkedHashMap<>();
 		depthBuffers = new LinkedHashMap<>();
 		this.width = width;
 		this.height = height;
+		this.sRGB = sRGB;
 
 		gl.getGL().glGenFramebuffers(1, framebufferId, 0);
 
@@ -95,7 +102,7 @@ public class GLFramebuffer {
 				gl,
 				GLTypeEnum.UnsignedByte,
 				channelCount,
-				width, height, 1, true, 1, channelDepth));
+				width, height, 1, true, 1, channelDepth, true, sRGB));
 
 		gl.glFramebufferTexture(GL4.GL_FRAMEBUFFER,
 				getCurrentFramebufferColorAttachment(),
