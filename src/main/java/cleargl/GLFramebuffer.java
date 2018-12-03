@@ -1,15 +1,16 @@
 package cleargl;
 
+import com.jogamp.opengl.GL4;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import com.jogamp.opengl.GL4;
 
 /**
  * Convenience class for handling OpenGL Framebuffers
  *
- * @author Ulrik Günther <hello@ulrik.is>
+ * @author Ulrik Günther
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class GLFramebuffer {
