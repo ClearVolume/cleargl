@@ -133,8 +133,10 @@ public class ClearGLWindow implements ClearGLDisplayable {
 			mGlWindow.setCapabilitiesChooser(lMultisampleChooser);
 			mGlWindow.setTitle(pWindowTitle);
 
-			pClearGLWindowEventListener.setClearGLWindow(this);
-			mGlWindow.addGLEventListener(pClearGLWindowEventListener);
+			if(pClearGLWindowEventListener != null) {
+				pClearGLWindowEventListener.setClearGLWindow(this);
+				mGlWindow.addGLEventListener(pClearGLWindowEventListener);
+			}
 			mGlWindow.setSurfaceSize(pDefaultWidth, pDefaultHeight);
 			mGlWindow.setAutoSwapBufferMode(true);
 		});
