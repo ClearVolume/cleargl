@@ -1,5 +1,9 @@
 package cleargl;
 
+import com.jogamp.opengl.GL4;
+import com.jogamp.opengl.GLException;
+
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.color.ColorSpace;
 import java.awt.geom.AffineTransform;
@@ -11,9 +15,6 @@ import java.nio.ByteOrder;
 import java.nio.channels.FileChannel;
 import java.util.Arrays;
 import java.util.Hashtable;
-import javax.imageio.ImageIO;
-import com.jogamp.opengl.GL4;
-import com.jogamp.opengl.GLException;
 
 @SuppressWarnings({"WeakerAccess", "unused"})
 public class GLTexture implements GLInterface, GLCloseable {
@@ -638,6 +639,10 @@ public class GLTexture implements GLInterface, GLCloseable {
 
 	public int getChannels() {
 		return mNumberOfChannels;
+	}
+
+	public int getFormat() {
+		return mTextureOpenGLFormat;
 	}
 
 	public int getInternalFormat() {
