@@ -45,7 +45,17 @@ public class GLTexture implements GLInterface, GLCloseable {
 
 	private final int mNumberOfChannels;
 
+	private final boolean msRGB;
+
 	private static ColorModel glAlphaColorModel = new ComponentColorModel(
+			ColorSpace.getInstance(ColorSpace.CS_LINEAR_RGB),
+			new int[]{8, 8, 8, 8},
+			true,
+			false,
+			ComponentColorModel.TRANSLUCENT,
+			DataBuffer.TYPE_BYTE);
+
+	private static ColorModel glAlphaColorModelsRGB = new ComponentColorModel(
 			ColorSpace.getInstance(ColorSpace.CS_sRGB),
 			new int[]{8, 8, 8, 8},
 			true,
@@ -54,6 +64,14 @@ public class GLTexture implements GLInterface, GLCloseable {
 			DataBuffer.TYPE_BYTE);
 
 	private static ColorModel glColorModel = new ComponentColorModel(
+			ColorSpace.getInstance(ColorSpace.CS_LINEAR_RGB),
+			new int[]{8, 8, 8, 0},
+			false,
+			false,
+			ComponentColorModel.OPAQUE,
+			DataBuffer.TYPE_BYTE);
+
+	private static ColorModel glColorModelsRGB = new ComponentColorModel(
 			ColorSpace.getInstance(ColorSpace.CS_sRGB),
 			new int[]{8, 8, 8, 0},
 			false,
@@ -176,6 +194,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 		mTextureHeight = pTextureHeight;
 		mTextureDepth = pTextureDepth;
 		mMipMapLevels = pMipMapLevels;
+		msRGB = sRGB;
 
 		mTextureTarget = mTextureDepth == 1 ? GL4.GL_TEXTURE_2D
 				: GL4.GL_TEXTURE_3D;
@@ -653,6 +672,10 @@ public class GLTexture implements GLInterface, GLCloseable {
 		return mBytesPerChannel * 8;
 	}
 
+	public boolean getsRGB() {
+		return msRGB;
+	}
+
 	@Override
 	public GL4 getGL() {
 		return mGL.getGL().getGL4();
@@ -775,7 +798,10 @@ public class GLTexture implements GLInterface, GLCloseable {
 				channelCount,
 				texWidth, texHeight, 1,
 				linearInterpolation,
-				levels);
+				levels,
+				32,
+				true,
+				flippedImage.getColorModel().getColorSpace().isCS_sRGB());
 
 		tex.clear();
 		tex.copyFrom(imageData);
@@ -807,6 +833,8 @@ public class GLTexture implements GLInterface, GLCloseable {
 		ByteBuffer imageBuffer;
 		WritableRaster raster;
 		BufferedImage texImage;
+		final ColorModel rgbColorModel;
+		final ColorModel rgbaColorModel;
 
 		int texWidth = 2;
 		int texHeight = 2;
@@ -818,12 +846,20 @@ public class GLTexture implements GLInterface, GLCloseable {
 			texHeight *= 2;
 		}
 
+		if(bufferedImage.getColorModel().getColorSpace().isCS_sRGB()) {
+		    rgbColorModel = glColorModelsRGB;
+			rgbaColorModel = glAlphaColorModelsRGB;
+		} else {
+			rgbColorModel = glColorModel;
+			rgbaColorModel = glAlphaColorModel;
+		}
+
 		if (bufferedImage.getColorModel().hasAlpha()) {
 			raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, texWidth, texHeight, 4, null);
-			texImage = new BufferedImage(GLTexture.glAlphaColorModel, raster, false, new Hashtable<>());
+			texImage = new BufferedImage(rgbaColorModel, raster, false, new Hashtable<>());
 		} else {
 			raster = Raster.createInterleavedRaster(DataBuffer.TYPE_BYTE, texWidth, texHeight, 3, null);
-			texImage = new BufferedImage(GLTexture.glColorModel, raster, false, new Hashtable<>());
+			texImage = new BufferedImage(rgbColorModel, raster, false, new Hashtable<>());
 		}
 
 		final Graphics g = texImage.getGraphics();
