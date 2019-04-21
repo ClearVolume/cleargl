@@ -147,6 +147,28 @@ public class GLVector implements Serializable {
 		return n;
 	}
 
+	public GLVector hadamard(final GLVector pGLVector) {
+		if(this.getDimension() != pGLVector.getDimension()) {
+			throw new UnsupportedOperationException("Vectors do not have same dimension: " + this + " vs " + pGLVector);
+		}
+
+		GLVector result = this.clone();
+		for (int i = 0; i < mDimension; i++) {
+			result.mElements[i] *= pGLVector.mElements[i];
+		}
+
+		return result;
+	}
+
+	public GLVector inverse() {
+		GLVector result = this.clone();
+		for (int i = 0; i < mDimension; i++) {
+			result.mElements[i] = 1.0f/result.mElements[i];
+		}
+
+		return result;
+	}
+
 	public float magnitude() {
 		float lResult = 0;
 		for (int i = 0; i < mDimension; i++) {
