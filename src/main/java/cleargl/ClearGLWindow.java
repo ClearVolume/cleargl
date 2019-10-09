@@ -1,15 +1,9 @@
 package cleargl;
 
-import java.awt.*;
-import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import com.jogamp.nativewindow.CapabilitiesImmutable;
 import com.jogamp.nativewindow.WindowClosingProtocol.WindowClosingMode;
-import com.jogamp.newt.*;
 import com.jogamp.newt.Window;
+import com.jogamp.newt.*;
 import com.jogamp.newt.awt.NewtCanvasAWT;
 import com.jogamp.newt.event.KeyListener;
 import com.jogamp.newt.event.MouseListener;
@@ -17,6 +11,13 @@ import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.util.FPSAnimator;
+
+import java.awt.*;
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 public class ClearGLWindow implements ClearGLDisplayable {
 
@@ -178,11 +179,13 @@ public class ClearGLWindow implements ClearGLDisplayable {
 	}
 
 	public void stop() {
-		mAnimator.setIgnoreExceptions(true);
-		mAnimator.pause();
-		mAnimator.stop();
-		while (mAnimator.isAnimating())
-			Thread.yield();
+		if(mAnimator != null) {
+			mAnimator.setIgnoreExceptions(true);
+			mAnimator.pause();
+			mAnimator.stop();
+			while (mAnimator.isAnimating())
+				Thread.yield();
+		}
 	}
 
 	/*
