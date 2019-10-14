@@ -198,7 +198,7 @@ public class ClearGLWindow implements ClearGLDisplayable {
 		try {
 
 			try {
-				runOnEDT(false, () -> {
+				runOnEDT(true, () -> {
 					mAnimator.stop();
 				});
 
@@ -213,7 +213,7 @@ public class ClearGLWindow implements ClearGLDisplayable {
 			}
 
 			if (mGlWindow.isRealized())
-				runOnEDT(false, () -> {
+				runOnEDT(true, () -> {
 					try {
 						mGlWindow.destroy();
 					} catch (Throwable e) {
