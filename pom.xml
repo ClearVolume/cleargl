@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.scijava</groupId>
 		<artifactId>pom-scijava</artifactId>
-		<version>23.2.0</version>
+		<version>27.0.1</version>
 	</parent>
 
 	<groupId>net.clearvolume</groupId>
@@ -16,6 +16,7 @@
 	<description>jogl convenience wrapper</description>
 
 	<properties>
+        <package-name>net.clearvolume.cleargl</package-name>
 		<scijava.jvm.version>1.8</scijava.jvm.version>
 		<enforcer.skip>true</enforcer.skip>
 	</properties>
@@ -56,7 +57,7 @@
 	<repositories>
 		<repository>
 			<id>imagej.public</id>
-			<url>http://maven.scijava.org/content/groups/public</url>
+			<url>https://maven.scijava.org/content/groups/public</url>
 		</repository>
 	</repositories>
 </project>
