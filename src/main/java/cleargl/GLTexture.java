@@ -490,6 +490,31 @@ public class GLTexture implements GLInterface, GLCloseable {
 				clampT ? GL4.GL_CLAMP_TO_EDGE : GL4.GL_REPEAT);
 	}
 
+	public void setRepeatModeS(final int mode) {
+		mGL.glTexParameteri( mTextureTarget,
+				GL4.GL_TEXTURE_WRAP_S,
+				mode);
+	}
+
+	public void setRepeatModeT(final int mode) {
+		mGL.glTexParameteri( mTextureTarget,
+				GL4.GL_TEXTURE_WRAP_T,
+				mode);
+	}
+
+	public void setRepeatModeR(final int mode) {
+		mGL.glTexParameteri( mTextureTarget,
+				GL4.GL_TEXTURE_WRAP_R,
+				mode);
+	}
+
+	public void setTextureBorderColor(final float[] color) {
+		mGL.glTextureParameterfv( mTextureTarget,
+				GL4.GL_TEXTURE_BORDER_COLOR,
+				color,
+				0);
+	}
+
 	public void clear() {
 		bind();
 
