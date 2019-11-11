@@ -509,7 +509,7 @@ public class GLTexture implements GLInterface, GLCloseable {
 	}
 
 	public void setTextureBorderColor(final float[] color) {
-		mGL.glTextureParameterfv( mTextureTarget,
+		mGL.glTexParameterfv( mTextureTarget,
 				GL4.GL_TEXTURE_BORDER_COLOR,
 				color,
 				0);
