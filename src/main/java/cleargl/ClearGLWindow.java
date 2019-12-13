@@ -10,6 +10,8 @@ import com.jogamp.newt.event.MouseListener;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.opengl.GLWindow;
 import com.jogamp.opengl.*;
+import com.jogamp.opengl.util.Animator;
+import com.jogamp.opengl.util.AnimatorBase;
 import com.jogamp.opengl.util.FPSAnimator;
 
 import java.awt.*;
@@ -31,8 +33,9 @@ public class ClearGLWindow implements ClearGLDisplayable {
 	private final GLMatrix mViewMatrix;
 	private NewtCanvasAWT mNewtCanvasAWT;
 
-	private FPSAnimator mAnimator;
+	private AnimatorBase mAnimator;
 	private int mFramesPerSecond = 60;
+	private boolean mUseFPSAnimator;
 
 	static {
 		System.setProperty("sun.awt.noerasebackground", "true");
@@ -90,15 +93,30 @@ public class ClearGLWindow implements ClearGLDisplayable {
 	}
 
 	public ClearGLWindow(final String pWindowTitle,
-			final int pDefaultWidth,
-			final int pDefaultHeight,
-			final ClearGLEventListener pClearGLWindowEventListener) {
+						  final int pDefaultWidth,
+						  final int pDefaultHeight,
+						  final ClearGLEventListener pClearGLWindowEventListener) {
 		this(pWindowTitle,
 				pDefaultWidth,
 				pDefaultHeight,
 				"GL4",
 				1,
-				pClearGLWindowEventListener);
+				pClearGLWindowEventListener,
+				true);
+	}
+
+	public ClearGLWindow(final String pWindowTitle,
+						 final int pDefaultWidth,
+						 final int pDefaultHeight,
+						 final ClearGLEventListener pClearGLWindowEventListener,
+						 final boolean pUseFPSAnimator) {
+		this(pWindowTitle,
+				pDefaultWidth,
+				pDefaultHeight,
+				"GL4",
+				1,
+				pClearGLWindowEventListener,
+				pUseFPSAnimator);
 	}
 
 	public ClearGLWindow(final String pWindowTitle,
@@ -106,10 +124,12 @@ public class ClearGLWindow implements ClearGLDisplayable {
 			final int pDefaultHeight,
 			final String pGLVersion,
 			final int pNumberOfSamples,
-			final ClearGLEventListener pClearGLWindowEventListener) {
+			final ClearGLEventListener pClearGLWindowEventListener,
+			final boolean pUseFPSAnimator) {
 		mWindowTitle = pWindowTitle;
 		mWindowDefaultWidth = pDefaultWidth;
 		mWindowDefaultHeight = pDefaultHeight;
+		mUseFPSAnimator = pUseFPSAnimator;
 
 		mProjectionMatrix = new GLMatrix();
 		mViewMatrix = new GLMatrix();
@@ -156,14 +176,18 @@ public class ClearGLWindow implements ClearGLDisplayable {
 	public void setFPS(final int pFramesPerSecond) {
 		mFramesPerSecond = pFramesPerSecond;
 
-		if (mAnimator != null) {
-			// mAnimator.setRunAsFastAsPossible(true);
+		if (mAnimator != null && mAnimator instanceof FPSAnimator) {
+		    ((FPSAnimator) mAnimator).setFPS(pFramesPerSecond);
 		}
 	}
 
 	public void start() {
-		mAnimator = new FPSAnimator(this.getGLAutoDrawable(), mFramesPerSecond);
-		mAnimator.setUpdateFPSFrames(60, null);
+		if(mUseFPSAnimator) {
+			mAnimator = new FPSAnimator(this.getGLAutoDrawable(), mFramesPerSecond);
+			mAnimator.setUpdateFPSFrames(60, null);
+		} else {
+			mAnimator = new Animator(this.getGLAutoDrawable());
+		}
 
 		mAnimator.start();
 		while (!mAnimator.isAnimating())
@@ -224,6 +248,17 @@ public class ClearGLWindow implements ClearGLDisplayable {
 			System.err.println(e.getLocalizedMessage());
 		}
 	}
+
+	public void closeNoEDT() throws GLException {
+		if(mAnimator != null) {
+			mAnimator.stop();
+		}
+		setVisible(false);
+		if (mGlWindow.isRealized()) {
+			mGlWindow.destroy();
+		}
+	}
+
 
 	@Override
 	public void setWindowTitle(final String pTitleString) {
