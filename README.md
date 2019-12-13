@@ -1,4 +1,4 @@
-# ClearGL 2.2.7
+# ClearGL 2.2.10
 
 Facade API on top of JOGL (http://jogamp.org/jogl/www/) offering a simple interface for creating OpenGL contexts/windows, GLSL shader programs, and textures. Use it in your favourite JVM-based language.
 
