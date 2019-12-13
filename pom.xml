@@ -19,6 +19,8 @@
         <package-name>net.clearvolume.cleargl</package-name>
 		<scijava.jvm.version>1.8</scijava.jvm.version>
 		<enforcer.skip>true</enforcer.skip>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
 	</properties>
 
 	<scm>
