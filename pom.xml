@@ -18,7 +18,7 @@
 
 	<name>cleargl</name>
 	<description>ClearGL facade API on top of JOGL.</description>
-	<url>https://github.com/clearvolume/ClearGL</url>
+	<url>https://github.com/ClearVolume/cleargl</url>
 	<inceptionYear>2014</inceptionYear>
 	<organization>
 		<name>ClearVolume</name>
@@ -63,14 +63,14 @@
 	</mailingLists>
 
 	<scm>
-		<connection>scm:git:https://github.com/clearvolume/ClearGL</connection>
-		<developerConnection>scm:git:git@github.com:clearvolume/ClearGL</developerConnection>
+		<connection>scm:git:https://github.com/ClearVolume/cleargl</connection>
+		<developerConnection>scm:git:git@github.com:ClearVolume/cleargl</developerConnection>
 		<tag>HEAD</tag>
-		<url>https://github.com/clearvolume/ClearGL</url>
+		<url>https://github.com/ClearVolume/cleargl</url>
 	</scm>
 	<issueManagement>
 		<system>GitHub Issues</system>
-		<url>https://github.com/clearvolume/ClearGL/issues</url>
+		<url>https://github.com/ClearVolume/cleargl/issues</url>
 	</issueManagement>
 	<ciManagement>
 		<system>None</system>
