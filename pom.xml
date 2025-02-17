@@ -80,6 +80,9 @@
 		<package-name>cleargl</package-name>
 		<license.licenseName>lgpl_v3</license.licenseName>
 		<license.copyrightOwners>ClearVolume developers.</license.copyrightOwners>
+
+		<!-- NB: Deploy releases to the SciJava Maven repository. -->
+		<releaseProfiles>sign,deploy-to-scijava</releaseProfiles>
 	</properties>
 
 	<repositories>
