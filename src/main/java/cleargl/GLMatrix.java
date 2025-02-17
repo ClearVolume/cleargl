@@ -25,43 +25,49 @@ import static java.lang.Math.*;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import com.jogamp.opengl.math.FloatUtil;
+import com.jogamp.opengl.math.Matrix4f;
 import com.jogamp.opengl.math.Quaternion;
+import com.jogamp.opengl.math.Vec3f;
 import com.jogamp.opengl.math.VectorUtil;
 
 public class GLMatrix implements Serializable {
 
-	private final float[] mMatrix;
+	private final Matrix4f mMatrix;
 	private final float[] scratch = new float[16];
 
 	public GLMatrix() {
-		mMatrix = new float[16];
+		mMatrix = new Matrix4f();
 	}
 
 	public GLMatrix(final float[] matrix) {
 		if (matrix.length == 16) {
-			mMatrix = matrix;
+			mMatrix = new Matrix4f(matrix);
 		} else {
 			System.err.println("Incompatible matrix dimensions while converting from float!");
-			mMatrix = new float[16];
+			mMatrix = new Matrix4f();
 		}
 		// TODO: error handling! Throw exception?
 	}
 
+	public GLMatrix(final Matrix4f matrix) {
+		mMatrix = matrix;
+	}
+
 	public float get(final int pRow, final int pColumn) {
-		return mMatrix[4 * pRow + pColumn];
+		return mMatrix.get(4 * pRow + pColumn);
 	}
 
 	public void set(final int pRow, final int pColumn, final float pValue) {
-		mMatrix[4 * pRow + pColumn] = pValue;
+		mMatrix.set(4 * pRow + pColumn, pValue);
 	}
 
 	public void mult(final int pRow, final int pColumn, final float pValue) {
-		mMatrix[4 * pRow + pColumn] *= pValue;
+		int index = 4 * pRow + pColumn;
+		mMatrix.set(index, mMatrix.get(index) * pValue);
 	}
 
 	public void setIdentity() {
-		FloatUtil.makeIdentity(mMatrix);
+		mMatrix.loadIdentity();
 	}
 
 	public static GLMatrix getIdentity() {
@@ -109,7 +115,7 @@ public class GLMatrix implements Serializable {
 	}
 
 	public void mult(final GLMatrix pGLMatrix) {
-		FloatUtil.multMatrix(mMatrix, pGLMatrix.mMatrix);
+		mMatrix.mul(pGLMatrix.mMatrix);
 	}
 
 	public void multinv(final GLMatrix pGLMatrix) {
@@ -119,7 +125,7 @@ public class GLMatrix implements Serializable {
 
 	public GLMatrix setFrustumMatrix(final float left, final float right, final float bottom, final float top,
 			final float near, final float far) {
-		FloatUtil.makeFrustum(mMatrix, 0, true, left, right, bottom, top, near, far);
+		mMatrix.setToFrustum(left, right, bottom, top, near, far);
 
 		return this;
 	}
@@ -128,9 +134,7 @@ public class GLMatrix implements Serializable {
 			final float pAspectRatio,
 			final float pNearPlane,
 			final float pFarPlane) {
-		FloatUtil.makePerspective(mMatrix,
-				0,
-				true,
+		mMatrix.setToPerspective(
 				pFOV,
 				pAspectRatio,
 				pNearPlane,
@@ -158,7 +162,7 @@ public class GLMatrix implements Serializable {
 		left = -b * near / convergenceDist;
 		right = c * near / convergenceDist;
 
-		FloatUtil.makeFrustum(mMatrix, 0, true,
+		mMatrix.setToFrustum(
 				left, right, bottom, top, near, far);
 	}
 
@@ -204,7 +208,8 @@ public class GLMatrix implements Serializable {
 
 		System.err.println(eye + ", " + (right + res.x()) + "/" + (top + res.y()) + " => " + distance + "/" + n + " -> "
 				+ left + "/" + right + "/" + bottom + "/" + top + ", s=" + s);
-		FloatUtil.makeFrustum(mMatrix, 0, true, left * s, right * s, bottom * s, top * s, n * s, far);
+		mMatrix.setToFrustum(
+			left * s, right * s, bottom * s, top * s, n * s, far);
 
 		final GLMatrix flip = new GLMatrix(new float[]{
 				1.0f, 0.0f, 0.0f, 0.0f,
@@ -219,7 +224,7 @@ public class GLMatrix implements Serializable {
 	public GLMatrix setFrustumProjectionMatrix(final float top, final float bottom,
 			final float left, final float right, final float near, final float far) {
 
-		FloatUtil.makeFrustum(mMatrix, 0, true,
+		mMatrix.setToFrustum(
 				left, right, bottom, top, near, far);
 
 		return this;
@@ -231,9 +236,7 @@ public class GLMatrix implements Serializable {
 			final float pTop,
 			final float pZNear,
 			final float pZFar) {
-		FloatUtil.makeOrtho(mMatrix,
-				0,
-				true,
+		new Matrix4f(mMatrix).setToOrtho(
 				pLeft,
 				pRight,
 				pBottom,
@@ -271,15 +274,10 @@ public class GLMatrix implements Serializable {
 		final float[] lLookAt = new float[]{pLookAtX, pLookAtY, pLookAtZ};
 		final float[] lUp = new float[]{pUpX, pUpY, pUpZ};
 
-		FloatUtil.makeLookAt(mMatrix,
-				0,
-				lPosition,
-				0,
-				lLookAt,
-				0,
-				lUp,
-				0,
-				new float[16]);
+		Vec3f eye = new Vec3f(lLookAt);
+		Vec3f center = new Vec3f(lPosition);
+		Vec3f up = new Vec3f(lUp);
+		mMatrix.setToLookAt(eye, center, up, new Matrix4f());
 
 		return this;
 	}
@@ -296,35 +294,33 @@ public class GLMatrix implements Serializable {
 	public void euler(final double bankX,
 			final double headingY,
 			final double attitudeZ) {
-		FloatUtil.makeRotationEuler(mMatrix,
-				0,
+		new Matrix4f(mMatrix).setToRotationEuler(
 				(float) bankX,
 				(float) headingY,
 				(float) attitudeZ);
-
 	}
 
 	public GLMatrix rotEuler(final double bankX,
 			final double headingY,
 			final double attitudeZ) {
-		final float[] lRotMatrix = FloatUtil.makeRotationEuler(scratch,
-				0,
+		Matrix4f lRotMatrix = new Matrix4f(scratch);
+		lRotMatrix.setToRotationEuler(
 				(float) bankX,
 				(float) headingY,
 				(float) attitudeZ);
-		FloatUtil.multMatrix(mMatrix, lRotMatrix);
+		new Matrix4f(mMatrix).mul(lRotMatrix);
 
 		return this;
 	}
 
 	public GLMatrix translate(final float pDeltaX, final float pDeltaY, final float pDeltaZ) {
-		final float[] lTranslationMatrix = FloatUtil.makeTranslation(scratch,
-				true,
+		Matrix4f lTranslationMatrix = new Matrix4f(scratch);
+		lTranslationMatrix.setToTranslation(
 				pDeltaX,
 				pDeltaY,
 				pDeltaZ);
 
-		FloatUtil.multMatrix(mMatrix, lTranslationMatrix);
+		mMatrix.mul(lTranslationMatrix);
 		return this;
 	}
 
@@ -335,38 +331,39 @@ public class GLMatrix implements Serializable {
 	public GLMatrix scale(final float pScaleX, final float pScaleY, final float pScaleZ) {
 
 		Arrays.fill(scratch, 0.0f);
-		final float[] lScaleMatrix = FloatUtil.makeScale(scratch,
-				false,
+		Matrix4f lScaleMatrix = new Matrix4f(scratch);
+		lScaleMatrix.setToScale(
 				pScaleX,
 				pScaleY,
 				pScaleZ);
 
-		FloatUtil.multMatrix(mMatrix, lScaleMatrix);
+		mMatrix.mul(lScaleMatrix);
 		return this;
 	}
 
 	public void invscale(final float pScaleX, final float pScaleY, final float pScaleZ) {
 
-		final float[] lScaleMatrix = FloatUtil.makeScale(scratch,
-				true,
+		Matrix4f lScaleMatrix = new Matrix4f(scratch);
+		lScaleMatrix.setToScale(
 				1.0f / pScaleX,
 				1.0f / pScaleY,
 				1.0f / pScaleZ);
 
-		FloatUtil.multMatrix(mMatrix, lScaleMatrix);
+		mMatrix.mul(lScaleMatrix);
 	}
 
 	public GLMatrix mult(final Quaternion pQuaternion) {
-		final float[] lQuaternionMatrix = pQuaternion.toMatrix(scratch,
-				0);
-		FloatUtil.multMatrix(mMatrix, lQuaternionMatrix);
+		Matrix4f lQuaternionMatrix = new Matrix4f(scratch);
+		pQuaternion.toMatrix(lQuaternionMatrix);
+		mMatrix.mul(lQuaternionMatrix);
 
 		return this;
 	}
 
 	public float[] mult(final float[] pVector) {
 		final float[] lResultVector = new float[4];
-		mulColMat4Vec4(lResultVector, mMatrix, pVector);
+		mMatrix.get(scratch);
+		mulColMat4Vec4(lResultVector, scratch, pVector);
 		return lResultVector;
 	}
 
@@ -453,71 +450,57 @@ public class GLMatrix implements Serializable {
 	}
 
 	public void copyFrom(final GLMatrix rhs) {
+		mMatrix.get(scratch);
 		System.arraycopy(rhs.getFloatArray(),
 				0,
-				mMatrix,
+				scratch,
 				0,
-				mMatrix.length);
+				scratch.length);
 	}
 
 	public float[] getFloatArray() {
-		return mMatrix;
+		return mMatrix.get(new float[16]);
 	}
 
 	public float[] getTransposedFloatArray() {
 		final GLMatrix lGLMatrix = new GLMatrix();
-		System.arraycopy(mMatrix,
+		System.arraycopy(mMatrix.get(new float[16]),
 				0,
 				lGLMatrix.getFloatArray(),
 				0,
-				mMatrix.length);
+				16);
 		lGLMatrix.transpose();
 		return lGLMatrix.getFloatArray();
 	}
 
 	public GLMatrix invert() {
-		System.arraycopy(mMatrix, 0, scratch, 0, mMatrix.length);
-
-		FloatUtil.invertMatrix(scratch, mMatrix);
+		mMatrix.invert();
 		return this;
 	}
 
 	public GLMatrix getInverse() {
-		final GLMatrix inverse;
-		System.arraycopy(mMatrix, 0, scratch, 0, mMatrix.length);
-
-		FloatUtil.invertMatrix(mMatrix, scratch);
-		inverse = new GLMatrix(scratch);
-
-		return inverse;
+		final Matrix4f inverse = new Matrix4f(scratch);
+		mMatrix.invert(inverse);
+		return new GLMatrix(inverse);
 	}
 
 	public GLMatrix transpose() {
-		System.arraycopy(mMatrix, 0, scratch, 0, mMatrix.length);
-
-		FloatUtil.transposeMatrix(scratch, mMatrix);
-
+		mMatrix.transpose();
 		return this;
 	}
 
 	@Override
 	public String toString() {
 		final StringBuilder lStringBuilder = new StringBuilder();
-		FloatUtil.matrixToString(lStringBuilder,
+		mMatrix.toString(lStringBuilder,
 				"",
-				"%10.5f",
-				mMatrix,
-				0,
-				4,
-				4,
-				true);
+				"%10.5f");
 		return "GLMatrix:\n" + lStringBuilder.toString();
 	}
 
 	public static GLMatrix fromQuaternion(final Quaternion q) {
-		final float[] rotationMatrix = new float[16];
-		q.toMatrix(rotationMatrix, 0);
-
+		Matrix4f rotationMatrix = new Matrix4f();
+		q.toMatrix(rotationMatrix);
 		return new GLMatrix(rotationMatrix);
 	}
 
@@ -582,7 +565,9 @@ public class GLMatrix implements Serializable {
 	}
 
 	public static void cross(final float[] pResult, final float[] pA, final float[] pB) {
-		VectorUtil.crossVec3(pResult, pA, pB);
+		Vec3f result = new Vec3f();
+		result.cross(new Vec3f(pA), new Vec3f(pB));
+		result.get(pResult);
 	}
 
 	public static void zero(final float[] pVector) {
@@ -612,21 +597,21 @@ public class GLMatrix implements Serializable {
 
 	public ByteBuffer push(ByteBuffer buffer) {
 		final int pos = buffer.position();
-		buffer.asFloatBuffer().put(mMatrix);
+		buffer.asFloatBuffer().put(mMatrix.get(new float[16]));
 		buffer.position(pos);
 		return buffer;
 	}
 
 	public ByteBuffer put(ByteBuffer buffer) {
 		int position = buffer.position();
-		buffer.asFloatBuffer().put(mMatrix);
-		buffer.position(position + mMatrix.length * 4);
+		buffer.asFloatBuffer().put(mMatrix.get(new float[16]));
+		buffer.position(position + 16 * 4);
 		return buffer;
 	}
 
 	public ByteBuffer toBuffer() {
 		ByteBuffer b = ByteBuffer.allocateDirect(16 * 4);
-		b.asFloatBuffer().put(mMatrix);
+		b.asFloatBuffer().put(mMatrix.get(new float[16]));
 		b.position(0);
 		b.limit(16 * 4);
 
@@ -637,7 +622,7 @@ public class GLMatrix implements Serializable {
 	public int hashCode() {
 		long result = 1;
 		int i = 0;
-		for (float element : mMatrix) {
+		for (float element : mMatrix.get(new float[16])) {
 			long bits = Float.floatToIntBits(element);
 			result = 31 * result + bits ^ ((++i + bits) >>> 32);
 		}

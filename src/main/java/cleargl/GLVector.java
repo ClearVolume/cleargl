@@ -26,6 +26,7 @@ import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
 import com.jogamp.opengl.math.Quaternion;
+import com.jogamp.opengl.math.Vec3f;
 import com.jogamp.opengl.math.VectorUtil;
 
 /*
@@ -154,7 +155,7 @@ public class GLVector implements Serializable {
 		final float[] in = this.mElements.clone();
 		final float[] out = new float[mDimension];
 
-		q.rotateVector(out, 0, in, 0);
+		q.rotateVector(new Vec3f(out), new Vec3f(in));
 
 		return new GLVector(out);
 	}
@@ -216,10 +217,12 @@ public class GLVector implements Serializable {
 	}
 
 	public GLVector cross(final GLVector v) {
-		final float result[] = new float[3];
-		VectorUtil.crossVec3(result, this.toFloatBuffer().array(), v.toFloatBuffer().array());
+		final Vec3f result = new Vec3f();
+		final Vec3f a = new Vec3f(this.toFloatBuffer().array());
+		final Vec3f b = new Vec3f(v.toFloatBuffer().array());
+		result.cross(a, b);
 
-		return new GLVector(result);
+		return new GLVector(result.get(new float[3]));
 	}
 
 	public GLVector getNormalized() {
