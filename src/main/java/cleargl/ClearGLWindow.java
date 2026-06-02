@@ -650,7 +650,37 @@ public class ClearGLWindow implements ClearGLDisplayable {
 
 	public NewtCanvasAWT getNewtCanvasAWT() {
 		if (mNewtCanvasAWT == null) {
-			mNewtCanvasAWT = new NewtCanvasAWT(mGlWindow);
+			// HiDPI workaround: JOGL (2.3.x) predates the Java 9+ per-monitor
+			// DPI model and never scales its GL surface on Windows. When the OS
+			// display scaling is >100%, the AWT canvas occupies device pixels
+			// (logical * scale) but the NEWT child renders only a 1:1 backbuffer,
+			// leaving an uncovered (white) margin on the right/bottom. Report the
+			// canvas size in device pixels (logical * GraphicsConfiguration
+			// scale) so AWT sizes the heavyweight NEWT child to cover the full
+			// visible area. At 100% scaling the scale is 1.0, so this is a no-op.
+			mNewtCanvasAWT = new NewtCanvasAWT(mGlWindow) {
+				private double scaleX() {
+					final GraphicsConfiguration lGC = getGraphicsConfiguration();
+					return (lGC == null) ? 1.0
+							: lGC.getDefaultTransform().getScaleX();
+				}
+
+				private double scaleY() {
+					final GraphicsConfiguration lGC = getGraphicsConfiguration();
+					return (lGC == null) ? 1.0
+							: lGC.getDefaultTransform().getScaleY();
+				}
+
+				@Override
+				public int getWidth() {
+					return (int) Math.round(super.getWidth() * scaleX());
+				}
+
+				@Override
+				public int getHeight() {
+					return (int) Math.round(super.getHeight() * scaleY());
+				}
+			};
 			mNewtCanvasAWT.setShallUseOffscreenLayer(false);
 		}
 
