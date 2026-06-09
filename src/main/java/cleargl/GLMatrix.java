@@ -450,12 +450,7 @@ public class GLMatrix implements Serializable {
 	}
 
 	public void copyFrom(final GLMatrix rhs) {
-		mMatrix.get(scratch);
-		System.arraycopy(rhs.getFloatArray(),
-				0,
-				scratch,
-				0,
-				scratch.length);
+		mMatrix.load(rhs.getFloatArray());
 	}
 
 	public float[] getFloatArray() {
