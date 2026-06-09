@@ -589,7 +589,7 @@ public class ClearGLWindow implements ClearGLDisplayable {
 
 	@Override
 	public int getSurfaceWidth() {
-		return mGlWindow.getSurfaceHeight();
+		return mGlWindow.getSurfaceWidth();
 	}
 
 	@Override
