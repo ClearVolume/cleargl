@@ -32,23 +32,53 @@
 	<developers>
 		<!-- See https://imagej.net/Team -->
 		<developer>
-			<id>FIXME</id>
-			<name>Noma Onomatopoeia</name>
-			<url>https://mycompany.com/people/noma-onomatopoeia</url>
+			<id>nicost</id>
+			<name>Nico Stuurman</name>
+			<url>https://github.com/nicost</url>
 			<roles>
-				<role>founder</role>
-				<role>lead</role>
-				<role>developer</role>
-				<role>debugger</role>
-				<role>reviewer</role>
-				<role>support</role>
+				<role>maintainer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>ctrueden</id>
+			<name>Curtis Rueden</name>
+			<url>https://github.com/ctrueden</url>
+			<roles>
 				<role>maintainer</role>
 			</roles>
 		</developer>
 	</developers>
 	<contributors>
 		<contributor>
-			<name>None</name>
+			<name>Loic Royer</name>
+			<url>https://github.com/royerloic</url>
+			<roles><role>founder</role></roles>
+			<properties><id>royerloic</id></properties>
+		</contributor>
+		<contributor>
+			<name>Ulrik Günther</name>
+			<url>https://github.com/skalarproduktraum</url>
+			<properties><id>skalarproduktraum</id></properties>
+		</contributor>
+		<contributor>
+			<name>Tobias Pietzsch</name>
+			<url>https://github.com/tpietzsch</url>
+			<properties><id>tpietzsch</id></properties>
+		</contributor>
+		<contributor>
+			<name>Martin Weigert</name>
+			<url>https://github.com/maweigert</url>
+			<properties><id>maweigert</id></properties>
+		</contributor>
+		<contributor>
+			<name>Alexander Dibrov</name>
+			<url>https://github.com/adibrov</url>
+			<properties><id>adibrov</id></properties>
+		</contributor>
+		<contributor>
+			<name>Florian Jug</name>
+			<url>https://github.com/fjug</url>
+			<properties><id>fjug</id></properties>
 		</contributor>
 	</contributors>
 
