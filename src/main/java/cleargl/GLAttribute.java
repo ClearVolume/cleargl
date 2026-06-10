@@ -2,7 +2,7 @@
  * #%L
  * ClearGL facade API on top of JOGL.
  * %%
- * Copyright (C) 2014 - 2025 ClearVolume developers.
+ * Copyright (C) 2014 - 2026 ClearVolume developers.
  * %%
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License as
