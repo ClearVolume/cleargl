@@ -25,10 +25,10 @@ import static java.lang.Math.*;
 import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
-import com.jogamp.opengl.math.Matrix4f;
-import com.jogamp.opengl.math.Quaternion;
-import com.jogamp.opengl.math.Vec3f;
-import com.jogamp.opengl.math.VectorUtil;
+import com.jogamp.math.Matrix4f;
+import com.jogamp.math.Quaternion;
+import com.jogamp.math.Vec3f;
+import com.jogamp.math.VectorUtil;
 
 public class GLMatrix implements Serializable {
 

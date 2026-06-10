@@ -22,7 +22,7 @@
 package cleargl.util.arcball;
 
 import cleargl.GLMatrix;
-import com.jogamp.opengl.math.Quaternion;
+import com.jogamp.math.Quaternion;
 
 public class ArcBall {
 	private static final float Epsilon = 1.0e-5f;

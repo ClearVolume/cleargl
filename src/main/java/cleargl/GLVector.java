@@ -25,9 +25,9 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.Arrays;
-import com.jogamp.opengl.math.Quaternion;
-import com.jogamp.opengl.math.Vec3f;
-import com.jogamp.opengl.math.VectorUtil;
+import com.jogamp.math.Quaternion;
+import com.jogamp.math.Vec3f;
+import com.jogamp.math.VectorUtil;
 
 /*
 @author Ulrik Günther, Loïc Royer
