@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/clearvolume/ClearGL/actions/workflows/build.yml/badge.svg)](https://github.com/clearvolume/ClearGL/actions/workflows/build.yml)
+[![Build Status](https://github.com/ClearVolume/cleargl/actions/workflows/build.yml/badge.svg)](https://github.com/ClearVolume/cleargl/actions/workflows/build.yml)
 
 # ClearGL 2.2.10
 
